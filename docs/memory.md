@@ -30,6 +30,8 @@ Superseded entries remain searchable and public but are omitted from active retr
 
 Snapshots make it possible to inspect which memories a particular decision had available. They also prevent the context silently changing in the middle of a resumed job.
 
+Live founders can add web discoveries during the first stage. The original input observation snapshot remains unchanged; `discoveredObservations` is recorded separately and committed atomically with the discovery report and source memories. Subsequent stages receive both sets. The discovery checkpoint includes bounded web tool metadata (queries, page URLs, status) and URL citations from the API; internal reasoning items are omitted. Each source records a model-written synthesis context, not an original page excerpt. Private observations are excluded from web discovery input, and all discoveries from a private-input cycle remain private in exports and future retrieval.
+
 This first implementation has bounded lexical retrieval, not semantic embeddings, an autonomous memory-consolidation process, or full graph traversal. A long career will need ranking across themes, direct work relationships, older unresolved questions, and a diversity allocation so recent work does not monopolize recall. An embedding index should be rebuildable from the canonical records.
 
 ## Public archive

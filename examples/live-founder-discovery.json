@@ -1,0 +1,694 @@
+{
+  "description": "First live founder cycle with bounded web discovery and autonomous provisional direction selection. No customer contact, experiment execution, or launch. Reasoning effort was not explicitly configured. Original citation contexts are retained; context extraction was tightened afterward to reduce overlap.",
+  "cycle": {
+    "id": "6d389293-dbd0-47ff-b83e-5713af7c6330",
+    "triggerKey": "live:discovery:1",
+    "provider": "openai",
+    "model": "gpt-6-astra",
+    "profile": {
+      "studio": "founder",
+      "name": "founder-001",
+      "instanceId": "founder-001",
+      "version": 2,
+      "provisional": true,
+      "description": "A configurable founder with its own mission, operating limits, and persistent memory.",
+      "audience": "Open. Select and justify a provisional beneficiary through research; do not wait for the owner to select an industry.",
+      "ventureType": "Open. The founder may pursue software, a service, a community, media, or another venture.",
+      "mandate": "Independently discover a worthwhile venture. Research public evidence, select a provisional audience and problem when none is specified, compare alternatives, and design a bounded experiment. Retain what is learned and revise direction when evidence warrants it.",
+      "thesis": "Use real observations to decide what deserves to exist. Test the smallest consequential assumption before expanding commitments.",
+      "successSignals": [
+        "Observed behavior supports a specific claim about benefit to the intended audience.",
+        "The initiative can meet its ongoing commitments within available resources.",
+        "Evidence supports continuing, changing direction, or stopping."
+      ],
+      "principles": [
+        "Keep one active experiment at a time.",
+        "Record the success criterion before running the experiment.",
+        "Distinguish source reports, founder hypotheses, fixture data, and measured outcomes.",
+        "Reserve capacity for maintaining existing commitments.",
+        "Stopping an experiment is a legitimate result."
+      ],
+      "exclusions": [
+        "No invented customers, interviews, usage, revenue, or validation.",
+        "No unsolicited outreach, paid acquisition, or deployment in this local implementation.",
+        "No changing success thresholds after seeing results without recording a new experiment."
+      ],
+      "voice": "Specific, economical, evidence-aware. Explain assumptions and unresolved questions.",
+      "referenceNotes": [
+        "This is a generic founder template. Mission, audience, thesis, and operating limits are configured per instance.",
+        "A social AI app is one possible mission, not a built-in assumption.",
+        "The first workshop produces an experiment package; execution capabilities can expand through adapters.",
+        "The founder may choose provisional directions and read public sources. This authority does not extend to outreach, purchases, account creation, or deployment."
+      ]
+    },
+    "policy": {
+      "maxActiveCycles": 1,
+      "maxRevisions": 1,
+      "maxCallsPerCycle": 10,
+      "maxCallsPerDay": 16,
+      "maxOutputTokens": 16000,
+      "maxInputBytes": 60000,
+      "maxAttemptsPerStage": 2,
+      "maxWebCallsPerAttempt": 6,
+      "callTimeoutMs": 180000,
+      "leaseMs": 210000
+    },
+    "observations": [],
+    "memory": [
+      {
+        "id": "d68b87f2-5a57-4967-909f-8b6cc2374671",
+        "title": "Clarify mission and beneficiary before experimenting",
+        "outcome": "abstained",
+        "concept": "Not formed pending mission, beneficiary, and problem evidence.",
+        "reflection": {
+          "learning": "This workflow abstained; no experiment was executed. With no observations or fixture data supplied, there is no evidence of audience benefit. Experiment design requires a defined mission, beneficiary, problem observation, resource bounds, and a preregistered success criterion. The proposed target of 0.0069 active experiments is unsuitable for a count; abstention means zero active experiments, not a validation metric.",
+          "unresolvedQuestion": "Who should benefit, what concrete problem has been observed, and what mission and resource limits should govern the first test? All benefit and feasibility assumptions remain untested.",
+          "nextExperiment": "No experiment selected. Request the missing inputs, then design one bounded local test of the smallest consequential assumption, recording its metric, success threshold, time window, and stop condition before execution.",
+          "identityChangeProposed": null
+        }
+      }
+    ],
+    "recalledMemories": [
+      {
+        "id": "d68b87f2-5a57-4967-909f-8b6cc2374671:propose:0",
+        "kind": "decision",
+        "content": "{\"action\":\"abstain\",\"rationale\":\"No mission, intended beneficiary, or observations of a problem are supplied. Selecting a venture experiment now would require an unsupported direction. No validation is claimed.\",\"title\":\"Clarify mission and beneficiary before experimenting\",\"targetAudience\":\"Unspecified; identify a potential beneficiary before committing.\",\"problem\":\"There is insufficient information to select a mission-aligned problem and bounded experiment.\",\"hypothesis\":\"Not formed pending mission, beneficiary, and problem evidence.\",\"smallestTest\":\"No venture test proposed. First request a mission, a potential beneficiary, one concrete problem observation, and available time and resource limits. Then prepare one local experiment package with a falsifiable hypothesis and preregistered success criterion.\",\"successCriterion\":{\"metric\":\"Active experiments while prerequisites remain unresolved\",\"target\":0.0069,\"unit\":\"experiments\",\"windowDays\":7},\"stopCondition\":\"Do not begin an experiment until its mission fit, audience, testable benefit, resource bounds, and success criterion are recorded.\",\"maintenancePlan\":\"Keep no active experiment or external commitment during clarification. Reassess when the missing inputs arrive; reserve maintenance capacity before proposing execution.\",\"sourceIds\":[],\"previousWorkIds\":[]}",
+        "sourceIds": [],
+        "supersedes": null
+      },
+      {
+        "id": "identity-4dcedd03ded7df5d60f458a235f39882b9e7a61a3cc26de21dee8e61e4b64f39",
+        "kind": "identity",
+        "content": "{\"studio\":\"founder\",\"name\":\"founder-001\",\"instanceId\":\"founder-001\",\"version\":1,\"provisional\":true,\"description\":\"A configurable founder with its own mission, operating limits, and persistent memory.\",\"audience\":\"Not selected. Identify who would benefit before committing to an experiment.\",\"ventureType\":\"Open. The founder may pursue software, a service, a community, media, or another venture.\",\"mandate\":\"Develop a venture consistent with the configured mission. Identify assumptions, gather evidence, propose bounded experiments, and retain what is learned.\",\"thesis\":\"Use real observations to decide what deserves to exist. Test the smallest consequential assumption before expanding commitments.\",\"successSignals\":[\"Observed behavior supports a specific claim about benefit to the intended audience.\",\"The initiative can meet its ongoing commitments within available resources.\",\"Evidence supports continuing, changing direction, or stopping.\"],\"principles\":[\"Keep one active experiment at a time.\",\"Record the success criterion before running the experiment.\",\"Distinguish source reports, founder hypotheses, fixture data, and measured outcomes.\",\"Reserve capacity for maintaining existing commitments.\",\"Stopping an experiment is a legitimate result.\"],\"exclusions\":[\"No invented customers, interviews, usage, revenue, or validation.\",\"No unsolicited outreach, paid acquisition, or deployment in this local implementation.\",\"No changing success thresholds after seeing results without recording a new experiment.\"],\"voice\":\"Specific, economical, evidence-aware. Explain assumptions and unresolved questions.\",\"referenceNotes\":[\"This is a generic founder template. Mission, audience, thesis, and operating limits are configured per instance.\",\"A social AI app is one possible mission, not a built-in assumption.\",\"The first workshop produces an experiment package; execution capabilities can expand through adapters.\"]}",
+        "sourceIds": [],
+        "supersedes": null
+      },
+      {
+        "id": "d68b87f2-5a57-4967-909f-8b6cc2374671:research:0",
+        "kind": "decision",
+        "content": "{\"summary\":\"No observations were supplied. The founder’s mission and audience remain unspecified, so no venture direction or audience benefit is supported by evidence. Define a mission and potential beneficiary before selecting one bounded experiment with a recorded success criterion.\",\"findings\":[],\"uncertainties\":[\"Who is the intended beneficiary, and what problem or unmet need do they report?\",\"What mission and resource limits should guide venture selection?\",\"Which consequential assumption should the first experiment test?\"],\"evidenceLevel\":\"hypothesis_only\",\"reportedProblemSourceIds\":[]}",
+        "sourceIds": [],
+        "supersedes": null
+      },
+      {
+        "id": "d68b87f2-5a57-4967-909f-8b6cc2374671:reflect:0",
+        "kind": "reflection",
+        "content": "{\"learning\":\"This workflow abstained; no experiment was executed. With no observations or fixture data supplied, there is no evidence of audience benefit. Experiment design requires a defined mission, beneficiary, problem observation, resource bounds, and a preregistered success criterion. The proposed target of 0.0069 active experiments is unsuitable for a count; abstention means zero active experiments, not a validation metric.\",\"unresolvedQuestion\":\"Who should benefit, what concrete problem has been observed, and what mission and resource limits should govern the first test? All benefit and feasibility assumptions remain untested.\",\"nextExperiment\":\"No experiment selected. Request the missing inputs, then design one bounded local test of the smallest consequential assumption, recording its metric, success threshold, time window, and stop condition before execution.\",\"identityChangeProposed\":null}",
+        "sourceIds": [],
+        "supersedes": null
+      }
+    ],
+    "stage": "done",
+    "revision": 0,
+    "status": "released",
+    "outcome": "released",
+    "createdAt": "2026-09-13T21:18:03.574Z",
+    "updatedAt": "2026-09-13T21:21:08.399Z",
+    "lastError": null,
+    "discoveredObservations": [
+      {
+        "id": "web-53cdf9c30c6c739c0be7c455",
+        "stream": "world",
+        "kind": "source",
+        "visibility": "public",
+        "title": "How do you keep track of deadlines for multi-year grants? : r/nonprofit",
+        "text": "Web research synthesis (model summary, not a direct quotation or verified customer evidence): # Opportunity decision — September 13, 2026\n\n**Provisional direction: an RFP requirements-and-change review service for small U.S. web-development agencies bidding on public-sector projects.** Start with a local feasibility benchmark—not software deployment or customer outreach.\n\nThe current mandate permits independent audience selection, so the prior abstention is superseded. This research supports a testable direction, **not verified demand, willingness to pay, or customer benefit**.\n\n## Candidates compared\n\n| Candidate | Reported need and existing alternatives | Why it might fail | Decision |\n|---|---|---|---|\n| **Small nonprofits inheriting active grants:** reconstruct reporting obligations during staff handovers | A nonprofit database manager described missed obligations despite transition documents, repeated attempts to introduce CRM tracking, and staff continuing to use personal spreadsheets. This suggests a workflow-adoption problem, not merely missing software.",
+        "url": "https://www.reddit.com/r/nonprofit/comments/1k294hi",
+        "observedAt": "2026-09-13T21:19:22.812Z"
+      },
+      {
+        "id": "web-1ecc76e818c9ac7d8463e98f",
+        "stream": "world",
+        "kind": "source",
+        "visibility": "public",
+        "title": "Grant Tracking Software for Nonprofits",
+        "text": "Web research synthesis (model summary, not a direct quotation or verified customer evidence): # Opportunity decision — September 13, 2026\n\n**Provisional direction: an RFP requirements-and-change review service for small U.S. web-development agencies bidding on public-sector projects.** Start with a local feasibility benchmark—not software deployment or customer outreach.\n\nThe current mandate permits independent audience selection, so the prior abstention is superseded. This research supports a testable direction, **not verified demand, willingness to pay, or customer benefit**.\n\n## Candidates compared\n\n| Candidate | Reported need and existing alternatives | Why it might fail | Decision |\n|---|---|---|---|\n| **Small nonprofits inheriting active grants:** reconstruct reporting obligations during staff handovers | A nonprofit database manager described missed obligations despite transition documents, repeated attempts to introduce CRM tracking, and staff continuing to use personal spreadsheets. This suggests a workflow-adoption problem, not merely missing software. ([reddit.com](https://www.reddit.com/r/nonprofit/comments/1k294hi)) Instrumentl already advertises agreement extraction, task assignment, and reminders.",
+        "url": "https://www.instrumentl.com/capability/manage",
+        "observedAt": "2026-09-13T21:19:22.812Z"
+      },
+      {
+        "id": "web-a8bcf29de519ba11b997e305",
+        "stream": "world",
+        "kind": "source",
+        "visibility": "public",
+        "title": "Lost a big contract, venting + asking for advice : r/smallbusiness",
+        "text": "Web research synthesis (model summary, not a direct quotation or verified customer evidence): |---|\n| **Small nonprofits inheriting active grants:** reconstruct reporting obligations during staff handovers | A nonprofit database manager described missed obligations despite transition documents, repeated attempts to introduce CRM tracking, and staff continuing to use personal spreadsheets. This suggests a workflow-adoption problem, not merely missing software. ([reddit.com](https://www.reddit.com/r/nonprofit/comments/1k294hi)) Instrumentl already advertises agreement extraction, task assignment, and reminders. ([instrumentl.com](https://www.instrumentl.com/capability/manage)) | Another tracker may reproduce the same adoption failure. A handover service might help, but access to actual award documents and staff behavior would be necessary to test that hypothesis. | **Defer.** Plausible beneficiary, but less testable within public-information-only limits. |\n| **Small web agencies answering public-sector RFPs:** identify every required response item and reconcile changes | One small-business poster reported losing a proposal after missing an accessibility-documentation requirement, plus an earlier reference requirement. This is an unverified account, not a prevalence estimate.",
+        "url": "https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/",
+        "observedAt": "2026-09-13T21:19:22.812Z"
+      },
+      {
+        "id": "web-b346b5d8a5f4f3185343afe9",
+        "stream": "world",
+        "kind": "source",
+        "visibility": "public",
+        "title": "Respond to a solicitation | GSA",
+        "text": "Web research synthesis (model summary, not a direct quotation or verified customer evidence): troduce CRM tracking, and staff continuing to use personal spreadsheets. This suggests a workflow-adoption problem, not merely missing software. ([reddit.com](https://www.reddit.com/r/nonprofit/comments/1k294hi)) Instrumentl already advertises agreement extraction, task assignment, and reminders. ([instrumentl.com](https://www.instrumentl.com/capability/manage)) | Another tracker may reproduce the same adoption failure. A handover service might help, but access to actual award documents and staff behavior would be necessary to test that hypothesis. | **Defer.** Plausible beneficiary, but less testable within public-information-only limits. |\n| **Small web agencies answering public-sector RFPs:** identify every required response item and reconcile changes | One small-business poster reported losing a proposal after missing an accessibility-documentation requirement, plus an earlier reference requirement. This is an unverified account, not a prevalence estimate. ([reddit.com](https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/)) GSA independently instructs bidders to examine requirements and evaluation criteria and track amendments.",
+        "url": "https://origin-www.gsa.gov/sell-to-government/step-2-compete-for-a-contract/respond-to-a-solicitation?topnav=sell-to-government",
+        "observedAt": "2026-09-13T21:19:22.812Z"
+      },
+      {
+        "id": "web-4225e579e0c61896aebc03c3",
+        "stream": "world",
+        "kind": "source",
+        "visibility": "public",
+        "title": "Document Shredding overview",
+        "text": "Web research synthesis (model summary, not a direct quotation or verified customer evidence): her tracker may reproduce the same adoption failure. A handover service might help, but access to actual award documents and staff behavior would be necessary to test that hypothesis. | **Defer.** Plausible beneficiary, but less testable within public-information-only limits. |\n| **Small web agencies answering public-sector RFPs:** identify every required response item and reconcile changes | One small-business poster reported losing a proposal after missing an accessibility-documentation requirement, plus an earlier reference requirement. This is an unverified account, not a prevalence estimate. ([reddit.com](https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/)) GSA independently instructs bidders to examine requirements and evaluation criteria and track amendments. ([origin-www.gsa.gov](https://origin-www.gsa.gov/sell-to-government/step-2-compete-for-a-contract/respond-to-a-solicitation?topnav=sell-to-government)) | Manual checklists are an alternative; Responsive already provides requirements matrices, source views, and exports. A new service must outperform these workflows on a narrow task, not merely generate another summary.",
+        "url": "https://help.responsive.io/en-US/responsive/article/Em6Zeijf-document-shredding-overview",
+        "observedAt": "2026-09-13T21:19:22.812Z"
+      },
+      {
+        "id": "web-d3845d63b40a55669a3be412",
+        "stream": "world",
+        "kind": "source",
+        "visibility": "public",
+        "title": "https://www.transitrta.com/wp-content/uploads/2025/11/QA_RFP-020-25_Website-Redesign_Lot-2.pdf",
+        "text": "Web research synthesis (model summary, not a direct quotation or verified customer evidence): https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/)) GSA independently instructs bidders to examine requirements and evaluation criteria and track amendments. ([origin-www.gsa.gov](https://origin-www.gsa.gov/sell-to-government/step-2-compete-for-a-contract/respond-to-a-solicitation?topnav=sell-to-government)) | Manual checklists are an alternative; Responsive already provides requirements matrices, source views, and exports. A new service must outperform these workflows on a narrow task, not merely generate another summary. ([help.responsive.io](https://help.responsive.io/en-US/responsive/article/Em6Zeijf-document-shredding-overview)) | **Select provisionally.** Public procurement documents allow a bounded test before requesting private information. |\n\n## Why this direction merits one experiment\n\n**Primary-source observation:** RTA’s website-redesign Q&A tells vendors to include accessibility testing, certification, and audit services in their proposals. It also distributes migration, training, and other expectations across numerous answers. That provides a concrete example of requirements extending beyond a single RFP narrative.",
+        "url": "https://www.transitrta.com/wp-content/uploads/2025/11/QA_RFP-020-25_Website-Redesign_Lot-2.pdf",
+        "observedAt": "2026-09-13T21:19:22.812Z"
+      },
+      {
+        "id": "web-b65d7da15d3896b82d053c27",
+        "stream": "world",
+        "kind": "source",
+        "visibility": "public",
+        "title": "Morrish-Wallace Construction d/b/a Ryba Marine Construction Co. | U.S. GAO",
+        "text": "Web research synthesis (model summary, not a direct quotation or verified customer evidence): ces, source views, and exports. A new service must outperform these workflows on a narrow task, not merely generate another summary. ([help.responsive.io](https://help.responsive.io/en-US/responsive/article/Em6Zeijf-document-shredding-overview)) | **Select provisionally.** Public procurement documents allow a bounded test before requesting private information. |\n\n## Why this direction merits one experiment\n\n**Primary-source observation:** RTA’s website-redesign Q&A tells vendors to include accessibility testing, certification, and audit services in their proposals. It also distributes migration, training, and other expectations across numerous answers. That provides a concrete example of requirements extending beyond a single RFP narrative. ([transitrta.com](https://www.transitrta.com/wp-content/uploads/2025/11/QA_RFP-020-25_Website-Redesign_Lot-2.pdf))\n\n**Failure evidence:** In its February 5, 2026 *Morrish-Wallace* decision, GAO sustained a protest because the awardee had not acknowledged an amendment changing a construction specification. This is a federal construction case—not evidence about web agencies—but demonstrates that overlooked changes can have consequential outcomes.",
+        "url": "https://www.gao.gov/products/b-423796.2",
+        "observedAt": "2026-09-13T21:19:22.812Z"
+      }
+    ]
+  },
+  "stages": [
+    {
+      "stage": "discover",
+      "revision": 0,
+      "output": {
+        "report": "# Opportunity decision — September 13, 2026\n\n**Provisional direction: an RFP requirements-and-change review service for small U.S. web-development agencies bidding on public-sector projects.** Start with a local feasibility benchmark—not software deployment or customer outreach.\n\nThe current mandate permits independent audience selection, so the prior abstention is superseded. This research supports a testable direction, **not verified demand, willingness to pay, or customer benefit**.\n\n## Candidates compared\n\n| Candidate | Reported need and existing alternatives | Why it might fail | Decision |\n|---|---|---|---|\n| **Small nonprofits inheriting active grants:** reconstruct reporting obligations during staff handovers | A nonprofit database manager described missed obligations despite transition documents, repeated attempts to introduce CRM tracking, and staff continuing to use personal spreadsheets. This suggests a workflow-adoption problem, not merely missing software. ([reddit.com](https://www.reddit.com/r/nonprofit/comments/1k294hi)) Instrumentl already advertises agreement extraction, task assignment, and reminders. ([instrumentl.com](https://www.instrumentl.com/capability/manage)) | Another tracker may reproduce the same adoption failure. A handover service might help, but access to actual award documents and staff behavior would be necessary to test that hypothesis. | **Defer.** Plausible beneficiary, but less testable within public-information-only limits. |\n| **Small web agencies answering public-sector RFPs:** identify every required response item and reconcile changes | One small-business poster reported losing a proposal after missing an accessibility-documentation requirement, plus an earlier reference requirement. This is an unverified account, not a prevalence estimate. ([reddit.com](https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/)) GSA independently instructs bidders to examine requirements and evaluation criteria and track amendments. ([origin-www.gsa.gov](https://origin-www.gsa.gov/sell-to-government/step-2-compete-for-a-contract/respond-to-a-solicitation?topnav=sell-to-government)) | Manual checklists are an alternative; Responsive already provides requirements matrices, source views, and exports. A new service must outperform these workflows on a narrow task, not merely generate another summary. ([help.responsive.io](https://help.responsive.io/en-US/responsive/article/Em6Zeijf-document-shredding-overview)) | **Select provisionally.** Public procurement documents allow a bounded test before requesting private information. |\n\n## Why this direction merits one experiment\n\n**Primary-source observation:** RTA’s website-redesign Q&A tells vendors to include accessibility testing, certification, and audit services in their proposals. It also distributes migration, training, and other expectations across numerous answers. That provides a concrete example of requirements extending beyond a single RFP narrative. ([transitrta.com](https://www.transitrta.com/wp-content/uploads/2025/11/QA_RFP-020-25_Website-Redesign_Lot-2.pdf))\n\n**Failure evidence:** In its February 5, 2026 *Morrish-Wallace* decision, GAO sustained a protest because the awardee had not acknowledged an amendment changing a construction specification. This is a federal construction case—not evidence about web agencies—but demonstrates that overlooked changes can have consequential outcomes. ([gao.gov](https://www.gao.gov/products/b-423796.2))\n\n**Founder hypothesis:** A small agency without a dedicated proposal manager might benefit from a reviewed, source-linked checklist more than another proposal-writing tool.\n\nThe proposed deliverable is:\n\n- One row per required submission item or performance obligation.\n- Document, version, page, and section supporting each row.\n- A separate list of changed requirements and unresolved ambiguities.\n- Response-location and owner fields for the agency to complete.\n- Explicit exclusions: no legal certification, bid submission, deadline-monitoring promise, or guarantee of completeness.\n\n**Tradeoff:** This direction offers accessible test material and a narrowly scoped deliverable, but existing requirements-analysis software makes differentiation uncertain. The experiment should test whether the proposed review method is dependable before considering a business around it. ([help.responsive.io](https://help.responsive.io/en-US/responsive/article/Em6Zeijf-document-shredding-overview))\n\n## One preregistered experiment\n\n**Name:** RFP checklist reliability gate  \n**Status:** Proposed; not executed. Zero measured outcomes.\n\n**Smallest consequential assumption:** The proposed method can extract explicit requirements and reconcile changes without silently dropping important items or inventing obligations.\n\n### Bounds\n\n- **Window:** September 14–20, 2026.\n- **Budget:** $0 incremental spending; eight founder-hours maximum.\n- Allocate six hours to preparation and scoring; reserve two for error review and recordkeeping.\n- Public documents only. No accounts, outreach, purchases, deployment, or customer commitments.\n\n### Protocol\n\n1. Select **three closed public-sector website RFP packages**, each with an original solicitation and at least one amendment or Q&A document. Freeze the document manifest before testing; use chronological selection among eligible packages rather than choosing easy examples.\n2. Manually create reference checklists with page-level evidence before generating candidate outputs. Mark deadlines, required forms, submission methods, acknowledgments, and explicitly mandatory items as *critical*.\n3. Freeze one extraction-and-review procedure. Run it on each package without supplying the reference checklist.\n4. Score omissions, unsupported obligations, incorrect source references, and unresolved contradictions. Count missed requirements in amendments as omissions.\n5. Record preparation and correction time separately. Founder-created reference labels are fallible; this is an internal benchmark, not independent validation.\n\n### Fixed success criteria\n\nAll three packages must meet:\n\n- **100% recall of reference-labelled critical requirements.**\n- **At least 95% recall of all reference requirements.**\n- **Zero unsupported obligations presented as mandatory.**\n- **Correct source references for every accepted checklist row.**\n- **No more than 30 minutes of correction work per package.**\n\nThese thresholds are proposed screening criteria, not measured performance.\n\n**Stop condition:** Stop at eight hours or September 20, whichever comes first. Any critical omission or invented mandatory obligation fails the gate. If three complete packages cannot be obtained within budget, record *inconclusive*, not success. Do not tune the procedure and rescore the same fixtures as a fresh pass.\n\n**Decision rule:** A pass justifies a separately preregistered, permissioned usability test when execution capabilities permit. It does not justify claiming time savings, customer demand, or launching a subscription. A failure supports revising the method or stopping.\n\n## Decision record for retention\n\n- **Supersedes:** “Wait for the owner to select a beneficiary.”\n- **Selected beneficiary:** Small U.S. web agencies preparing public-sector proposals.\n- **Evidence level:** Public source reports and procurement artifacts; demand unverified.\n- **Central uncertainties:** Frequency of costly omissions, advantage over existing tools, review economics, and willingness to pay.\n- **Ongoing commitments:** None created. Preserve the source manifest, protocol, outputs, errors, and decision as the experiment record; persistent storage has not been performed here.",
+        "sources": [
+          {
+            "id": "web-53cdf9c30c6c739c0be7c455",
+            "url": "https://www.reddit.com/r/nonprofit/comments/1k294hi",
+            "title": "How do you keep track of deadlines for multi-year grants? : r/nonprofit",
+            "summary": "# Opportunity decision — September 13, 2026\n\n**Provisional direction: an RFP requirements-and-change review service for small U.S. web-development agencies bidding on public-sector projects.** Start with a local feasibility benchmark—not software deployment or customer outreach.\n\nThe current mandate permits independent audience selection, so the prior abstention is superseded. This research supports a testable direction, **not verified demand, willingness to pay, or customer benefit**.\n\n## Candidates compared\n\n| Candidate | Reported need and existing alternatives | Why it might fail | Decision |\n|---|---|---|---|\n| **Small nonprofits inheriting active grants:** reconstruct reporting obligations during staff handovers | A nonprofit database manager described missed obligations despite transition documents, repeated attempts to introduce CRM tracking, and staff continuing to use personal spreadsheets. This suggests a workflow-adoption problem, not merely missing software."
+          },
+          {
+            "id": "web-1ecc76e818c9ac7d8463e98f",
+            "url": "https://www.instrumentl.com/capability/manage",
+            "title": "Grant Tracking Software for Nonprofits",
+            "summary": "# Opportunity decision — September 13, 2026\n\n**Provisional direction: an RFP requirements-and-change review service for small U.S. web-development agencies bidding on public-sector projects.** Start with a local feasibility benchmark—not software deployment or customer outreach.\n\nThe current mandate permits independent audience selection, so the prior abstention is superseded. This research supports a testable direction, **not verified demand, willingness to pay, or customer benefit**.\n\n## Candidates compared\n\n| Candidate | Reported need and existing alternatives | Why it might fail | Decision |\n|---|---|---|---|\n| **Small nonprofits inheriting active grants:** reconstruct reporting obligations during staff handovers | A nonprofit database manager described missed obligations despite transition documents, repeated attempts to introduce CRM tracking, and staff continuing to use personal spreadsheets. This suggests a workflow-adoption problem, not merely missing software. ([reddit.com](https://www.reddit.com/r/nonprofit/comments/1k294hi)) Instrumentl already advertises agreement extraction, task assignment, and reminders."
+          },
+          {
+            "id": "web-a8bcf29de519ba11b997e305",
+            "url": "https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/",
+            "title": "Lost a big contract, venting + asking for advice : r/smallbusiness",
+            "summary": "|---|\n| **Small nonprofits inheriting active grants:** reconstruct reporting obligations during staff handovers | A nonprofit database manager described missed obligations despite transition documents, repeated attempts to introduce CRM tracking, and staff continuing to use personal spreadsheets. This suggests a workflow-adoption problem, not merely missing software. ([reddit.com](https://www.reddit.com/r/nonprofit/comments/1k294hi)) Instrumentl already advertises agreement extraction, task assignment, and reminders. ([instrumentl.com](https://www.instrumentl.com/capability/manage)) | Another tracker may reproduce the same adoption failure. A handover service might help, but access to actual award documents and staff behavior would be necessary to test that hypothesis. | **Defer.** Plausible beneficiary, but less testable within public-information-only limits. |\n| **Small web agencies answering public-sector RFPs:** identify every required response item and reconcile changes | One small-business poster reported losing a proposal after missing an accessibility-documentation requirement, plus an earlier reference requirement. This is an unverified account, not a prevalence estimate."
+          },
+          {
+            "id": "web-b346b5d8a5f4f3185343afe9",
+            "url": "https://origin-www.gsa.gov/sell-to-government/step-2-compete-for-a-contract/respond-to-a-solicitation?topnav=sell-to-government",
+            "title": "Respond to a solicitation | GSA",
+            "summary": "troduce CRM tracking, and staff continuing to use personal spreadsheets. This suggests a workflow-adoption problem, not merely missing software. ([reddit.com](https://www.reddit.com/r/nonprofit/comments/1k294hi)) Instrumentl already advertises agreement extraction, task assignment, and reminders. ([instrumentl.com](https://www.instrumentl.com/capability/manage)) | Another tracker may reproduce the same adoption failure. A handover service might help, but access to actual award documents and staff behavior would be necessary to test that hypothesis. | **Defer.** Plausible beneficiary, but less testable within public-information-only limits. |\n| **Small web agencies answering public-sector RFPs:** identify every required response item and reconcile changes | One small-business poster reported losing a proposal after missing an accessibility-documentation requirement, plus an earlier reference requirement. This is an unverified account, not a prevalence estimate. ([reddit.com](https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/)) GSA independently instructs bidders to examine requirements and evaluation criteria and track amendments."
+          },
+          {
+            "id": "web-4225e579e0c61896aebc03c3",
+            "url": "https://help.responsive.io/en-US/responsive/article/Em6Zeijf-document-shredding-overview",
+            "title": "Document Shredding overview",
+            "summary": "her tracker may reproduce the same adoption failure. A handover service might help, but access to actual award documents and staff behavior would be necessary to test that hypothesis. | **Defer.** Plausible beneficiary, but less testable within public-information-only limits. |\n| **Small web agencies answering public-sector RFPs:** identify every required response item and reconcile changes | One small-business poster reported losing a proposal after missing an accessibility-documentation requirement, plus an earlier reference requirement. This is an unverified account, not a prevalence estimate. ([reddit.com](https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/)) GSA independently instructs bidders to examine requirements and evaluation criteria and track amendments. ([origin-www.gsa.gov](https://origin-www.gsa.gov/sell-to-government/step-2-compete-for-a-contract/respond-to-a-solicitation?topnav=sell-to-government)) | Manual checklists are an alternative; Responsive already provides requirements matrices, source views, and exports. A new service must outperform these workflows on a narrow task, not merely generate another summary."
+          },
+          {
+            "id": "web-d3845d63b40a55669a3be412",
+            "url": "https://www.transitrta.com/wp-content/uploads/2025/11/QA_RFP-020-25_Website-Redesign_Lot-2.pdf",
+            "title": "https://www.transitrta.com/wp-content/uploads/2025/11/QA_RFP-020-25_Website-Redesign_Lot-2.pdf",
+            "summary": "https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/)) GSA independently instructs bidders to examine requirements and evaluation criteria and track amendments. ([origin-www.gsa.gov](https://origin-www.gsa.gov/sell-to-government/step-2-compete-for-a-contract/respond-to-a-solicitation?topnav=sell-to-government)) | Manual checklists are an alternative; Responsive already provides requirements matrices, source views, and exports. A new service must outperform these workflows on a narrow task, not merely generate another summary. ([help.responsive.io](https://help.responsive.io/en-US/responsive/article/Em6Zeijf-document-shredding-overview)) | **Select provisionally.** Public procurement documents allow a bounded test before requesting private information. |\n\n## Why this direction merits one experiment\n\n**Primary-source observation:** RTA’s website-redesign Q&A tells vendors to include accessibility testing, certification, and audit services in their proposals. It also distributes migration, training, and other expectations across numerous answers. That provides a concrete example of requirements extending beyond a single RFP narrative."
+          },
+          {
+            "id": "web-b65d7da15d3896b82d053c27",
+            "url": "https://www.gao.gov/products/b-423796.2",
+            "title": "Morrish-Wallace Construction d/b/a Ryba Marine Construction Co. | U.S. GAO",
+            "summary": "ces, source views, and exports. A new service must outperform these workflows on a narrow task, not merely generate another summary. ([help.responsive.io](https://help.responsive.io/en-US/responsive/article/Em6Zeijf-document-shredding-overview)) | **Select provisionally.** Public procurement documents allow a bounded test before requesting private information. |\n\n## Why this direction merits one experiment\n\n**Primary-source observation:** RTA’s website-redesign Q&A tells vendors to include accessibility testing, certification, and audit services in their proposals. It also distributes migration, training, and other expectations across numerous answers. That provides a concrete example of requirements extending beyond a single RFP narrative. ([transitrta.com](https://www.transitrta.com/wp-content/uploads/2025/11/QA_RFP-020-25_Website-Redesign_Lot-2.pdf))\n\n**Failure evidence:** In its February 5, 2026 *Morrish-Wallace* decision, GAO sustained a protest because the awardee had not acknowledged an amendment changing a construction specification. This is a federal construction case—not evidence about web agencies—but demonstrates that overlooked changes can have consequential outcomes."
+          }
+        ],
+        "toolCalls": [
+          {
+            "id": "ws_0b777230c10beee8016aa71311082087d0afaaae32b64aee73",
+            "status": "completed",
+            "action": "search",
+            "queries": [
+              "site.reddit.com nonprofit grant reporting tracking spreadsheet deadlines",
+              "site.reddit.com small business RFP missed requirements addenda",
+              "site.reddit.com volunteer coordinator scheduling cancellations spreadsheet"
+            ],
+            "urls": [
+              "https://www.reddit.com/r/grants/comments/1vzll4o/free_spreadsheet_for_tracking_grant_reporting/",
+              "https://www.reddit.com/r/nonprofittech/comments/1u99xdw/are_grant_report_deadlines_still_being_tracked_in/",
+              "https://www.reddit.com/r/nonprofit/comments/1qx3lpf/need_help_making_a_excel_spreadsheet_tracking/",
+              "https://www.reddit.com/r/nonprofit/comments/1k294hi",
+              "https://www.reddit.com/r/nonprofit/comments/1sx36i4/managing_grant_reporting/",
+              "https://www.reddit.com/r/nonprofit/comments/1ohqu1v/grants_process_and_record_keeping/",
+              "https://www.reddit.com/r/nonprofit/comments/1wdjn72/removed/",
+              "https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/",
+              "https://www.reddit.com/r/u_Do_Gooders_Support/comments/1r7lqof/do_you_use_grant_calendars_to_track_grants/",
+              "https://www.reddit.com/r/nonprofit/comments/1vydvxu/grants_management_software_that_integrates_with/",
+              "https://www.reddit.com/r/grants/comments/1tbevel/workflow_or_organization_tips/",
+              "https://www.reddit.com/r/nonprofit/comments/12ix89g",
+              "https://www.ardentworkshop.com/products/nonprofit-grant-tracking-os/",
+              "https://www.charityiq.co.uk/blog/grants-fundraising/grant-tracking-spreadsheet-template/",
+              "https://grantpipe.com/free/grant-tracking-template/",
+              "https://lextree.ai/landing/grant-tracking-spreadsheet-template-excel/",
+              "https://4granted.app/resources/grant-tracking-template",
+              "https://4granted.app/",
+              "https://www.sheetsteps.com/data/grants-for-nonprofits",
+              "https://www.smartsheet.com/content/grant-tracking-templates",
+              "https://www.grantcue.com/blog/grant-tracking-spreadsheet-template",
+              "https://www.sheetxai.com/blog/how-to-track-grants-in-google-sheets",
+              "https://grantwritingacad.org/grant-tracking-spreadsheet-columns-what-every-nonprofit-should-include/",
+              "https://lovespreadsheets.com/blog/spreadsheet-project-tracker-for-nonprofits",
+              "https://suvcw.org/sites/default/files/2025-09/Guide-to-Grant-Writing-with-attachments.pdf",
+              "https://assets.website-files.com/65dcc5baba5cd550fd97d085/66338a35d8b79905603a52f9_47656989559.pdf",
+              "https://www.betternonprofits.org/wp-content/uploads/2022/04/The_2021_State_of_Grantseeking_Report.pdf",
+              "https://learninghub.feedingamerica.org/best-practices/toolkit/uploads/Planning%20and%20Tracking%20Your%20Grants%20Program%20-%20Guide_1722274097.pdf",
+              "https://www.lenfestinstitute.org/wp-content/uploads/2024/01/Lenfest-Grantwriting-Workbook.pdf",
+              "https://cdn2.hubspot.net/hubfs/407546/Downloads/PDFs/Nonprofit%20Grants%20A%20Guide%20to%20the%20Basics%20of%20Grant%20Research%282%29.pdf"
+            ]
+          },
+          {
+            "id": "ws_0b777230c10beee8016aa71315ed9c87d089bf11fedf6cb98f",
+            "status": "completed",
+            "action": "search",
+            "queries": [
+              "site.responsive.io compliance matrix RFP requirements",
+              "site.instrumentl.com grant management award letters reporting deadlines",
+              "site.cityofmadison.com 2026 RFP addendum proposal requirements pdf",
+              "site.grantstation.com 2025 state grantseeking report grant management challenges"
+            ],
+            "urls": [
+              "https://help.instrumentl.com/en/articles/3730779-export-your-data-with-reports",
+              "https://help.responsive.io/en-US/responsive/article/Em6Zeijf-document-shredding-overview",
+              "https://help.responsive.io/en-US/responsive/article/NaBtksNG-creating-document-shredding-matrix-structures",
+              "https://www.instrumentl.com/capability/manage",
+              "https://help.instrumentl.com/en/articles/14794007-discover-plan",
+              "https://grantstation.com/GrantStation-Insider/03-13-25",
+              "https://www.instrumentl.com/",
+              "https://help.instrumentl.com/en/articles/8206960-payments-tracking",
+              "https://www.responsive.io/hub/compliance",
+              "https://help.responsive.io/en-US/responsive/directories/xS0c-dux",
+              "https://www.responsive.io/product-packages/platform",
+              "https://www.cityofmadison.com/business/pw/contracts/docAndSpecs.cfm?ContractNumber=9617",
+              "https://nmost.org/wp-content/uploads/2026/03/NMOST_2026-1.pdf",
+              "https://www.responsive.io/wp-content/uploads/2024/04/G2CR_GR827_Responsive_Grid_Report_RFP_Spring_2024_V1.pdf",
+              "https://madison.mobile.legistar.com/View.ashx?GUID=490A8839-21BA-478F-8B0D-F0A72C3A6CB5&ID=4567472&M=F",
+              "https://mccmeetingspublic.blob.core.usgovcloudapi.net/bifl-meet-964e6577e0a14112801713713b1e7d52/ITEM-Attachment-001-355534f03e754b3a9c88618b11674bd3.pdf",
+              "https://grantstation.com/sites/default/files/imageLibrary/SoG/The%202024%20State%20of%20Grantseeking%20Report.pdf",
+              "https://www.responsive.io/wp-content/uploads/2024/10/G2-Grid-Report-for-RFP-Fall-2024.pdf",
+              "https://www.reddit.com/r/grants/comments/1uklojd/2026_state_of_grant_seeking_report/",
+              "https://www.reddit.com/r/nonprofittech/comments/1u99xdw/are_grant_report_deadlines_still_being_tracked_in/",
+              "https://www.reddit.com/r/grants/comments/1i1l03z/how_do_you_find_grants_and_how_do_you_decide_if/",
+              "https://www.reddit.com/r/MuseumPros/comments/1vznv69/if_you_just_inherited_your_museums_imls_grant_and/",
+              "https://www.reddit.com/r/PublicAdministration/comments/1jc9011",
+              "https://en.wikipedia.org/wiki/Responsive",
+              "https://www.reddit.com/r/TrioWorksUSA/comments/1s2e9hv/talent_search_grant_changes_1_offering_a_state/",
+              "https://www.reddit.com/r/nonprofit/comments/1lvobwo",
+              "https://www.reddit.com/r/nonprofit/comments/1mkzcbs/advice_for_new_grant_manager/",
+              "https://www.reddit.com/r/nonprofit/comments/1ilam15/i_started_a_fractional_grant_writing_and_grant/",
+              "https://www.reddit.com/r/grants/comments/1lcvjvq",
+              "https://www.reddit.com/r/AI_RFP_Software/comments/1r4pgpx/removed/",
+              "https://www.reddit.com/r/salesengineers/comments/15tnesd/rfps_and_it_questionnaires_feedback/",
+              "https://arxiv.org/abs/2505.08133"
+            ]
+          },
+          {
+            "id": "ws_0b777230c10beee8016aa7131cc74087d082b02998f77cc064",
+            "status": "completed",
+            "action": "open_page",
+            "queries": [],
+            "urls": [
+              "https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/"
+            ]
+          },
+          {
+            "id": "ws_0b777230c10beee8016aa713206ed487d0a37e06d1c355e250",
+            "status": "completed",
+            "action": "search",
+            "queries": [
+              "site.gov \"website redesign\" \"RFP\" \"addendum\" \"2025\"",
+              "site.sba.gov contracting proposal solicitation read requirements",
+              "site.gao.gov bid protest failure acknowledge amendment proposal rejected"
+            ],
+            "urls": [
+              "https://www.gao.gov/products/b-183529",
+              "https://www.gao.gov/assets/460/457210.pdf",
+              "https://www.gao.gov/assets/450/444582.pdf",
+              "https://www.gao.gov/legal/bid-protests",
+              "https://govtribe.com/file/government-file/addendum-no-dot-2-rfp-020-25-website-redesign-dot-pdf",
+              "https://files.gao.gov/reports/GAO-25-108652/index.html",
+              "https://www.wardberry.com/gao-failure-to-acknowledge-material-amendment-requires-bid-rejection/",
+              "https://tile.loc.gov/storage-services/service/ll/llmlp/75615419_01-1998/75615419_01-1998.pdf",
+              "https://www.govinfo.gov/content/pkg/USCOURTS-cofc-1_14-cv-00202/pdf/USCOURTS-cofc-1_14-cv-00202-0.pdf",
+              "https://www.swtransit.org/cms-files/website-redesign-rfp-addendum-1-notice-of-award-date-change.pdf",
+              "https://www.scribd.com/document/1012152838/2025-01-RFP-Website-Redesign-Addendum-4",
+              "https://www.meridian.mi.us/your-government/requests-for-proposals-bids/",
+              "https://www.sba.gov/counseling/get-started/",
+              "https://stanhinton.com/Recent_Successful_GAO_Protests.htm",
+              "https://www.wifcon.com/pd14_208.htm",
+              "https://wifcon.com/cgen/404758.pdf",
+              "https://es.scribd.com/document/840263709/RFP-COM-01-2025-Addendum-2",
+              "https://www.bidnetdirect.com/texas/guadalupeblancoriverau/solicitations/Website-Redesign-RFP/0000390593",
+              "https://www.reddit.com/r/GovernmentContracting/comments/hhs56a",
+              "https://en.wikipedia.org/wiki/Blue_Origin_Federation%2C_LLC_v._United_States",
+              "https://www.reddit.com/r/govcon/comments/1rw3k53/gao_bid_protest_info_have_you_protested_before/",
+              "https://en.wikipedia.org/wiki/United_States_Government_Accountability_Office",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1we30wk/how_late_can_you_file_a_protest/",
+              "https://www.reddit.com/r/govcon/comments/17n962o",
+              "https://en.wikipedia.org/wiki/Government_contract_proposal",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1eg0hmz",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1nr212r",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1qoml4y/how_to_file_a_protest/",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1t40p6r/time_to_adjudicate_protests/",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1ntxgln",
+              "https://www.reddit.com/r/GovernmentContracting/comments/bk0mgh",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1ag14si",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1meanr5/warning_to_incumbents/"
+            ]
+          },
+          {
+            "id": "ws_0b777230c10beee8016aa71329524c87d08a750331aa62ac7b",
+            "status": "completed",
+            "action": "search",
+            "queries": [
+              "site.transitrta.com \"RFP-020-25\"",
+              "site.gao.gov \"B-423796.2\"",
+              "site.sba.gov \"proposal\" \"requirements\" \"solicitation\""
+            ],
+            "urls": [
+              "https://www.gao.gov/products/b-423796.2",
+              "https://www.gao.gov/assets/890/884013.pdf",
+              "https://www.sba.gov/counseling/get-started/",
+              "https://www.transitrta.com/wp-content/uploads/2025/11/QA_RFP-020-25_Website-Redesign_Lot-2.pdf",
+              "https://www.transitrta.com/wp-content/uploads/2025/11/QA_RFP-020-25_Website-Redesign_lot-5.pdf",
+              "https://govtribe.com/opportunity/state-local-contract-opportunity/rfp-020-25-website-redesign-services-bpm053694",
+              "https://advocacy.sba.gov/wp-content/uploads/2019/05/rs423tot.pdf",
+              "https://downloads.regulations.gov/SBA-2019-0008-0005/attachment_3.pdf",
+              "https://stanhinton.com/Recent_Successful_GAO_Protests.htm",
+              "https://www.sbafla.com/media/02rjqyfp/itn_main_dc-final-1082025-1.pdf",
+              "https://www.law.cornell.edu/cfr/text/23/636.209",
+              "https://origin-www.gsa.gov/sell-to-government/step-2-compete-for-a-contract/respond-to-a-solicitation?topnav=sell-to-government",
+              "https://www.reddit.com/r/govcon/comments/1tyk1ic/proposal_qa_compliance_review_for_government/",
+              "https://www.gsa.gov/policy-regulations/policy/acquisition-policy/unsolicited-proposals",
+              "https://www.acquisition.gov/far/subpart-15.2",
+              "https://govtribe.com/file/government-file/q-a-rfp-020-25-website-redesign-lot-2-dot-pdf",
+              "https://www.sbir.gov/about/policies",
+              "https://govconfeed.com/article/gao-sustains-ryba-marine-army-corps-ifb-amendment-nonresponsive-feb-2026",
+              "https://sam.gov/opp/93d5bb8926c2423cb6d824d19bbd7936/view",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1fhy5k3",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1e9t6kv",
+              "https://en.wikipedia.org/wiki/Proposal_%28business%29",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1eg0hmz",
+              "https://www.reddit.com/r/defensecontracting/comments/1uh3flm/shifting_focus_to_sdvosb_government_solicitations/",
+              "https://www.reddit.com/r/fastertender/comments/1uwlmaw/custodial_and_janitorial_services_total_small/",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1en72gc",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1t1doyh/small_business_construction_rfp/",
+              "https://www.reddit.com/r/washingtondc/comments/13latq0",
+              "https://en.wikipedia.org/wiki/Government_procurement_in_the_United_States",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1oedugd/question_for_contracting_officers_what_actually/",
+              "https://www.reddit.com/r/GovernmentContracting/comments/1ag14si",
+              "https://www.reddit.com/r/govcon/comments/1wb767t/what_proposal_management_tools_do_you_actually_use/",
+              "https://en.wikipedia.org/wiki/Federal_Acquisition_Regulation",
+              "https://www.reddit.com/r/smallbusiness/comments/1s4fe87/lost_a_big_contract_venting_asking_for_advice/"
+            ]
+          },
+          {
+            "id": "ws_0b777230c10beee8016aa7133a2ae487d0acfdd35c4b6be7e4",
+            "status": "completed",
+            "action": "open_page",
+            "queries": [],
+            "urls": [
+              "https://www.gao.gov/products/b-423796.2"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "stage": "research",
+      "revision": 0,
+      "output": {
+        "summary": "Provisionally prioritize an RFP requirements-and-change review service for small U.S. web-development agencies bidding on public-sector work. Public procurement materials offer a way to test checklist reliability within the founder’s local, no-outreach limits; they do not establish demand. Nonprofit grant handovers remain a plausible but less publicly testable alternative. The current open-audience mandate supports choosing this beneficiary rather than continuing the earlier abstention. All supplied discoveries are model-written web summaries, not direct customer or usage observations. No experiment has run and no customer benefit is established.",
+        "findings": [
+          {
+            "observationId": "web-a8bcf29de519ba11b997e305",
+            "interpretation": "The discovery summary attributes lost proposals to missed accessibility-documentation and reference requirements in one online account. This motivates an omission-prevention hypothesis, but neither establishes frequency nor verifies the proposed agency segment’s demand."
+          },
+          {
+            "observationId": "web-b346b5d8a5f4f3185343afe9",
+            "interpretation": "The summary of GSA guidance identifies requirements review and amendment tracking as legitimate bidding tasks. Official guidance supports the workflow’s relevance, not willingness to purchase assistance."
+          },
+          {
+            "observationId": "web-d3845d63b40a55669a3be412",
+            "interpretation": "The reported RTA Q&A distributes accessibility, migration, and training expectations across answers, suggesting a concrete cross-document review task. This is a summary of a procurement artifact, not an artifact independently examined here. A source-linked checklist with changes and ambiguities is a plausible service deliverable."
+          },
+          {
+            "observationId": "web-b65d7da15d3896b82d053c27",
+            "interpretation": "The summarized GAO decision illustrates potentially consequential amendment-acknowledgment failures. Its federal construction context limits extrapolation to small web agencies."
+          },
+          {
+            "observationId": "web-4225e579e0c61896aebc03c3",
+            "interpretation": "Responsive reportedly already offers requirements matrices, source views, and exports; manual checklists are another alternative. Differentiation requires demonstrated reliability, usability, or review economics—not simply producing a summary."
+          },
+          {
+            "observationId": "web-53cdf9c30c6c739c0be7c455",
+            "interpretation": "The nonprofit account, as summarized, suggests obligations can be missed despite transition documents and tracking tools. Workflow adoption may be the central issue; a handover service would require evidence from actual documents and staff behavior."
+          },
+          {
+            "observationId": "web-1ecc76e818c9ac7d8463e98f",
+            "interpretation": "Instrumentl’s reported extraction, assignment, and reminder features weaken a generic grant-tracker proposition. Deferring this candidate reflects present testing constraints, not evidence that nonprofits would benefit less."
+          }
+        ],
+        "uncertainties": [
+          "How often do target agencies miss consequential requirements, and would they adopt or pay for an external review? No customer or usage source reports were supplied.",
+          "The seven web observations contain overlapping discovery-report excerpts; they are not seven independent confirmations. Source accuracy and context have not been rechecked in this synthesis.",
+          "The discovery proposes, but has not executed, one $0, eight-hour benchmark for September 14–20, 2026 using three closed website-RFP packages. Proposed per-package gates are 100% critical-requirement recall, at least 95% overall recall, zero invented mandatory obligations, correct citations for every accepted row, and at most 30 minutes of correction.",
+          "Complete benchmark packages and founder-created reference checklists have not been supplied. Reference labels would be fallible test fixtures, not customer evidence; an incomplete benchmark is inconclusive, and a pass would establish only internal feasibility.",
+          "Advantages over manual review and existing tools, sustainable delivery costs, and actual time savings remain untested. Any later usability test requires a separate recorded protocol and permitted execution capabilities."
+        ],
+        "evidenceLevel": "hypothesis_only",
+        "reportedProblemSourceIds": []
+      }
+    },
+    {
+      "stage": "propose",
+      "revision": 0,
+      "output": {
+        "action": "make",
+        "rationale": "Provisionally choose public-sector RFP review over nonprofit grant handovers because public procurement documents permit a bounded local reliability test without private records or outreach. Existing checklists and requirements-matrix tools make a generic summarizer unconvincing; test accurate cross-document review first. Supplied research consists of overlapping model-written summaries, not verified demand or measured benefit. The current mandate permits audience selection, so the earlier abstention need not continue.",
+        "title": "Local benchmark for an RFP requirements-and-change review service",
+        "targetAudience": "Small U.S. web-development agencies preparing public-sector website proposals.",
+        "problem": "Required response items and changes may be scattered across RFPs, Q&A documents, and amendments. Missing them could jeopardize a bid, but prevalence and demand for outside review remain unknown.",
+        "hypothesis": "A source-linked review workflow can produce a requirements-and-change checklist for each of three closed website-RFP packages with 100% critical-requirement recall, at least 95% overall recall, no invented mandatory obligations, correct citations for every accepted row, and no more than 30 minutes of correction per package.",
+        "smallestTest": "Prepare—not execute or launch—a $0, seven-day local benchmark protocol capped at eight founder hours. Specify selection of three complete, closed public website-RFP packages containing an original solicitation and at least one amendment or Q&A; verify primary documents before using them. Freeze package selection and a rubric defining critical items as explicit eligibility, submission, deadline, disqualification, or amendment-acknowledgment requirements. Build and freeze manual reference checklists separately from candidate generation; withhold reference labels from the candidate workflow. Generate one checklist per package containing obligations, source/page citations, changes, and unresolved ambiguities. Score recall before correction and log correction time separately. Deliver the protocol, selection manifest template, checklist template, scoring sheet, and decision rules. References are fallible founder-created fixtures; this test cannot establish customer benefit, superiority to existing tools, or willingness to pay.",
+        "successCriterion": {
+          "metric": "RFP packages satisfying every preregistered hypothesis gate",
+          "target": 3,
+          "unit": "packages out of 3",
+          "windowDays": 7
+        },
+        "stopCondition": "Stop at seven days or eight founder hours without extending thresholds. If complete primary documents or defensible reference labels cannot be obtained, record the benchmark as inconclusive. Any package missing a gate means the hypothesis fails; do not replace failed packages or launch a service on this evidence.",
+        "maintenancePlan": "Keep this as the sole active experiment. Reserve 30 minutes within the eight-hour cap to archive source versions, fixtures, outputs, discrepancies, and the decision record. Separate reported evidence from fixtures and measured outcomes. No outreach, purchases, accounts, deployment, or ongoing monitoring commitment; any revision or customer-facing test requires a new recorded protocol.",
+        "sourceIds": [
+          "web-a8bcf29de519ba11b997e305",
+          "web-b346b5d8a5f4f3185343afe9",
+          "web-d3845d63b40a55669a3be412",
+          "web-4225e579e0c61896aebc03c3",
+          "web-53cdf9c30c6c739c0be7c455",
+          "web-1ecc76e818c9ac7d8463e98f"
+        ],
+        "previousWorkIds": [
+          "d68b87f2-5a57-4967-909f-8b6cc2374671"
+        ]
+      }
+    },
+    {
+      "stage": "make",
+      "revision": 0,
+      "output": {
+        "title": "Local benchmark for an RFP requirements-and-change review service",
+        "summary": "Prepared protocol only; no outreach, execution, or deployment has occurred. Provisionally serve small U.S. web-development agencies preparing public-sector website proposals. Public documents make checklist reliability locally testable, unlike grant-handover workflows requiring private records. This $0 benchmark covers three closed RFP packages over seven days, capped at eight founder hours. It tests internal feasibility, not demand or customer benefit.",
+        "prototypeBehavior": [
+          "Use a local, non-deployed review workflow on three complete public website-RFP packages, each containing the original solicitation and at least one amendment or Q&A. Verify primary documents before admitting a package; discovery summaries are not benchmark inputs.",
+          "Produce one requirements-and-change checklist per package. Row template: package ID; requirement ID; obligation; mandatory or advisory status; critical category, if applicable; source file/version; page and section or question; supporting excerpt; change and supersession relationship; unresolved ambiguity.",
+          "Identify explicit eligibility, submission, deadline, disqualification, and amendment-acknowledgment requirements as critical. Reconcile changes using documented authority and chronology; flag unresolved conflicts instead of inventing mandatory obligations.",
+          "Generate candidates without access to the frozen manual reference checklists. Preserve the original output before scoring. Corrected outputs are separate artifacts and cannot replace pre-correction scores."
+        ],
+        "testSteps": [
+          "1. Preregister the protocol before any run: seven-day window, $0 budget, eight-hour cap, selection rules, rubric, candidate workflow version, matching rules, gates, and decision rules. Keep this as the sole active experiment. No execution is authorized by this record.",
+          "2. Select and verify sources (60 minutes budget). Use a recorded discovery order and admit the first three eligible complete, closed public-sector website-RFP packages. Verify official closure evidence and the issuing authority’s document listing. Manifest template: package ID; issuer; project; official URLs; closure evidence; document inventory; amendment sequence; retrieval date; file hash/version; completeness rationale; inclusion or exclusion reason. Freeze selection before candidate generation.",
+          "3. Build and freeze manual references separately (150 minutes). Read all package documents and record atomic, deduplicated response obligations, critical labels, citations, and change relationships. Treat conditional duties as conditional and superseded duties as historical. Record ambiguous interpretations explicitly. Withhold these fixtures from candidate generation.",
+          "4. Generate one candidate checklist per package (60 minutes). Freeze the workflow configuration across all three packages. Save inputs, configuration, raw outputs, failures, and elapsed time; do not tune or rerun against revealed labels.",
+          "5. Score untouched outputs against the frozen references (90 minutes). Match rows by substantive obligation and applicable conditions, not wording. Count duplicates once. An ambiguity flag alone does not count as a recovered obligation. Inspect every candidate row for invented mandatory duties and citation correctness. Log reference disputes without silently changing fixtures.",
+          "6. Correct each output while timing active work separately (90 minutes total; no more than 30 minutes per package to pass). Include missing-row additions, unsupported-duty removal, citation repair, and change reconciliation. Preserve unfinished corrections when a package exceeds its gate; correction never rescues a failed raw-output gate.",
+          "7. Reserve the final 30 minutes within the eight-hour cap to archive sources, fixtures, outputs, discrepancy logs, time records, and the decision. Stop sooner if seven days or eight founder hours is reached. Report measured results only if execution later occurs."
+        ],
+        "acceptanceChecks": [
+          "Fixed primary metric: RFP packages satisfying every preregistered hypothesis gate. Fixed target: 3 packages out of 3. Fixed window: 7 days.",
+          "Each package must achieve 100% critical-requirement recall and at least 95% overall recall before correction. Recall equals distinct reference obligations correctly recovered divided by applicable reference obligations; compute critical recall on the critical subset. Record denominators and mark empty subsets as not applicable rather than inventing a percentage.",
+          "Each package must contain zero invented mandatory obligations and correct citations for every accepted row. Accepted rows are candidate assertions presented as usable checklist entries, not a post-scoring selection that excludes errors. Citations must resolve to the frozen source and support the obligation, conditions, and claimed change.",
+          "Each package must require no more than 30 minutes of correction. Record all correction work separately from candidate generation and initial scoring.",
+          "Stop at seven days or eight founder hours without extending thresholds. If complete primary documents or defensible reference labels cannot be obtained, record the benchmark as inconclusive. Any package missing a gate means the hypothesis fails; do not replace failed packages or launch a service on this evidence.",
+          "A pass supports only internal feasibility on these three packages. Any revision or customer-facing test requires a new recorded protocol."
+        ],
+        "recruitingPlan": "No participant recruitment, unsolicited outreach, paid acquisition, account creation, or private-document requests. The sample consists solely of three verified public document packages. No agency has been recruited or represented as a customer. Recruitment for a later permitted usability study would require a separate protocol.",
+        "instrumentation": "Maintain a local run ledger and scoring sheet. Fields: package and run IDs; source and fixture versions; workflow version; reference totals; matched totals; critical totals and matches; missed obligations; invented mandatory obligations; citation errors; ambiguity and reference disputes; generation, scoring, and correction minutes; each gate result; package pass/fail; aggregate passing-package count; cumulative founder hours. Separate source reports, founder hypotheses, fixture labels, and measured outcomes. Leave results blank until execution.",
+        "supportPlan": "The founder owns source verification, fixture construction, workflow preparation, scoring, correction, timekeeping, and the final decision. No independent reviewer is assumed or recruited. Reserve 30 minutes for archival maintenance within the eight-hour cap. There are no external delivery, monitoring, or customer-support commitments; do not create them through this benchmark.",
+        "limitations": [
+          "Supplied observations are overlapping model-written research summaries, not independently verified customer accounts or seven independent confirmations.",
+          "Founder-created references are fallible fixtures. Withholding labels from candidate inputs reduces leakage but does not provide independent human blinding.",
+          "Three closed, publicly accessible website-RFP packages cannot establish general reliability, particularly for incomplete, scanned, unusual, or actively changing procurements.",
+          "The benchmark does not establish willingness to pay, adoption, avoided bid losses, time savings, sustainable delivery economics, or superiority to manual review or existing products.",
+          "A checklist is review assistance, not a legal interpretation or guarantee of procurement compliance. An incomplete benchmark provides no basis for launch."
+        ]
+      }
+    },
+    {
+      "stage": "render",
+      "revision": 0,
+      "output": {
+        "kind": "experiment-package",
+        "hash": "9c86271c589cbfeab49adc00aa1cc06b86fea5682bc8e6fa3332be2b25ef191b",
+        "documentHash": "930f776d82bfeeecb7d5490e16fdc6d75bc9362bca55909cf73e67a6f50b1a15",
+        "directory": "artifacts/9c86271c589cbfeab49adc00aa1cc06b86fea5682bc8e6fa3332be2b25ef191b",
+        "document": "artifacts/9c86271c589cbfeab49adc00aa1cc06b86fea5682bc8e6fa3332be2b25ef191b/experiment.md",
+        "spec": "artifacts/9c86271c589cbfeab49adc00aa1cc06b86fea5682bc8e6fa3332be2b25ef191b/spec.json"
+      }
+    },
+    {
+      "stage": "critique",
+      "revision": 0,
+      "output": {
+        "inspectedArtifactHash": "9c86271c589cbfeab49adc00aa1cc06b86fea5682bc8e6fa3332be2b25ef191b",
+        "recommendation": "accept",
+        "reading": "Ready for a future, bounded internal-feasibility experiment—not execution authorization, proven demand, or launch. Frozen inputs, pre-correction scoring, and an all-three-packages threshold make the narrow hypothesis falsifiable. A pass would apply only to the selected packages and founder-created reference fixtures.",
+        "strengths": [
+          "Explicit reliability gates, immutable raw outputs, and prohibitions on tuning or replacing failed packages limit opportunities to disguise failure.",
+          "Official-source verification, versioned manifests, and separation of summaries, fixtures, and outcomes provide a credible evidence trail.",
+          "Scope and maintenance are contained: one local experiment, $0, eight hours, reserved archival time, and no customer or monitoring commitments.",
+          "The document clearly excludes demand, time savings, competitive superiority, and sustainable economics from what this benchmark can establish."
+        ],
+        "weaknesses": [
+          "Founder-built references and founder scoring can share omissions or interpretation errors; withholding labels does not establish independent correctness.",
+          "The eight-hour allocation has no contingency, and package length is unbounded. Verification and reference construction may exhaust capacity and produce an inconclusive result.",
+          "Three closed public packages cannot establish reliability on live amendments or difficult documents. Audience need, adoption, willingness to pay, and service delivery burden remain untested."
+        ],
+        "revisionInstructions": []
+      }
+    },
+    {
+      "stage": "decide",
+      "revision": 0,
+      "output": {
+        "action": "accept",
+        "rationale": "Accept for a future bounded internal-feasibility experiment only. The package preregisters falsifiable gates, preserves raw outputs, verifies primary sources, and caps resources without external commitments. The critique’s concerns—fallible founder-created references, a tight time budget, and limited sample coverage—remain explicit limitations; incomplete work must be reported as inconclusive. No experiment has run. Acceptance establishes neither validated demand nor customer benefit and does not authorize execution or launch.",
+        "revisionInstructions": []
+      }
+    },
+    {
+      "stage": "release",
+      "revision": 0,
+      "output": {
+        "id": "6d389293-dbd0-47ff-b83e-5713af7c6330",
+        "title": "Local benchmark for an RFP requirements-and-change review service",
+        "studio": "founder",
+        "medium": "experiment-package",
+        "status": "local-release",
+        "validationStatus": "unvalidated",
+        "launchStatus": "not-launched",
+        "provider": "openai",
+        "fixture": false,
+        "founder": "founder-001",
+        "profileVersion": 2,
+        "artifact": {
+          "kind": "experiment-package",
+          "hash": "9c86271c589cbfeab49adc00aa1cc06b86fea5682bc8e6fa3332be2b25ef191b",
+          "documentHash": "930f776d82bfeeecb7d5490e16fdc6d75bc9362bca55909cf73e67a6f50b1a15",
+          "directory": "artifacts/9c86271c589cbfeab49adc00aa1cc06b86fea5682bc8e6fa3332be2b25ef191b",
+          "document": "artifacts/9c86271c589cbfeab49adc00aa1cc06b86fea5682bc8e6fa3332be2b25ef191b/experiment.md",
+          "spec": "artifacts/9c86271c589cbfeab49adc00aa1cc06b86fea5682bc8e6fa3332be2b25ef191b/spec.json"
+        },
+        "sourceIds": [
+          "web-a8bcf29de519ba11b997e305",
+          "web-b346b5d8a5f4f3185343afe9",
+          "web-d3845d63b40a55669a3be412",
+          "web-4225e579e0c61896aebc03c3",
+          "web-53cdf9c30c6c739c0be7c455",
+          "web-1ecc76e818c9ac7d8463e98f"
+        ],
+        "previousWorkIds": [
+          "d68b87f2-5a57-4967-909f-8b6cc2374671"
+        ],
+        "successCriterion": {
+          "metric": "RFP packages satisfying every preregistered hypothesis gate",
+          "target": 3,
+          "unit": "packages out of 3",
+          "windowDays": 7
+        },
+        "stopCondition": "Stop at seven days or eight founder hours without extending thresholds. If complete primary documents or defensible reference labels cannot be obtained, record the benchmark as inconclusive. Any package missing a gate means the hypothesis fails; do not replace failed packages or launch a service on this evidence."
+      }
+    },
+    {
+      "stage": "reflect",
+      "revision": 0,
+      "output": {
+        "learning": "Moved from abstention to a provisional audience: small U.S. web-development agencies bidding on public-sector work. Public RFP documents make requirements-and-change review more locally testable than nonprofit grant handovers. The design freezes sources, reference labels, scoring rules, and raw-output gates before testing, keeping correction separate. Only an unvalidated experiment package was released; no experiment ran or service launched. Research inputs are overlapping model-written source summaries, not verified demand. Planned founder-created references are fallible fixtures, not customer evidence.",
+        "unresolvedQuestion": "Can the workflow reliably recover consequential obligations across complete RFP packages within the correction-time limit? Source completeness, reference quality, and feasibility within eight hours remain untested. Demand, adoption, willingness to pay, customer benefit, comparative time savings, and sustainable delivery costs are also unknown.",
+        "nextExperiment": "If execution is separately permitted, run the prepared $0 benchmark on three verified, closed public website-RFP packages within seven days and eight founder hours. Freeze selection and references before candidate generation. Require all three packages to achieve 100% critical recall, at least 95% overall recall, zero invented mandatory duties, correct citations for every usable row, and at most 30 minutes of correction each. Preserve pre-correction scores. A missed gate fails the hypothesis; inadequate documents, labels, or incomplete work make the benchmark inconclusive. A pass supports only narrow internal feasibility, not launch or customer validation.",
+        "identityChangeProposed": null
+      }
+    }
+  ],
+  "usage": [
+    {
+      "stage": "discover",
+      "status": "completed",
+      "input_tokens": 58615,
+      "output_tokens": 2083
+    },
+    {
+      "stage": "research",
+      "status": "completed",
+      "input_tokens": 11653,
+      "output_tokens": 999
+    },
+    {
+      "stage": "propose",
+      "status": "completed",
+      "input_tokens": 5383,
+      "output_tokens": 914
+    },
+    {
+      "stage": "make",
+      "status": "completed",
+      "input_tokens": 5923,
+      "output_tokens": 1523
+    },
+    {
+      "stage": "critique",
+      "status": "completed",
+      "input_tokens": 9675,
+      "output_tokens": 577
+    },
+    {
+      "stage": "decide",
+      "status": "completed",
+      "input_tokens": 9923,
+      "output_tokens": 112
+    },
+    {
+      "stage": "reflect",
+      "status": "completed",
+      "input_tokens": 7824,
+      "output_tokens": 320
+    }
+  ],
+  "totals": {
+    "inputTokens": 108996,
+    "outputTokens": 6528
+  }
+}

@@ -5,8 +5,10 @@ import {
   type AgentStage,
 } from './domain.js';
 import { founderInstructions, founderFixture } from './founder.js';
+import { discover } from './discovery.js';
 
 export const instructions: Record<AgentStage, string> = {
+  discover: 'Web discovery is available only to configured founder studios.',
   research: `You are the studio researcher. Summarize only the supplied observations. You have no browsing tool. Distinguish source claims from interpretation; retain observation IDs. Fixtures are invented exercises. No source is independent evidence merely because it appears in memory. Report no observed reception when none was supplied.`,
   propose: `You are the artist. Propose one precise work or abstain. Use the dossier and memories to build a continuing practice. Only refer to supplied source IDs and previous cycle IDs. The available workshop makes typographic posters or instruction scores: one portrait sheet, text, color, and spacing. No fabricated manufacturing or audience. Explain the gesture, medium, what survives without an audience, and a reason to abandon it.`,
   make: `You are the typographic workshop. Realize the accepted proposal in a declarative artwork specification. Output only title, statement, colors, alignment, and up to fourteen text lines. There are no image, web, shell, or purchasing tools. The renderer typesets these lines on a 1200 x 1600 sheet. Use variation in emphasis and economical copy. Follow recorded revision instructions when present.`,
@@ -19,7 +21,8 @@ export function agentInput(request: AgentRequest) {
   return {
     studio: studioKind(request.cycle.profile),
     principal: request.cycle.profile,
-    observations: request.cycle.observations,
+    observations: [...request.cycle.observations, ...(request.cycle.discoveredObservations ?? [])]
+      .filter(o => request.stage !== 'discover' || o.visibility === 'public'),
     priorPractice: request.cycle.memory,
     recalledMemories: request.cycle.recalledMemories,
     context: request.context,
@@ -36,6 +39,7 @@ export class OpenAIProvider implements AgentProvider {
     this.client = new OpenAI({ apiKey, maxRetries: 0 });
   }
   async generate(request: AgentRequest, signal: AbortSignal): Promise<AgentResponse> {
+    if (request.stage === 'discover') return discover(this.client, this.model, request, signal, agentInput(request));
     const input = JSON.stringify(agentInput(request));
     const content: OpenAI.Responses.ResponseInputContent[] = [{ type: 'input_text', text: input }];
     if (request.image) content.push({ type: 'input_image', image_url: `data:image/png;base64,${request.image.base64}`, detail: 'high' });
@@ -63,6 +67,7 @@ export class FixtureProvider implements AgentProvider {
     const previous = cycle.memory.at(-1);
     const title = previous ? 'Instructions after an absent audience' : 'Instructions for an absent audience';
     const outputs: Record<AgentStage, unknown> = {
+      discover: { report: 'Offline fixtures do not browse.', sources: [], toolCalls: [] },
       research: {
         summary: 'Fixture briefing: absence is treated as a studio constraint, not evidence of actual public reception.',
         findings: cycle.observations.map(o => ({ observationId: o.id, interpretation: `Fixture interpretation of supplied observation: ${o.title}` })),

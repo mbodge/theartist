@@ -5,7 +5,7 @@ import { dirname } from 'node:path';
 import {
   AttemptLimitError, BudgetError, BusyError, PausedError, StudioError,
   agentSchemas, studioKind, isFounder,
-  type Cycle, type Memory, type Result, type Stage, type StudioKind,
+  type Cycle, type Memory, type Observation, type Result, type Stage, type StudioKind,
 } from './domain.js';
 
 export const hash = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
@@ -179,7 +179,7 @@ export class Store {
     const row = this.db.prepare('SELECT output FROM checkpoints WHERE cycle_id=? AND stage=? AND revision=?').get(id, stage, revision) as { output: string } | undefined;
     return row ? JSON.parse(row.output) as Result : undefined;
   }
-  complete(lease: Lease, output: Result, next: Pick<Cycle, 'stage' | 'revision' | 'status' | 'outcome'>,
+  complete(lease: Lease, output: Result, next: Pick<Cycle, 'stage' | 'revision' | 'status' | 'outcome'> & { discoveredObservations?: Observation[] },
     usage?: { inputTokens: number | null; outputTokens: number | null; responseId: string | null }) {
     return this.db.transaction(() => {
       this.assertLease(lease);
@@ -191,10 +191,15 @@ export class Store {
         this.db.prepare('INSERT INTO releases VALUES(?,?)').run(cycle.id, JSON.stringify(output));
       }
       const updated: Cycle = { ...cycle, ...next, updatedAt: this.iso(), lastError: null };
+      for (const observation of next.discoveredObservations ?? []) {
+        this.addMemory({ id: `${cycle.id}:source:${observation.id}`, kind: 'observation',
+          content: JSON.stringify(observation), cycleId: cycle.id, sourceIds: [observation.id],
+          visibility: observation.visibility, supersedes: null });
+      }
       this.db.prepare('UPDATE cycles SET payload=?,lease_token=NULL,lease_until=0 WHERE id=?').run(JSON.stringify(updated), cycle.id);
       const kind = cycle.stage === 'reflect' ? 'reflection' : cycle.stage === 'release' ? 'work' : 'decision';
       this.addMemory({ id: `${cycle.id}:${cycle.stage}:${cycle.revision}`, kind, content: JSON.stringify(output),
-        cycleId: cycle.id, sourceIds: cycle.observations.map(o => o.id),
+        cycleId: cycle.id, sourceIds: [...cycle.observations, ...(updated.discoveredObservations ?? [])].map(o => o.id),
         visibility: cycle.observations.some(o => o.visibility === 'private') ? 'private' : 'public', supersedes: null });
       this.event(cycle.id, 'stage.completed', { stage: cycle.stage, revision: cycle.revision, nextStage: next.stage, outcome: next.outcome });
       return updated;

@@ -59,7 +59,7 @@ npm run studio -- run CYCLE_ID
 npm run studio -- show CYCLE_ID
 ```
 
-Omit `--observations` for an empty observation set. No reception is invented to fill the gap. Input observations carry IDs, dates, provenance type, stream, and visibility. External-source records require source URLs. Importing a source does not independently verify it, and the researcher has no live browsing tool in this version.
+Omit `--observations` for an empty observation set. No reception is invented to fill the gap. Input observations carry IDs, dates, provenance type, stream, and visibility. External-source records require source URLs. Importing a source does not independently verify it. Live founders can now start with a bounded web discovery stage; artist research still summarizes supplied inputs.
 
 The initial workshop makes **typographic posters and instruction scores** from bounded declarative specifications. It renders an actual PNG for the critic and final artist review. It does not yet generate photographs, arbitrary websites, video, or physical objects.
 
@@ -74,7 +74,17 @@ npm run studio -- run CYCLE_ID --provider openai
 
 Live runs incur provider charges. Execution limits live in `config/policy.json`: daily/cycle call allowances, maximum output tokens, input size, retries, timeouts, and revision limits. Failed and interrupted calls retain their allowance reservation. The SDK's automatic retries are disabled. These are resource limits, **not a dollar-denominated spending guarantee**. No purchasing, outbound email, or social tools are connected.
 
-The live adapter has completed a [first Astra founder trial](docs/trials/astra-001.md): three paid model calls, persisted research/proposal/reflection, and an abstention with no supplied evidence. Live production and review stages remain untested. The trial also exposed a schema issue, now regression-tested: abstention can use a null success criterion, while making an experiment still requires one.
+The live adapter completed a [first Astra founder trial](docs/trials/astra-001.md) that abstained without supplied evidence. A [second live trial with web discovery](docs/trials/astra-discovery-001.md) completed the full loop: seven model calls, six web actions, seven cited sources, and a reviewed experiment package. These are two observed runs, not a general quality evaluation. No experiment was executed or product launched. Abstention can use a null success criterion, while making an experiment requires one.
+
+### Autonomous founder discovery
+
+New founders are authorized to research public information and select a provisional audience and direction. Their live loop starts with web search and page reading using OpenAI's hosted `web_search` tool, then synthesizes cited findings before proposing an experiment. No owner-selected industry is required. The founder explains its choice, keeps assumptions explicit, and may still abstain when it cannot justify a useful bounded test.
+
+`maxWebCallsPerAttempt` in the founder policy enables and bounds discovery: the template allows six web tool calls per discovery attempt, including searches and page reads. Set it to zero to disable web access. A missing field keeps older policies offline. Fixture runs always skip web discovery. The ordinary call, retry, timeout, and pause limits still apply; each retry can spend another web allowance. These are per-attempt tool limits, not a dollar budget.
+
+The harness imports only URL citations from API response metadata as source observations. URLs merely written in the report do not become sources. Original input observations stay unchanged; discoveries persist separately with the discovery checkpoint in the same transaction. The public record includes search queries, page URLs, citations, a research report, and subsequent decisions. Source summaries are model interpretations, not page snapshots or verified customer evidence. Private observation text is withheld from the discovery request.
+
+Existing founders must explicitly enable discovery in their policy. `founder-001` has been configured for the live trial; `example-founder` retains its original policy. See [founder documentation](docs/founders.md).
 
 ## Memory belongs to the artist
 

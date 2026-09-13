@@ -39,6 +39,14 @@ Cloudflare and OpenAI should not both own the career history. The application ow
 
 The local `better-sqlite3` adapter and native `sharp` renderer are Node components; they cannot simply be uploaded unchanged to Workers. The hosted migration needs a Cloudflare storage adapter and sandbox/remote rendering adapter. Domain schemas, role instructions, memory records, and validation contracts can remain stable. Factor a shared asynchronous store interface as that second storage adapter is implemented rather than claiming the current synchronous store is already portable.
 
+## Local web discovery
+
+The founder's optional `discover` stage uses the direct Responses API with hosted `web_search`, live access, a required tool call, and a policy-controlled `max_tool_calls`. Search, page-open, and in-page-find actions share that allowance. Source URLs come from response citation metadata; arbitrary URLs in model prose are not imported. Original page bodies and internal reasoning are not retained. Search metadata and the explicit report are committed with cited source observations before the next stage starts. Other stages receive those observations with their structured role inputs and cannot browse.
+
+The API tool limit is per request. Discovery retries consume another model-call reservation and may repeat up to that many web actions. A timed-out or interrupted remote request may still incur costs. The SDK's retries remain disabled; local state fencing prevents duplicate source/checkpoint commits. No remote-request reconciliation or exact dollar budget is claimed.
+
+Sources: [web search and citation metadata](https://developers.openai.com/api/docs/guides/tools-web-search), [Responses parameters](https://developers.openai.com/api/reference/cli/resources/responses/methods/create). The first successful live discovery run is [recorded here](trials/astra-discovery-001.md).
+
 ## Managed execution integration requirements
 
 1. Persist a job intent and stable local ID before creating an OpenAI session/turn.

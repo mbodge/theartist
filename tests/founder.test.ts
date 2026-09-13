@@ -189,6 +189,7 @@ test('OpenAI founder transport selects founder instructions and schemas', async 
   assert.ok(String(body?.instructions).includes('configured founder'));
   assert.ok(JSON.stringify(body?.text).includes('successCriterion'));
   assert.ok(!JSON.stringify(body?.text).includes('materialReason'));
+  assert.equal(body?.tools, undefined);
 });
 
 test('CLI founder demo is idempotent across separate processes', async t => {

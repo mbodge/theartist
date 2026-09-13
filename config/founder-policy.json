@@ -3,9 +3,10 @@
   "maxRevisions": 2,
   "maxCallsPerCycle": 14,
   "maxCallsPerDay": 30,
-  "maxOutputTokens": 4000,
+  "maxOutputTokens": 16000,
   "maxInputBytes": 60000,
   "maxAttemptsPerStage": 2,
-  "callTimeoutMs": 60000,
-  "leaseMs": 90000
+  "callTimeoutMs": 180000,
+  "leaseMs": 210000,
+  "maxWebCallsPerAttempt": 6
 }

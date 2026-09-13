@@ -52,7 +52,7 @@ npm run studio -- export --instance my-founder
 
 The repository includes an `example-founder` configuration and a [public fixture archive](../examples/public-founder/latest.json). If an ignored observation file is absent after cloning, the instance starts with no observations.
 
-To use live model calls, configure `.env` as described in the main README and pass `--provider openai` to `start`, `tick`, `run`, or `step`. Live mode uses the founder's mission and schemas. The [first live Astra trial](trials/astra-001.md) records a fresh generic founder abstaining without supplied evidence; it does not demonstrate autonomous opportunity discovery. Its original decisions and token usage are checked in for inspection.
+To use live model calls, configure `.env` as described in the main README and pass `--provider openai` to `start`, `tick`, `run`, or `step`. Live mode uses the founder's mission and schemas. The [first live Astra trial](trials/astra-001.md) records a fresh generic founder abstaining without supplied evidence. The [second trial](trials/astra-discovery-001.md) adds web discovery and an explicit independent-selection mandate: it researched alternatives and produced a reviewed experiment package. Both original decision records and token usage are checked in for inspection.
 
 The command line checks the instance ID stored in the data directory. Pointing one founder at another founder's directory produces an error. Artist and founder stores cannot be mixed. Each founder has its own limits and logs; these are per-instance allowances, not yet an account-wide billing limit.
 
@@ -60,7 +60,11 @@ The command line checks the instance ID stored in the data directory. Pointing o
 
 The implemented loop is:
 
-`observe → hypothesize → design experiment → render package → review → decide → local release → reflect`
+`discover → synthesize observations → choose provisional direction → design experiment → render package → review → decide → local release → reflect`
+
+The optional discovery stage is enabled for live founders by a positive `maxWebCallsPerAttempt` policy value. It uses hosted web search, page reading, and finding text within pages, within one bounded Responses request. The generic founder may compare candidate directions and choose its own provisional audience; a custom mission still constrains that choice. The template allows six web actions per attempt. Old policies without this setting and all offline fixture runs skip discovery. Existing in-flight cycles keep their original stages and limits.
+
+Discovery records the explicit research report and web tool metadata, then atomically imports up to eight cited sources into memory with its checkpoint. A restart continues at synthesis without repeating successful web calls. URLs found only in model-written text are not imported as sources. The search tool's citation metadata establishes provenance, not factual correctness. The experiment document includes clickable links for cited observations.
 
 The package includes:
 
@@ -81,7 +85,7 @@ This workshop plans experiments. Coding, deployment, outreach, payments, support
 
 ## Evidence and memory
 
-Input observations can use `customer` and `usage` streams in addition to the existing studio streams. Only externally sourced records in those streams can support `source_reports` in a founder research briefing. Fixtures and founder notes remain hypotheses. A supplied source is not independently verified merely because it has a URL.
+Input observations can use `customer` and `usage` streams in addition to the existing studio streams. Only externally sourced records in those streams can support `source_reports` in a founder research briefing. Fixtures and founder notes remain hypotheses. A supplied source is not independently verified merely because it has a URL. Automated web discoveries enter the `world` stream and cannot be promoted into customer/usage evidence by the model. Their text is citation context from the model's research synthesis; original page content is not archived.
 
 Proposals, experiment versions, critiques, decisions, local releases, and reflections persist across restarts. Later cycles receive the founder's prior practice and relevant memories. A new founder starts without another founder's history.
 

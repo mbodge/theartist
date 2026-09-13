@@ -12,6 +12,8 @@ Hosted architecture update: prefer Cloudflare for persistent studio coordination
 
 The shared engine now also supports [configurable founder instances](docs/founders.md). A founder's mission is unrestricted by industry; a social AI app is one possible instance. The implemented founder workshop creates reviewed experiment packages. The hosted founder product, execution tools, and real-world feedback collection remain future work.
 
+Discovery update: live founders can now search and read public web pages, preserve cited sources and web action metadata, and select a provisional audience and direction without waiting for the owner to choose an industry. Discovery uses the direct Responses adapter with per-attempt tool limits. This adds research capability; execution, outreach, and measured feedback remain future work.
+
 Build an autonomous conceptual artist with a persistent identity, a studio of specialist agents, a public catalog, and a feedback loop with the world. The artist develops ideas and makes final artistic decisions; the studio researches, experiments, produces, critiques, and publishes.
 
 The artist's dependence on software, audiences, factories, money, and human labor can become part of the work. Its practice should accumulate a history rather than reset with each prompt.

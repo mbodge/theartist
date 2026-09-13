@@ -33,6 +33,7 @@ export const policySchema = z.strictObject({
   maxOutputTokens: z.number().int().min(100).max(16000),
   maxInputBytes: z.number().int().min(1000).max(200000),
   maxAttemptsPerStage: z.number().int().min(1).max(5),
+  maxWebCallsPerAttempt: z.number().int().min(0).max(12).optional(),
   callTimeoutMs: z.number().int().min(100).max(300000),
   leaseMs: z.number().int().min(500).max(600000),
 }).refine(p => p.leaseMs > p.callTimeoutMs, 'Lease must exceed model timeout');
@@ -50,6 +51,20 @@ export const observationSchema = z.strictObject({
 export const observationsSchema = z.array(observationSchema).max(20)
   .refine(items => new Set(items.map(o => o.id)).size === items.length, 'Observation IDs must be unique');
 export type Observation = z.infer<typeof observationSchema>;
+
+// This record is assembled from API tool/citation metadata, never parsed from model-written URLs.
+const webUrl = z.string().url().max(4000).refine(value => /^https?:\/\//.test(value));
+export const discoverySchema = z.strictObject({
+  report: z.string().min(1).max(32000),
+  sources: z.array(z.strictObject({
+    id: z.string(), url: webUrl, title: z.string().min(1).max(300),
+    summary: z.string().min(1).max(1600),
+  })).max(8),
+  toolCalls: z.array(z.strictObject({
+    id: z.string(), status: z.string(), action: z.enum(['search', 'open_page', 'find_in_page']),
+    queries: z.array(z.string().max(4000)).max(20), urls: z.array(webUrl).max(100),
+  })).max(12),
+});
 
 export const researchSchema = z.strictObject({
   summary: prose,
@@ -116,14 +131,16 @@ export const experimentSchema = z.strictObject({
   limitations: z.array(prose).min(1).max(8),
 });
 
-export const stages = ['research', 'propose', 'make', 'render', 'critique', 'decide', 'release', 'reflect', 'done'] as const;
+export const stages = ['discover', 'research', 'propose', 'make', 'render', 'critique', 'decide', 'release', 'reflect', 'done'] as const;
 export type Stage = typeof stages[number];
-export type AgentStage = 'research' | 'propose' | 'make' | 'critique' | 'decide' | 'reflect';
+export type AgentStage = 'discover' | 'research' | 'propose' | 'make' | 'critique' | 'decide' | 'reflect';
 export const agentSchemas = {
+  discover: discoverySchema,
   research: researchSchema, propose: proposalSchema, make: artworkSchema,
   critique: critiqueSchema, decide: decisionSchema, reflect: reflectionSchema,
 } as const;
 export const founderAgentSchemas = {
+  discover: discoverySchema,
   research: founderResearchSchema, propose: founderProposalSchema, make: experimentSchema,
   critique: critiqueSchema, decide: decisionSchema, reflect: reflectionSchema,
 } as const;
@@ -133,6 +150,7 @@ export type Result = Record<string, unknown>;
 export type Cycle = {
   id: string; triggerKey: string; provider: ProviderName; model: string | null;
   profile: Profile; policy: Policy; observations: Observation[];
+  discoveredObservations?: Observation[];
   memory: Memory[]; stage: Stage; revision: number;
   recalledMemories: Array<{ id: string; kind: string; content: string; sourceIds: string[]; supersedes: string | null }>;
   status: 'active' | 'released' | 'abstained' | 'rejected' | 'failed';

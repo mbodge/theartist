@@ -13,7 +13,7 @@ export async function exportArchive(store: Store, studioRoot: string, destinatio
   const memories = allMemories.filter(m => m.visibility === 'public');
   const cycles = store.list().filter(c => c.observations.every(o => o.visibility === 'public')).map(c => ({
     id: c.id, studio: studioKind(c.profile), provider: c.provider, model: c.model, fixture: c.provider === 'fixture',
-    profile: c.profile, observations: c.observations, priorPractice: c.memory,
+    profile: c.profile, observations: c.observations, discoveredObservations: c.discoveredObservations ?? [], priorPractice: c.memory,
     recalledMemoryIds: c.recalledMemories.map(m => m.id),
     stage: c.stage, status: c.status, outcome: c.outcome, revision: c.revision,
     createdAt: c.createdAt, updatedAt: c.updatedAt,

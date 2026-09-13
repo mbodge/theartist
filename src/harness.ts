@@ -1,7 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import {
-  agentSchemas, schemasFor, isFounder, isFounderArtifact, observationsSchema, profileSchema, policySchema, StudioError,
+  agentSchemas, schemasFor, discoverySchema, isFounder, isFounderArtifact, observationsSchema, profileSchema, policySchema, StudioError,
   type AgentProvider, type AgentRequest, type AgentResponse, type AgentStage,
   type StudioArtifact, type Cycle, type Observation, type Policy, type Profile, type Result,
 } from './domain.js';
@@ -31,7 +31,8 @@ export class Harness {
       id: randomUUID(), triggerKey, provider: this.provider.name, model: this.provider.model,
       profile, policy, observations, memory: this.store.recentMemory(),
       recalledMemories: recalled.map(({ id, kind, content, sourceIds, supersedes }) => ({ id, kind, content, sourceIds, supersedes })),
-      stage: 'research', revision: 0, status: 'active', outcome: null,
+      stage: isFounder(profile) && this.provider.name === 'openai' && (policy.maxWebCallsPerAttempt ?? 0) > 0 ? 'discover' : 'research',
+      revision: 0, status: 'active', outcome: null,
       createdAt: now, updatedAt: now, lastError: null,
     };
     return this.store.create(cycle);
@@ -54,8 +55,9 @@ export class Harness {
       const next = { stage: cycle.stage, revision: cycle.revision, status: cycle.status, outcome: cycle.outcome };
       if (isAgent) {
         const context: Record<string, unknown> = {};
-        if (cycle.stage !== 'research') context.research = this.required(cycle, 'research');
-        if (!['research', 'propose'].includes(cycle.stage)) context.proposal = this.required(cycle, 'propose');
+        if (cycle.stage === 'research') context.discovery = this.store.checkpoint(id, 'discover') ?? null;
+        if (!['discover', 'research'].includes(cycle.stage)) context.research = this.required(cycle, 'research');
+        if (!['discover', 'research', 'propose'].includes(cycle.stage)) context.proposal = this.required(cycle, 'propose');
         if (cycle.stage === 'make' && cycle.revision > 0) {
           context.previousArtwork = this.required(cycle, 'make', cycle.revision - 1);
           context.critique = this.required(cycle, 'critique', cycle.revision - 1);
@@ -89,7 +91,8 @@ export class Harness {
         this.validateReferences(cycle, output);
       } else if (cycle.stage === 'render') {
         output = isFounder(cycle.profile)
-          ? await renderExperiment(this.root, this.required(cycle, 'propose'), this.required(cycle, 'make', cycle.revision))
+          ? await renderExperiment(this.root, this.required(cycle, 'propose'), this.required(cycle, 'make', cycle.revision),
+            [...cycle.observations, ...(cycle.discoveredObservations ?? [])])
           : await renderArtwork(this.root, this.required(cycle, 'make', cycle.revision));
       } else if (cycle.stage === 'release') {
         const decision = this.required(cycle, 'decide', cycle.revision);
@@ -101,6 +104,7 @@ export class Harness {
       } else throw new StudioError(`Unexpected stage ${cycle.stage}`);
 
       switch (cycle.stage) {
+        case 'discover': next.stage = 'research'; break;
         case 'research': next.stage = 'propose'; break;
         case 'propose':
           if (output.action === 'abstain') { next.stage = 'reflect'; next.outcome = 'abstained'; }
@@ -118,7 +122,13 @@ export class Harness {
         case 'release': next.stage = 'reflect'; next.outcome = 'released'; break;
         case 'reflect': next.stage = 'done'; next.status = cycle.outcome ?? 'failed'; break;
       }
-      return this.store.complete(lease, output, next, usage);
+      const discoveredObservations = cycle.stage === 'discover'
+        ? observationsSchema.parse(discoverySchema.parse(output).sources.map(source => ({
+          id: source.id, kind: 'source', stream: 'world', title: source.title, url: source.url,
+          text: `Web research synthesis (model summary, not a direct quotation or verified customer evidence): ${source.summary}`,
+          observedAt: this.store.iso(), visibility: cycle.observations.some(o => o.visibility === 'private') ? 'private' : 'public',
+        }))) : undefined;
+      return this.store.complete(lease, output, { ...next, ...(discoveredObservations ? { discoveredObservations } : {}) }, usage);
     } catch (error) {
       // Persist a bounded generic error; provider messages may include private request data.
       const message = error instanceof StudioError ? error.message : 'Stage failed; inspect the local exception and retry within the attempt allowance';
@@ -127,7 +137,7 @@ export class Harness {
     }
   }
   private validateReferences(cycle: Cycle, output: Result) {
-    const sourceIds = new Set(cycle.observations.map(o => o.id));
+    const sourceIds = new Set([...cycle.observations, ...(cycle.discoveredObservations ?? [])].map(o => o.id));
     if (cycle.stage === 'research') {
       for (const item of output.findings as { observationId: string }[]) if (!sourceIds.has(item.observationId)) throw new StudioError('Research cited an unknown observation');
       if (isFounder(cycle.profile)) {
