@@ -102,10 +102,11 @@ export const founderProposalSchema = z.strictObject({
   title: z.string().min(1).max(160), targetAudience: prose, problem: prose,
   hypothesis: prose, smallestTest: prose,
   successCriterion: z.strictObject({ metric: prose, target: z.number().positive().max(1000000),
-    unit: z.string().min(1).max(80), windowDays: z.number().int().min(1).max(365) }),
+    unit: z.string().min(1).max(80), windowDays: z.number().int().min(1).max(365) }).nullable(),
   stopCondition: prose, maintenancePlan: prose,
   sourceIds: z.array(z.string()).max(20), previousWorkIds: z.array(z.string()).max(10),
-});
+}).refine(p => p.action !== 'make' || p.successCriterion !== null,
+  'An experiment proposal requires a success criterion');
 export const experimentSchema = z.strictObject({
   title: z.string().min(1).max(160), summary: prose,
   prototypeBehavior: z.array(prose).min(1).max(8),

@@ -74,7 +74,7 @@ npm run studio -- run CYCLE_ID --provider openai
 
 Live runs incur provider charges. Execution limits live in `config/policy.json`: daily/cycle call allowances, maximum output tokens, input size, retries, timeouts, and revision limits. Failed and interrupted calls retain their allowance reservation. The SDK's automatic retries are disabled. These are resource limits, **not a dollar-denominated spending guarantee**. No purchasing, outbound email, or social tools are connected.
 
-The live adapter is typechecked and tested with a stubbed transport; it has not been tested against a paid live API in this implementation session.
+The live adapter has completed a [first Astra founder trial](docs/trials/astra-001.md): three paid model calls, persisted research/proposal/reflection, and an abstention with no supplied evidence. Live production and review stages remain untested. The trial also exposed a schema issue, now regression-tested: abstention can use a null success criterion, while making an experiment still requires one.
 
 ## Memory belongs to the artist
 

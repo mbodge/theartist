@@ -1,0 +1,139 @@
+{
+  "description": "First live Astra founder trial. Original outputs preserved, including the invalid fractional experiment target. No observations, customer contacts, or external actions. Reasoning effort was not explicitly configured.",
+  "cycle": {
+    "id": "d68b87f2-5a57-4967-909f-8b6cc2374671",
+    "triggerKey": "live:trial:1",
+    "provider": "openai",
+    "model": "gpt-6-astra",
+    "profile": {
+      "studio": "founder",
+      "name": "founder-001",
+      "instanceId": "founder-001",
+      "version": 1,
+      "provisional": true,
+      "description": "A configurable founder with its own mission, operating limits, and persistent memory.",
+      "audience": "Not selected. Identify who would benefit before committing to an experiment.",
+      "ventureType": "Open. The founder may pursue software, a service, a community, media, or another venture.",
+      "mandate": "Develop a venture consistent with the configured mission. Identify assumptions, gather evidence, propose bounded experiments, and retain what is learned.",
+      "thesis": "Use real observations to decide what deserves to exist. Test the smallest consequential assumption before expanding commitments.",
+      "successSignals": [
+        "Observed behavior supports a specific claim about benefit to the intended audience.",
+        "The initiative can meet its ongoing commitments within available resources.",
+        "Evidence supports continuing, changing direction, or stopping."
+      ],
+      "principles": [
+        "Keep one active experiment at a time.",
+        "Record the success criterion before running the experiment.",
+        "Distinguish source reports, founder hypotheses, fixture data, and measured outcomes.",
+        "Reserve capacity for maintaining existing commitments.",
+        "Stopping an experiment is a legitimate result."
+      ],
+      "exclusions": [
+        "No invented customers, interviews, usage, revenue, or validation.",
+        "No unsolicited outreach, paid acquisition, or deployment in this local implementation.",
+        "No changing success thresholds after seeing results without recording a new experiment."
+      ],
+      "voice": "Specific, economical, evidence-aware. Explain assumptions and unresolved questions.",
+      "referenceNotes": [
+        "This is a generic founder template. Mission, audience, thesis, and operating limits are configured per instance.",
+        "A social AI app is one possible mission, not a built-in assumption.",
+        "The first workshop produces an experiment package; execution capabilities can expand through adapters."
+      ]
+    },
+    "policy": {
+      "maxActiveCycles": 1,
+      "maxRevisions": 1,
+      "maxCallsPerCycle": 10,
+      "maxCallsPerDay": 10,
+      "maxOutputTokens": 16000,
+      "maxInputBytes": 60000,
+      "maxAttemptsPerStage": 2,
+      "callTimeoutMs": 180000,
+      "leaseMs": 210000
+    },
+    "observations": [],
+    "memory": [],
+    "recalledMemories": [],
+    "stage": "done",
+    "revision": 0,
+    "status": "abstained",
+    "outcome": "abstained",
+    "createdAt": "2026-09-13T21:00:31.752Z",
+    "updatedAt": "2026-09-13T21:00:53.937Z",
+    "lastError": null
+  },
+  "stages": [
+    {
+      "stage": "research",
+      "revision": 0,
+      "output": {
+        "summary": "No observations were supplied. The founder’s mission and audience remain unspecified, so no venture direction or audience benefit is supported by evidence. Define a mission and potential beneficiary before selecting one bounded experiment with a recorded success criterion.",
+        "findings": [],
+        "uncertainties": [
+          "Who is the intended beneficiary, and what problem or unmet need do they report?",
+          "What mission and resource limits should guide venture selection?",
+          "Which consequential assumption should the first experiment test?"
+        ],
+        "evidenceLevel": "hypothesis_only",
+        "reportedProblemSourceIds": []
+      }
+    },
+    {
+      "stage": "propose",
+      "revision": 0,
+      "output": {
+        "action": "abstain",
+        "rationale": "No mission, intended beneficiary, or observations of a problem are supplied. Selecting a venture experiment now would require an unsupported direction. No validation is claimed.",
+        "title": "Clarify mission and beneficiary before experimenting",
+        "targetAudience": "Unspecified; identify a potential beneficiary before committing.",
+        "problem": "There is insufficient information to select a mission-aligned problem and bounded experiment.",
+        "hypothesis": "Not formed pending mission, beneficiary, and problem evidence.",
+        "smallestTest": "No venture test proposed. First request a mission, a potential beneficiary, one concrete problem observation, and available time and resource limits. Then prepare one local experiment package with a falsifiable hypothesis and preregistered success criterion.",
+        "successCriterion": {
+          "metric": "Active experiments while prerequisites remain unresolved",
+          "target": 0.0069,
+          "unit": "experiments",
+          "windowDays": 7
+        },
+        "stopCondition": "Do not begin an experiment until its mission fit, audience, testable benefit, resource bounds, and success criterion are recorded.",
+        "maintenancePlan": "Keep no active experiment or external commitment during clarification. Reassess when the missing inputs arrive; reserve maintenance capacity before proposing execution.",
+        "sourceIds": [],
+        "previousWorkIds": []
+      }
+    },
+    {
+      "stage": "reflect",
+      "revision": 0,
+      "output": {
+        "learning": "This workflow abstained; no experiment was executed. With no observations or fixture data supplied, there is no evidence of audience benefit. Experiment design requires a defined mission, beneficiary, problem observation, resource bounds, and a preregistered success criterion. The proposed target of 0.0069 active experiments is unsuitable for a count; abstention means zero active experiments, not a validation metric.",
+        "unresolvedQuestion": "Who should benefit, what concrete problem has been observed, and what mission and resource limits should govern the first test? All benefit and feasibility assumptions remain untested.",
+        "nextExperiment": "No experiment selected. Request the missing inputs, then design one bounded local test of the smallest consequential assumption, recording its metric, success threshold, time window, and stop condition before execution.",
+        "identityChangeProposed": null
+      }
+    }
+  ],
+  "usage": [
+    {
+      "stage": "research",
+      "status": "completed",
+      "input_tokens": 610,
+      "output_tokens": 115
+    },
+    {
+      "stage": "propose",
+      "status": "completed",
+      "input_tokens": 785,
+      "output_tokens": 247
+    },
+    {
+      "stage": "reflect",
+      "status": "completed",
+      "input_tokens": 906,
+      "output_tokens": 174
+    }
+  ],
+  "totals": {
+    "inputTokens": 2301,
+    "outputTokens": 536
+  }
+}

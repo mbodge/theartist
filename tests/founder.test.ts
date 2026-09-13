@@ -62,6 +62,22 @@ test('source reports remain unvalidated even when a reviewer accepts the package
   assert.equal(h.store.releases()[0]?.validationStatus, 'unvalidated');
 });
 
+test('a make proposal without a success criterion cannot advance to production', async t => {
+  class MissingCriterion extends FixtureProvider {
+    override async generate(req: AgentRequest) {
+      const result = await super.generate(req);
+      if (req.stage === 'propose') Object.assign(result.output as object, { successCriterion: null });
+      return result;
+    }
+  }
+  const { h, cycle } = await setup(t, new MissingCriterion());
+  await h.step(cycle.id);
+  await assert.rejects(h.step(cycle.id), /requires a success criterion/);
+  assert.equal(h.store.get(cycle.id).stage, 'propose');
+  assert.equal(h.store.checkpoint(cycle.id, 'propose'), undefined);
+  assert.equal(h.store.releases().length, 0);
+});
+
 test('only one active founder experiment is allowed by default', async t => {
   const { h } = await setup(t);
   assert.throws(() => h.start('another', profile, policy, []), BudgetError);
@@ -71,12 +87,13 @@ test('founder can abstain without creating an experiment package', async t => {
   class Abstains extends FixtureProvider {
     override async generate(req: AgentRequest) {
       const result = await super.generate(req);
-      if (req.stage === 'propose') (result.output as { action: string }).action = 'abstain';
+      if (req.stage === 'propose') Object.assign(result.output as object, { action: 'abstain', successCriterion: null });
       return result;
     }
   }
   const { h, cycle } = await setup(t, new Abstains());
   assert.equal((await h.run(cycle.id)).status, 'abstained');
+  assert.equal(h.store.checkpoint(cycle.id, 'propose')?.successCriterion, null);
   assert.equal(h.store.releases().length, 0);
 });
 

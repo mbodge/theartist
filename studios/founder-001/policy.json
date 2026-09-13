@@ -1,0 +1,11 @@
+{
+  "maxActiveCycles": 1,
+  "maxRevisions": 1,
+  "maxCallsPerCycle": 10,
+  "maxCallsPerDay": 10,
+  "maxOutputTokens": 16000,
+  "maxInputBytes": 60000,
+  "maxAttemptsPerStage": 2,
+  "callTimeoutMs": 180000,
+  "leaseMs": 210000
+}
