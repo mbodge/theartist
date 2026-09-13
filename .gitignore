@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.studio/
+.env
+.env.*
+!.env.example
+*.sqlite*
+.DS_Store

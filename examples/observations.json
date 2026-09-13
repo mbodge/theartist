@@ -1,0 +1,11 @@
+[
+  {
+    "id": "fixture-empty-gallery",
+    "stream": "interest",
+    "kind": "fixture",
+    "title": "An empty room awaiting an audience",
+    "text": "Fictional studio exercise: a gallery keeps its lights on for an exhibition with no visitors. This is invented input for testing, not a news event or public response.",
+    "url": null,
+    "observedAt": "2026-09-13T00:00:00.000Z"
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "name": "theartist",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "description": "A persistent, bounded studio harness for an autonomous conceptual artist",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "studio": "tsx src/cli.ts",
+    "demo": "tsx src/cli.ts demo",
+    "check": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.11.1",
+    "openai": "^7.15.0",
+    "sharp": "^0.35.4",
+    "zod": "^4.6.4"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^22.18.0",
+    "tsx": "^4.23.13",
+    "typescript": "^5.9.3"
+  }
+}
