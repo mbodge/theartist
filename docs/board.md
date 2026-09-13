@@ -56,7 +56,7 @@ The next supervisor call must answer every active nudge that has not already rec
 
 Replies use structured model output. Unknown IDs, duplicate replies, or missing replies fail the stage. Replies and the ordinary decision checkpoint commit in the same fenced SQLite transaction. A stale worker cannot record a reply after losing its lease. A retry gets its own saved snapshot, and completed decisions are not rerun merely because someone added a nudge.
 
-Coding jobs receive the frozen nudges and supervisor replies from the accepted cycle, including the final acceptance decision. Later board edits cannot silently rewrite an already-queued build brief. Deferred and declined nudges are recorded as history, not execution instructions.
+Coding jobs receive the frozen nudges and supervisor replies from the accepted cycle, including the final acceptance decision. Later board edits cannot silently rewrite an already-queued build brief. The handoff also records whether each nudge was still active at the final acceptance decision. Deferred, declined, and previously withdrawn nudges are history, not execution instructions.
 
 The supervisor may incorporate, defer, or disagree with a nudge. It must explain that choice. Board text does not grant tool access, increase budgets, rewrite completed work, or count as customer evidence. Operating limits remain enforced by the harness.
 

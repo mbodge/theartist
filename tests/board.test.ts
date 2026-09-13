@@ -125,6 +125,8 @@ test('nudge arriving during a call is delivered next time; withdrawn in-flight g
   const deliveries = board.publicRecord(new Set([cycle.id])).deliveries;
   assert.equal(deliveries.find(d => d.stage === 'propose')?.snapshot.nudges[0]?.withdrawnAt, null);
   assert.deepEqual(deliveries.find(d => d.stage === 'decide')?.snapshot.nudges.map(n => n.id), [laterId]);
+  assert.equal(board.executionBrief(cycle.id).find(item => item.nudge.id === first.id)?.activeAtAcceptance, false);
+  assert.equal(board.executionBrief(cycle.id).find(item => item.nudge.id === laterId)?.activeAtAcceptance, true);
   assert.ok(store.verifyEvents());
 });
 

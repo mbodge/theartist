@@ -146,13 +146,16 @@ export class Board {
     }
   }
   executionBrief(cycleId: string) {
+    const finalDelivery = this.store.db.prepare(`SELECT d.snapshot FROM board_deliveries d JOIN attempts a ON a.id=d.attempt_id
+      WHERE d.cycle_id=? AND d.stage='decide' AND a.status='completed' ORDER BY d.revision DESC, d.rowid DESC LIMIT 1`).get(cycleId) as { snapshot: string } | undefined;
+    const activeAtAcceptance = new Set(finalDelivery ? (JSON.parse(finalDelivery.snapshot) as BoardContext).nudges.map(n => n.id) : []);
     return this.responses().filter(r => r.cycleId === cycleId).map(response => {
       const row = this.store.db.prepare('SELECT snapshot FROM board_deliveries WHERE attempt_id=?').get(response.attemptId) as { snapshot: string } | undefined;
       if (!row) throw new StudioError('Board response is missing its delivery snapshot');
       const snapshot = JSON.parse(row.snapshot) as BoardContext;
       const nudge = snapshot.nudges.find(n => n.id === response.nudgeId);
       if (!nudge) throw new StudioError('Board response is missing its original nudge');
-      return { nudge, response };
+      return { nudge, response, activeAtAcceptance: activeAtAcceptance.has(nudge.id) };
     });
   }
   publicRecord(cycleIds: Set<string>) {

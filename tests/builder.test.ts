@@ -233,6 +233,7 @@ test('build briefs retain the supervisor board decision and frozen guidance acro
   const brief = JSON.parse(job.brief);
   assert.equal(brief.boardResponses[0].nudge.text, 'Build one inspectable prototype.');
   assert.equal(brief.boardResponses[0].response.disposition, 'defer');
+  assert.equal(brief.boardResponses[0].activeAtAcceptance, true);
   assert.equal(brief.supervisorDecision.action, 'accept');
   const board = new Board(h.store);
   board.withdraw('launcher', board.nudges()[0]!.id, 'Later priorities');
