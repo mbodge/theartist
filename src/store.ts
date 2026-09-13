@@ -10,7 +10,7 @@ import {
 
 export const hash = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
 export type MemoryEntry = {
-  id: string; kind: 'identity' | 'observation' | 'decision' | 'reflection' | 'work' | 'note';
+  id: string; kind: 'identity' | 'observation' | 'decision' | 'reflection' | 'work' | 'note' | 'board';
   content: string; cycleId: string | null; sourceIds: string[];
   visibility: 'public' | 'private'; supersedes: string | null; createdAt: string;
 };
@@ -62,6 +62,19 @@ export class Store {
       CREATE TABLE IF NOT EXISTS build_jobs (
         cycle_id TEXT PRIMARY KEY REFERENCES cycles(id), payload TEXT NOT NULL,
         lease_token TEXT, lease_until INTEGER NOT NULL DEFAULT 0
+      );
+      CREATE TABLE IF NOT EXISTS board_members (id TEXT PRIMARY KEY, payload TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS board_nudges (
+        id TEXT PRIMARY KEY, author_id TEXT NOT NULL REFERENCES board_members(id),
+        trigger_key TEXT NOT NULL, payload TEXT NOT NULL, UNIQUE(author_id, trigger_key)
+      );
+      CREATE TABLE IF NOT EXISTS board_deliveries (
+        attempt_id TEXT PRIMARY KEY REFERENCES attempts(id), cycle_id TEXT NOT NULL REFERENCES cycles(id),
+        stage TEXT NOT NULL, revision INTEGER NOT NULL, snapshot TEXT NOT NULL
+      );
+      CREATE TABLE IF NOT EXISTS board_responses (
+        cycle_id TEXT NOT NULL REFERENCES cycles(id), nudge_id TEXT NOT NULL REFERENCES board_nudges(id),
+        payload TEXT NOT NULL, PRIMARY KEY(cycle_id, nudge_id)
       );
       CREATE INDEX IF NOT EXISTS attempts_by_day ON attempts(day, model_call);
       CREATE INDEX IF NOT EXISTS memories_by_cycle ON memories(cycle_id);
@@ -184,9 +197,10 @@ export class Store {
     return row ? JSON.parse(row.output) as Result : undefined;
   }
   complete(lease: Lease, output: Result, next: Pick<Cycle, 'stage' | 'revision' | 'status' | 'outcome'> & { discoveredObservations?: Observation[] },
-    usage?: { inputTokens: number | null; outputTokens: number | null; responseId: string | null }) {
+    usage?: { inputTokens: number | null; outputTokens: number | null; responseId: string | null }, onCommit?: () => void) {
     return this.db.transaction(() => {
       this.assertLease(lease);
+      onCommit?.();
       const cycle = lease.cycle;
       this.db.prepare('INSERT INTO checkpoints VALUES(?,?,?,?)').run(cycle.id, cycle.stage, cycle.revision, JSON.stringify(output));
       this.db.prepare("UPDATE attempts SET status='completed',input_tokens=?,output_tokens=?,response_id=? WHERE id=?")

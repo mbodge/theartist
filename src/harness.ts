@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import {
-  agentSchemas, schemasFor, discoverySchema, isFounder, isFounderArtifact, observationsSchema, profileSchema, policySchema, StudioError,
+  agentSchemas, discoverySchema, isFounder, isFounderArtifact, observationsSchema, profileSchema, policySchema, StudioError,
   type AgentProvider, type AgentRequest, type AgentResponse, type AgentStage,
   type StudioArtifact, type Cycle, type Observation, type Policy, type Profile, type Result,
 } from './domain.js';
 import { Store } from './store.js';
+import { Board, responseSchema, needsBoardResponse, type BoardContext } from './board.js';
 import { agentInput } from './agents.js';
 import { inspectArtifact, prepareRelease, renderArtwork } from './artifacts.js';
 import { inspectExperiment, renderExperiment, releaseExperiment } from './founder.js';
@@ -22,11 +23,13 @@ export class Harness {
     const now = this.store.iso();
     // Bind before memory retrieval so another studio's history can never enter this context.
     this.store.bindStudio(isFounder(profile) ? 'founder' : 'artist', isFounder(profile) ? profile.instanceId : null);
+    const board = new Board(this.store);
+    if (!board.members().length) board.initialize();
     const interests = isFounder(profile) ? [profile.mandate, profile.audience, profile.thesis] : profile.preoccupations;
     const query = [...observations.map(o => o.title), ...interests].join(' ');
     const all = this.store.memories();
     const superseded = new Set(all.map(m => m.supersedes).filter(Boolean));
-    const recalled = this.store.memories(query).filter(m => m.visibility === 'public' && !superseded.has(m.id)).slice(0, 8);
+    const recalled = this.store.memories(query).filter(m => m.visibility === 'public' && m.kind !== 'board' && !superseded.has(m.id)).slice(0, 8);
     const cycle: Cycle = {
       id: randomUUID(), triggerKey, provider: this.provider.name, model: this.provider.model,
       profile, policy, observations, memory: this.store.recentMemory(),
@@ -49,12 +52,15 @@ export class Harness {
     const lease = this.store.claim(id);
     const cycle = lease.cycle;
     const isAgent = cycle.stage in agentSchemas;
+    const board = new Board(this.store);
+    let boardSnapshot: BoardContext | undefined;
     try {
       let output: Result;
       let usage: AgentResponse | undefined;
       const next = { stage: cycle.stage, revision: cycle.revision, status: cycle.status, outcome: cycle.outcome };
       if (isAgent) {
-        const context: Record<string, unknown> = {};
+        boardSnapshot = board.deliver(lease);
+        const context: Record<string, unknown> = { ...(boardSnapshot ? { board: boardSnapshot } : {}) };
         if (cycle.stage === 'research') context.discovery = this.store.checkpoint(id, 'discover') ?? null;
         if (!['discover', 'research'].includes(cycle.stage)) context.research = this.required(cycle, 'research');
         if (!['discover', 'research', 'propose'].includes(cycle.stage)) context.proposal = this.required(cycle, 'propose');
@@ -87,7 +93,8 @@ export class Harness {
         });
         try { usage = await Promise.race([this.provider.generate(request, controller.signal), timeout]); }
         finally { clearTimeout(timer!); }
-        output = schemasFor(cycle.profile)[request.stage].parse(usage.output) as Result;
+        const parsed = responseSchema(request).parse(usage.output) as Result;
+        output = needsBoardResponse(request) ? { ...(parsed.result as Result), boardResponses: parsed.boardResponses } : parsed;
         this.validateReferences(cycle, output);
       } else if (cycle.stage === 'render') {
         output = isFounder(cycle.profile)
@@ -128,7 +135,7 @@ export class Harness {
           text: `Web research synthesis (model summary, not a direct quotation or verified customer evidence): ${source.summary}`,
           observedAt: this.store.iso(), visibility: cycle.observations.some(o => o.visibility === 'private') ? 'private' : 'public',
         }))) : undefined;
-      return this.store.complete(lease, output, { ...next, ...(discoveredObservations ? { discoveredObservations } : {}) }, usage);
+      return this.store.complete(lease, output, { ...next, ...(discoveredObservations ? { discoveredObservations } : {}) }, usage, () => board.recordResponses(lease, boardSnapshot, output));
     } catch (error) {
       // Persist a bounded generic error; provider messages may include private request data.
       const message = error instanceof StudioError ? error.message : 'Stage failed; inspect the local exception and retry within the attempt allowance';

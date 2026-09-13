@@ -26,6 +26,19 @@ The founder produces a reviewed **experiment package** with a hypothesis, succes
 
 `npm run demo:founder` runs a standalone founder fixture without creating a named instance. See [configurable founders](docs/founders.md) for instance commands, evidence rules, and the path to a hosted product anyone can use.
 
+## A board that can nudge the supervisor
+
+The launcher gets a founding board seat and can appoint directors. Members submit persistent, attributed guidance; the artist or founder answers **adopt**, **defer**, or **decline** at its next proposal or decision. Guidance, replies, and the exact context delivered to the supervisor are retained in the public archive.
+
+```sh
+npm run studio -- init my-studio --launcher mike --name "Mike Bodge"
+npm run studio -- board nudge --instance my-studio --as mike \
+  --text "Prioritize one small, runnable deliverable before expanding scope."
+npm run studio -- board --instance my-studio
+```
+
+The board works for artists and founders. It does not require a vote before each action. This version uses local operator IDs, not authenticated accounts. See [the board guide](docs/board.md) for membership, withdrawal, delivery timing, and public records.
+
 ## Run it
 
 Requires Node.js 22+ and npm.
@@ -164,6 +177,7 @@ Source map:
 | `src/founder.ts` | Founder roles, fixtures, and experiment packages |
 | `src/builder.ts` | Durable coding jobs, recovery, execution memory and file verification |
 | `src/managed-builder.ts` | OpenAI Agents sandbox, commands and artifacts |
+| `src/board.ts` | Launcher/director membership, nudges, delivery snapshots and supervisor replies |
 | `src/instances.ts` | Founder creation and isolated instance paths |
 | `src/artifacts.ts` | Bounded rendering and local release preparation |
 | `src/archive.ts` | Portable public archive projection |

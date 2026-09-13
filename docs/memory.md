@@ -63,3 +63,7 @@ All model-authored material in an export is an explicit output requested by the 
 - Portable archive import with ID conflict checks and artifact verification.
 
 Do not let a vendor's automatic compaction become the only surviving account of what the artist has done.
+
+## Board memory
+
+Board membership, attributed nudges, withdrawals, and supervisor replies are durable governance records. Active nudges are delivered through a bounded board snapshot, independently of full-text recall. Each agent attempt saves the exact snapshot it saw; supervisor replies commit atomically with the proposal or decision. Archive version 4 includes public board records and withholds private-cycle replies and snapshots. See [the board contract](board.md).

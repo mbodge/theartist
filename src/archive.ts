@@ -4,6 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { hash, type Store } from './store.js';
 import { immutableWrite, inspectArtifact } from './artifacts.js';
 import { artifactPath, type BuildJob } from './builder.js';
+import { Board, boardInstructions } from './board.js';
 import { instructions } from './agents.js';
 import { founderInstructions, inspectExperiment } from './founder.js';
 import { isFounderArtifact, studioKind, StudioError, type StudioArtifact } from './domain.js';
@@ -24,9 +25,9 @@ export async function exportArchive(store: Store, studioRoot: string, destinatio
   const events = store.events(); // Event payloads are operational metadata, never provider responses.
   const builds = (store.builds() as unknown as BuildJob[]).filter(b => b.visibility === 'public' && ids.has(b.cycleId));
   const manifest = {
-    schemaVersion: 3, title: `${cycles[0]?.profile.name ?? 'Studio'} — public archive`,
+    schemaVersion: 4, title: `${cycles[0]?.profile.name ?? 'Studio'} — public archive`,
     explanation: 'Explicit studio outputs, decisions, sources, and reflections. Fixture runs are synthetic. Local releases are not public exhibitions. Credentials, raw provider traces, and private source-derived records are excluded.',
-    instructions, founderInstructions, cycles, memories, releases, builds, events,
+    instructions, founderInstructions, boardInstructions, board: new Board(store).publicRecord(ids), cycles, memories, releases, builds, events,
     withheldMemoryCount: allMemories.length - memories.length,
     eventChainValid: store.verifyEvents(),
   };

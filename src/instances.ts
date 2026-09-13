@@ -1,5 +1,7 @@
 import { mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
+import { Store } from './store.js';
+import { Board, boardMemberInputSchema } from './board.js';
 import { founderProfileSchema, StudioError } from './domain.js';
 
 export function instancePaths(root: string, id: string) {
@@ -9,8 +11,9 @@ export function instancePaths(root: string, id: string) {
     observations: join(directory, 'observations.json'), data: join(root, '.studio', 'instances', id) };
 }
 
-export async function createFounder(root: string, id: string, options: { mission?: string; audience?: string; venture?: string } = {}) {
+export async function createFounder(root: string, id: string, options: { mission?: string; audience?: string; venture?: string; launcher?: { id: string; name: string } } = {}) {
   const paths = instancePaths(root, id);
+  const launcher = boardMemberInputSchema.parse(options.launcher ?? { id: 'launcher', name: 'Studio launcher' });
   const template = founderProfileSchema.parse(JSON.parse(await readFile(join(root, 'config', 'founder.json'), 'utf8')));
   const profile = founderProfileSchema.parse({ ...template, name: id, instanceId: id,
     mandate: options.mission ?? template.mandate, audience: options.audience ?? template.audience,
@@ -25,6 +28,8 @@ export async function createFounder(root: string, id: string, options: { mission
   await writeFile(paths.profile, JSON.stringify(profile, null, 2) + '\n', { flag: 'wx' });
   await writeFile(paths.policy, policy, { flag: 'wx' });
   await writeFile(paths.observations, '[]\n', { flag: 'wx' });
+  const store = new Store(join(paths.data, 'studio.sqlite'));
+  try { store.bindStudio('founder', id); new Board(store).initialize(launcher); } finally { store.close(); }
   return { id, ...paths, nextCommand: `npm run studio -- tick --instance ${id}` };
 }
 

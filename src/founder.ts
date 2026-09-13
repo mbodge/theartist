@@ -75,7 +75,9 @@ const md = (text: string) => text.replaceAll('&', '&amp;').replaceAll('<', '&lt;
   .replaceAll('\\', '\\\\').replace(/([`*_{}\[\]()#!|])/g, '\\$1');
 
 export async function renderExperiment(root: string, proposalOutput: Result, makerOutput: Result, observations: Observation[] = []): Promise<FounderArtifact> {
-  const proposal = founderProposalSchema.parse(proposalOutput), experiment = experimentSchema.parse(makerOutput);
+  // Governance replies belong to the decision record, outside the immutable experiment specification.
+  const { boardResponses: _boardResponses, ...proposalSpec } = proposalOutput;
+  const proposal = founderProposalSchema.parse(proposalSpec), experiment = experimentSchema.parse(makerOutput);
   if (proposal.action !== 'make' || proposal.successCriterion === null) throw new StudioError('Only experiment proposals with a success criterion can be rendered');
   const sources = observations.filter(source => proposal.sourceIds.includes(source.id));
   const spec = JSON.stringify({ renderer: 'experiment-package-v2', validationStatus: 'unvalidated', proposal, experiment, sources });

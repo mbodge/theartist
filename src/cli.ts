@@ -11,6 +11,7 @@ import { exportArchive } from './archive.js';
 import { Store } from './store.js';
 import { createFounder, instancePaths, listFounders } from './instances.js';
 import { Builder, buildTerminal, type BuildJob } from './builder.js';
+import { Board } from './board.js';
 import { ManagedBuilder } from './managed-builder.js';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
@@ -19,6 +20,12 @@ const help = `theartist — local studio harness
   npm run demo                            Offline fixture cycle + public archive
   npm run demo:founder                    Offline founder experiment package
   npm run studio -- init <name>           Create a configurable founder instance
+  npm run studio -- board                  Inspect members, nudges, and supervisor replies
+  npm run studio -- board init --as <id> --name <name>
+  npm run studio -- board add <id> --as <launcher> --name <name>
+  npm run studio -- board remove <id> --as <launcher>
+  npm run studio -- board nudge --as <id> --text <text> [--key <key>]
+  npm run studio -- board withdraw <nudge-id> --as <id> --text <reason>
   npm run studio -- founders              List founder instances
   npm run studio -- start --key <key>      Persist a new cycle; does not execute it
   npm run studio -- run <id>               Run/resume a cycle to completion
@@ -36,6 +43,9 @@ const help = `theartist — local studio harness
 Options:
   --studio artist|founder     Studio role bundle (artist by default)
   --instance <name>           Founder configuration and isolated memory directory
+  --launcher <id>            Launching board member (init only; default launcher)
+  --name <text>              Board member display name
+  --as <id>                  Local board attribution; not authentication
   --mission <text>            Initial founder mandate (init only)
   --audience <text>           Intended audience (init only)
   --venture <text>            Venture type, freely described (init only)
@@ -60,6 +70,7 @@ async function main() {
   const { positionals, values } = parseArgs({ allowPositionals: true, options: {
     provider: { type: 'string', default: 'fixture' }, observations: { type: 'string' },
     studio: { type: 'string' }, instance: { type: 'string' },
+    launcher: { type: 'string' }, name: { type: 'string' }, as: { type: 'string' },
     mission: { type: 'string' }, audience: { type: 'string' }, venture: { type: 'string' },
     profile: { type: 'string' }, policy: { type: 'string' },
     data: { type: 'string' }, out: { type: 'string' },
@@ -72,7 +83,7 @@ async function main() {
   const json = (value: unknown) => console.log(JSON.stringify(value, null, 2));
   if (command === 'init') {
     const id = positionals[1]; if (!id) throw new StudioError('init needs a founder name');
-    json(await createFounder(projectRoot, id, { mission: values.mission, audience: values.audience, venture: values.venture })); return;
+    json(await createFounder(projectRoot, id, { mission: values.mission, audience: values.audience, venture: values.venture, launcher: { id: values.launcher ?? 'launcher', name: values.name ?? 'Studio launcher' } })); return;
   }
   if (command === 'founders') { json(await listFounders(projectRoot)); return; }
   const mode = values.studio ?? (values.instance ? 'founder' : 'artist');
@@ -87,7 +98,29 @@ async function main() {
   const store = new Store(join(data, 'studio.sqlite'));
   try {
     store.bindStudio(mode as 'artist' | 'founder', values.instance ?? null);
-    if (command === 'status') { json({ paused: store.paused(), cycles: store.list().map(c => ({ id: c.id, stage: c.stage, status: c.status, provider: c.provider, revision: c.revision, lastError: c.lastError })), builds: store.builds().map(b => ({ cycleId: b.cycleId, status: b.status, sessionId: b.sessionId, error: b.error })), attempts: store.attempts(), eventChainValid: store.verifyEvents() }); return; }
+    const board = new Board(store);
+    if (command === 'board') {
+      if (values.private) throw new StudioError('Board records are public; private board nudges are not supported');
+      const action = positionals[1] ?? 'show';
+      if (action === 'show') { json(board.view()); return; }
+      const actor = values.as;
+      if (!actor) throw new StudioError('Board changes require --as with the local member ID');
+      const target = positionals[2];
+      if (action === 'init') json(board.initialize({ id: actor, name: values.name ?? actor }));
+      else if (action === 'add') {
+        if (!target || !values.name) throw new StudioError('board add needs a member ID and --name');
+        json(board.addMember(actor, { id: target, name: values.name }));
+      } else if (action === 'remove') {
+        if (!target) throw new StudioError('board remove needs a member ID');
+        json(board.removeMember(actor, target));
+      } else if (action === 'nudge') json(board.nudge(actor, values.text ?? '', values.key ?? randomUUID()));
+      else if (action === 'withdraw') {
+        if (!target) throw new StudioError('board withdraw needs a nudge ID');
+        json(board.withdraw(actor, target, values.text ?? ''));
+      } else throw new StudioError(`Unknown board action ${action}`);
+      return;
+    }
+    if (command === 'status') { json({ paused: store.paused(), board: { members: board.members().filter(m => m.active).length, activeNudges: board.nudges().filter(n => !n.withdrawnAt).length }, cycles: store.list().map(c => ({ id: c.id, stage: c.stage, status: c.status, provider: c.provider, revision: c.revision, lastError: c.lastError })), builds: store.builds().map(b => ({ cycleId: b.cycleId, status: b.status, sessionId: b.sessionId, error: b.error })), attempts: store.attempts(), eventChainValid: store.verifyEvents() }); return; }
     if (command === 'memory') { json(store.memories(positionals.slice(1).join(' ') || undefined)); return; }
     if (command === 'note') {
       if (!values.text?.trim() || values.text.length > 8000) throw new StudioError('note needs --text between 1 and 8000 characters');
@@ -96,7 +129,7 @@ async function main() {
     }
     if (command === 'show') {
       const id = positionals[1]; if (!id) throw new StudioError('show needs a cycle ID');
-      json({ cycle: store.get(id), memories: store.memories().filter(m => m.cycleId === id), build: store.builds().find(b => b.cycleId === id) ?? null }); return;
+      json({ cycle: store.get(id), boardResponses: board.responses().filter(r => r.cycleId === id), memories: store.memories().filter(m => m.cycleId === id), build: store.builds().find(b => b.cycleId === id) ?? null }); return;
     }
     if (command === 'close') {
       const id = positionals[1]; if (!id) throw new StudioError('close needs a cycle ID');

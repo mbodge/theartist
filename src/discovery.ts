@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import type OpenAI from 'openai';
 import { discoverySchema, isFounder, StudioError, type AgentRequest, type AgentResponse } from './domain.js';
+import { boardInstructions } from './board.js';
 import { founderInstructions } from './founder.js';
 
 function publicUrl(value: string): string | null {
@@ -58,7 +59,7 @@ export async function discover(client: OpenAI, model: string, request: AgentRequ
   if (!isFounder(request.cycle.profile) || limit < 1) throw new StudioError('Web discovery is disabled for this cycle');
   // API-documented field; SDK 7.15 exposes it on ResponseCreate but omits it on this REST params type.
   const params: OpenAI.Responses.ResponseCreateParamsNonStreaming & { max_tool_calls: number } = {
-    model, instructions: `${founderInstructions.discover}\nYou have at most ${limit} web tool calls, including searches and page reads. Today is ${new Date().toISOString().slice(0, 10)}.`,
+    model, instructions: `${founderInstructions.discover}\n${boardInstructions}\nYou have at most ${limit} web tool calls, including searches and page reads. Today is ${new Date().toISOString().slice(0, 10)}.`,
     input: JSON.stringify(input),
     tools: [{ type: 'web_search', search_context_size: 'medium', external_web_access: true }],
     tool_choice: 'required', max_tool_calls: limit,

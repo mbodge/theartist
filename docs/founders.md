@@ -19,7 +19,7 @@ studios/my-founder/
   observations.json     # Input records; excluded from Git by default
 
 .studio/instances/my-founder/
-  studio.sqlite         # Created on first run; isolated memory and history
+  studio.sqlite         # Board created at launch; isolated memory and history
   artifacts/            # Created as experiments are rendered
   releases/
   builds/               # Source, tests, and artifacts from coding jobs
@@ -54,6 +54,8 @@ npm run studio -- export --instance my-founder
 The repository includes an `example-founder` configuration and a [public fixture archive](../examples/public-founder/latest.json). If an ignored observation file is absent after cloning, the instance starts with no observations.
 
 To use live model calls, configure `.env` as described in the main README and pass `--provider openai` to `start`, `tick`, `run`, or `step`. Live mode uses the founder's mission and schemas. The [first live Astra trial](trials/astra-001.md) records a fresh generic founder abstaining without supplied evidence. The [second trial](trials/astra-discovery-001.md) adds web discovery and an explicit independent-selection mandate: it researched alternatives and produced a reviewed experiment package. Both original decision records and token usage are checked in for inspection.
+
+New founders also receive a [board](board.md), with the launcher as its first member. Use `--launcher ID --name "Display name"` at initialization to identify that member. Directors can nudge the founder and receive explicit responses in the decision record.
 
 The command line checks the instance ID stored in the data directory. Pointing one founder at another founder's directory produces an error. Artist and founder stores cannot be mixed. Each founder has its own limits and logs; these are per-instance allowances, not yet an account-wide billing limit.
 

@@ -42,7 +42,7 @@ The worker cancels running work when it observes a studio pause or the deadline.
 
 Each build retains its accepted input and hash, operating limits, session and turn identifiers, observed command output and exit codes, explicit assistant summary, usage, errors, and file hashes. Reasoning items are excluded. A compact result is added to durable memory; later founder cycles receive the previous execution status and file references.
 
-Files are under `.studio/instances/NAME/builds/BUILD_ID/prototype/`. Archive schema version 3 includes public build records and hash-verified copies of their files. Private cycles and their builds are excluded. Exporting produces a local snapshot; it does not automatically publish the snapshot on a website or push generated code to GitHub.
+Files are under `.studio/instances/NAME/builds/BUILD_ID/prototype/`. Archive schema version 4 (build records introduced in version 3) includes public build records and hash-verified copies of their files. Private cycles and their builds are excluded. Exporting produces a local snapshot; it does not automatically publish the snapshot on a website or push generated code to GitHub.
 
 ## Provider references
 

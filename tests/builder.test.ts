@@ -4,6 +4,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 import { Builder, artifactPath, type BuildJob, type BuildTransport, type RemoteBuild } from '../src/builder.js';
+import { Board } from '../src/board.js';
 import { executionLog } from '../src/managed-builder.js';
 import { Harness } from '../src/harness.js';
 import { FixtureProvider } from '../src/agents.js';
@@ -30,7 +31,7 @@ class FakeTransport implements BuildTransport {
   async cancel() { this.cancels++; }
   async cleanup() { this.deletes++; }
 }
-async function setup(t: { after: (fn: () => Promise<void>) => void }, privateInput = false) {
+async function setup(t: { after: (fn: () => Promise<void>) => void }, privateInput = false, governance = false) {
   const root = await mkdtemp(join(tmpdir(), 'builder-test-'));
   const fixture = new FixtureProvider();
   // Mock live provider so the acceptance path is tested without any network calls.
@@ -39,6 +40,7 @@ async function setup(t: { after: (fn: () => Promise<void>) => void }, privateInp
   t.after(async () => { h.store.close(); await rm(root, { recursive: true, force: true }); });
   const observations = privateInput ? inputs.map(o => ({ ...o, visibility: 'private' as const, text: 'SECRET_BUILD_INPUT' })) : inputs;
   const cycle = h.start('build-test', profile, policy, observations);
+  if (governance) new Board(h.store).nudge('launcher', 'Build one inspectable prototype.', 'prototype');
   await h.run(cycle.id);
   const transport = new FakeTransport();
   const builder = new Builder(root, h.store, transport);
@@ -222,4 +224,17 @@ test('rejected session deletion keeps cancellation unresolved and preserves the 
   assert.equal(builder.get(cycle.id)?.status, 'cancelling');
   const next = h.start('blocked-build', profile, { ...policy, maxCallsPerDay: 60 }, inputs); await h.run(next.id);
   await assert.rejects(builder.enqueue(next.id, { ...policy.builder!, maxJobsPerDay: 2 }), /Another build is still active/);
+});
+
+
+test('build briefs retain the supervisor board decision and frozen guidance across later withdrawals', async t => {
+  const { h, cycle, builder } = await setup(t, false, true);
+  const job = await builder.enqueue(cycle.id, policy.builder!);
+  const brief = JSON.parse(job.brief);
+  assert.equal(brief.boardResponses[0].nudge.text, 'Build one inspectable prototype.');
+  assert.equal(brief.boardResponses[0].response.disposition, 'defer');
+  assert.equal(brief.supervisorDecision.action, 'accept');
+  const board = new Board(h.store);
+  board.withdraw('launcher', board.nudges()[0]!.id, 'Later priorities');
+  assert.equal((await builder.enqueue(cycle.id, policy.builder!)).briefHash, job.briefHash);
 });

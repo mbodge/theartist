@@ -1,0 +1,469 @@
+{
+  "fixture": true,
+  "description": "Offline delivery and persistence example. Synthetic supervisor replies defer guidance and do not demonstrate independent judgment. The second nudge was added after the proposal and reached the acceptance decision.",
+  "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+  "board": {
+    "members": [
+      {
+        "id": "fixture-launcher",
+        "name": "Fixture launcher",
+        "role": "launcher",
+        "active": true,
+        "addedAt": "2026-09-13T22:08:54.584Z",
+        "addedBy": "fixture-launcher",
+        "removedAt": null
+      },
+      {
+        "id": "fixture-director",
+        "name": "Fixture director",
+        "role": "director",
+        "active": true,
+        "addedAt": "2026-09-13T22:08:54.585Z",
+        "addedBy": "fixture-launcher",
+        "removedAt": null
+      }
+    ],
+    "nudges": [
+      {
+        "id": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+        "key": "scope",
+        "authorId": "fixture-launcher",
+        "text": "Prefer a small, inspectable deliverable.",
+        "createdAt": "2026-09-13T22:08:54.585Z",
+        "withdrawnAt": "2026-09-13T22:08:54.605Z",
+        "withdrawnBy": "fixture-launcher",
+        "withdrawalReason": "Fixture withdrawal demonstrates preserved history."
+      },
+      {
+        "id": "b79189c4-4de4-4018-ade7-2a890235b454",
+        "key": "check",
+        "authorId": "fixture-director",
+        "text": "Keep the acceptance check reproducible.",
+        "createdAt": "2026-09-13T22:08:54.595Z",
+        "withdrawnAt": null,
+        "withdrawnBy": null,
+        "withdrawalReason": null
+      }
+    ],
+    "responses": [
+      {
+        "nudgeId": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+        "disposition": "defer",
+        "rationale": "Synthetic fixture: delivery is acknowledged, but this deterministic demo cannot exercise independent judgment about the nudge.",
+        "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+        "stage": "propose",
+        "revision": 0,
+        "attemptId": "d8a2a927-a69e-4cb5-ba7e-4278aa1d917d",
+        "createdAt": "2026-09-13T22:08:54.594Z",
+        "visibility": "public"
+      },
+      {
+        "nudgeId": "b79189c4-4de4-4018-ade7-2a890235b454",
+        "disposition": "defer",
+        "rationale": "Synthetic fixture: delivery is acknowledged, but this deterministic demo cannot exercise independent judgment about the nudge.",
+        "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+        "stage": "decide",
+        "revision": 0,
+        "attemptId": "2c57b709-f8da-4985-a2cc-6908ac3ee59a",
+        "createdAt": "2026-09-13T22:08:54.603Z",
+        "visibility": "public"
+      }
+    ],
+    "deliveries": [
+      {
+        "attemptId": "4ce480eb-3750-4578-a26d-e5b088bf04ab",
+        "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+        "stage": "research",
+        "revision": 0,
+        "snapshot": {
+          "members": [
+            {
+              "id": "fixture-launcher",
+              "name": "Fixture launcher",
+              "role": "launcher",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.584Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            },
+            {
+              "id": "fixture-director",
+              "name": "Fixture director",
+              "role": "director",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.585Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            }
+          ],
+          "nudges": [
+            {
+              "id": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "key": "scope",
+              "authorId": "fixture-launcher",
+              "text": "Prefer a small, inspectable deliverable.",
+              "createdAt": "2026-09-13T22:08:54.585Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            }
+          ],
+          "responses": [],
+          "pendingNudgeIds": []
+        }
+      },
+      {
+        "attemptId": "d8a2a927-a69e-4cb5-ba7e-4278aa1d917d",
+        "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+        "stage": "propose",
+        "revision": 0,
+        "snapshot": {
+          "members": [
+            {
+              "id": "fixture-launcher",
+              "name": "Fixture launcher",
+              "role": "launcher",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.584Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            },
+            {
+              "id": "fixture-director",
+              "name": "Fixture director",
+              "role": "director",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.585Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            }
+          ],
+          "nudges": [
+            {
+              "id": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "key": "scope",
+              "authorId": "fixture-launcher",
+              "text": "Prefer a small, inspectable deliverable.",
+              "createdAt": "2026-09-13T22:08:54.585Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            }
+          ],
+          "responses": [],
+          "pendingNudgeIds": [
+            "32d176ef-d735-49c1-a4a9-5e99fdca2c02"
+          ]
+        }
+      },
+      {
+        "attemptId": "cb4e878e-ee08-481b-90dd-7beaca040cc5",
+        "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+        "stage": "make",
+        "revision": 0,
+        "snapshot": {
+          "members": [
+            {
+              "id": "fixture-launcher",
+              "name": "Fixture launcher",
+              "role": "launcher",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.584Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            },
+            {
+              "id": "fixture-director",
+              "name": "Fixture director",
+              "role": "director",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.585Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            }
+          ],
+          "nudges": [
+            {
+              "id": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "key": "scope",
+              "authorId": "fixture-launcher",
+              "text": "Prefer a small, inspectable deliverable.",
+              "createdAt": "2026-09-13T22:08:54.585Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            },
+            {
+              "id": "b79189c4-4de4-4018-ade7-2a890235b454",
+              "key": "check",
+              "authorId": "fixture-director",
+              "text": "Keep the acceptance check reproducible.",
+              "createdAt": "2026-09-13T22:08:54.595Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            }
+          ],
+          "responses": [
+            {
+              "nudgeId": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "disposition": "defer",
+              "rationale": "Synthetic fixture: delivery is acknowledged, but this deterministic demo cannot exercise independent judgment about the nudge.",
+              "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+              "stage": "propose",
+              "revision": 0,
+              "attemptId": "d8a2a927-a69e-4cb5-ba7e-4278aa1d917d",
+              "createdAt": "2026-09-13T22:08:54.594Z",
+              "visibility": "public"
+            }
+          ],
+          "pendingNudgeIds": []
+        }
+      },
+      {
+        "attemptId": "eacc65b8-5ef5-4ccb-a1a1-132d8bd44938",
+        "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+        "stage": "critique",
+        "revision": 0,
+        "snapshot": {
+          "members": [
+            {
+              "id": "fixture-launcher",
+              "name": "Fixture launcher",
+              "role": "launcher",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.584Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            },
+            {
+              "id": "fixture-director",
+              "name": "Fixture director",
+              "role": "director",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.585Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            }
+          ],
+          "nudges": [
+            {
+              "id": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "key": "scope",
+              "authorId": "fixture-launcher",
+              "text": "Prefer a small, inspectable deliverable.",
+              "createdAt": "2026-09-13T22:08:54.585Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            },
+            {
+              "id": "b79189c4-4de4-4018-ade7-2a890235b454",
+              "key": "check",
+              "authorId": "fixture-director",
+              "text": "Keep the acceptance check reproducible.",
+              "createdAt": "2026-09-13T22:08:54.595Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            }
+          ],
+          "responses": [
+            {
+              "nudgeId": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "disposition": "defer",
+              "rationale": "Synthetic fixture: delivery is acknowledged, but this deterministic demo cannot exercise independent judgment about the nudge.",
+              "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+              "stage": "propose",
+              "revision": 0,
+              "attemptId": "d8a2a927-a69e-4cb5-ba7e-4278aa1d917d",
+              "createdAt": "2026-09-13T22:08:54.594Z",
+              "visibility": "public"
+            }
+          ],
+          "pendingNudgeIds": []
+        }
+      },
+      {
+        "attemptId": "2c57b709-f8da-4985-a2cc-6908ac3ee59a",
+        "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+        "stage": "decide",
+        "revision": 0,
+        "snapshot": {
+          "members": [
+            {
+              "id": "fixture-launcher",
+              "name": "Fixture launcher",
+              "role": "launcher",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.584Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            },
+            {
+              "id": "fixture-director",
+              "name": "Fixture director",
+              "role": "director",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.585Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            }
+          ],
+          "nudges": [
+            {
+              "id": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "key": "scope",
+              "authorId": "fixture-launcher",
+              "text": "Prefer a small, inspectable deliverable.",
+              "createdAt": "2026-09-13T22:08:54.585Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            },
+            {
+              "id": "b79189c4-4de4-4018-ade7-2a890235b454",
+              "key": "check",
+              "authorId": "fixture-director",
+              "text": "Keep the acceptance check reproducible.",
+              "createdAt": "2026-09-13T22:08:54.595Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            }
+          ],
+          "responses": [
+            {
+              "nudgeId": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "disposition": "defer",
+              "rationale": "Synthetic fixture: delivery is acknowledged, but this deterministic demo cannot exercise independent judgment about the nudge.",
+              "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+              "stage": "propose",
+              "revision": 0,
+              "attemptId": "d8a2a927-a69e-4cb5-ba7e-4278aa1d917d",
+              "createdAt": "2026-09-13T22:08:54.594Z",
+              "visibility": "public"
+            }
+          ],
+          "pendingNudgeIds": [
+            "b79189c4-4de4-4018-ade7-2a890235b454"
+          ]
+        }
+      },
+      {
+        "attemptId": "1e2a069b-d870-4456-96ed-d2b826356729",
+        "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+        "stage": "reflect",
+        "revision": 0,
+        "snapshot": {
+          "members": [
+            {
+              "id": "fixture-launcher",
+              "name": "Fixture launcher",
+              "role": "launcher",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.584Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            },
+            {
+              "id": "fixture-director",
+              "name": "Fixture director",
+              "role": "director",
+              "active": true,
+              "addedAt": "2026-09-13T22:08:54.585Z",
+              "addedBy": "fixture-launcher",
+              "removedAt": null
+            }
+          ],
+          "nudges": [
+            {
+              "id": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "key": "scope",
+              "authorId": "fixture-launcher",
+              "text": "Prefer a small, inspectable deliverable.",
+              "createdAt": "2026-09-13T22:08:54.585Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            },
+            {
+              "id": "b79189c4-4de4-4018-ade7-2a890235b454",
+              "key": "check",
+              "authorId": "fixture-director",
+              "text": "Keep the acceptance check reproducible.",
+              "createdAt": "2026-09-13T22:08:54.595Z",
+              "withdrawnAt": null,
+              "withdrawnBy": null,
+              "withdrawalReason": null
+            }
+          ],
+          "responses": [
+            {
+              "nudgeId": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+              "disposition": "defer",
+              "rationale": "Synthetic fixture: delivery is acknowledged, but this deterministic demo cannot exercise independent judgment about the nudge.",
+              "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+              "stage": "propose",
+              "revision": 0,
+              "attemptId": "d8a2a927-a69e-4cb5-ba7e-4278aa1d917d",
+              "createdAt": "2026-09-13T22:08:54.594Z",
+              "visibility": "public"
+            },
+            {
+              "nudgeId": "b79189c4-4de4-4018-ade7-2a890235b454",
+              "disposition": "defer",
+              "rationale": "Synthetic fixture: delivery is acknowledged, but this deterministic demo cannot exercise independent judgment about the nudge.",
+              "cycleId": "7bccd964-a40a-4420-a6f4-d2bb55b63977",
+              "stage": "decide",
+              "revision": 0,
+              "attemptId": "2c57b709-f8da-4985-a2cc-6908ac3ee59a",
+              "createdAt": "2026-09-13T22:08:54.603Z",
+              "visibility": "public"
+            }
+          ],
+          "pendingNudgeIds": []
+        }
+      }
+    ]
+  },
+  "proposal": {
+    "action": "make",
+    "rationale": "Design a cheap falsifiable test of the fictional workflow problem.",
+    "title": "First experiment: A new founder",
+    "targetAudience": "Open. Select and justify a provisional beneficiary through research; do not wait for the owner to select an industry.",
+    "problem": "The need addressed by this mission remains untested: Independently discover a worthwhile venture. Research public evidence, select a provisional audience and problem when none is specified, compare alternatives, and design a bounded experiment. Retain what is learned and revise direction when evidence warrants it.",
+    "hypothesis": "A small facilitated pilot may establish whether the intended audience can achieve a useful outcome related to the mission.",
+    "smallestTest": "Facilitate one representative audience activity manually before committing to a full venture.",
+    "successCriterion": {
+      "metric": "Participants completing the agreed activity without facilitator intervention",
+      "target": 3,
+      "unit": "participants out of 5 recruited",
+      "windowDays": 7
+    },
+    "stopCondition": "Stop if the need is not recurring or fewer than three of five participants complete the activity.",
+    "maintenancePlan": "Assign an owner for feedback triage and delete test data after the agreed retention period.",
+    "sourceIds": [],
+    "previousWorkIds": [],
+    "boardResponses": [
+      {
+        "nudgeId": "32d176ef-d735-49c1-a4a9-5e99fdca2c02",
+        "disposition": "defer",
+        "rationale": "Synthetic fixture: delivery is acknowledged, but this deterministic demo cannot exercise independent judgment about the nudge."
+      }
+    ]
+  },
+  "decision": {
+    "action": "accept",
+    "rationale": "Accept the fixture package as an unvalidated experiment design.",
+    "revisionInstructions": [],
+    "boardResponses": [
+      {
+        "nudgeId": "b79189c4-4de4-4018-ade7-2a890235b454",
+        "disposition": "defer",
+        "rationale": "Synthetic fixture: delivery is acknowledged, but this deterministic demo cannot exercise independent judgment about the nudge."
+      }
+    ]
+  },
+  "eventChainValid": true
+}
