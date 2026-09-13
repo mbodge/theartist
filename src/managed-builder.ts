@@ -89,6 +89,10 @@ export class ManagedBuilder implements BuildTransport {
   }
   async cleanup(job: BuildJob) {
     try { await this.client.beta.agents.sessions.delete(job.sessionId!); }
-    catch (error) { if (!(error instanceof OpenAI.APIError && error.status === 404)) throw error; }
+    catch (error) {
+      if (error instanceof OpenAI.APIError && error.status === 404) return;
+      if (error instanceof OpenAI.APIError && error.status === 409) throw new StudioError('Provider still reports an active session and refused deletion; cancellation remains unresolved. No new build will be dispatched.');
+      throw error;
+    }
   }
 }

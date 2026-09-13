@@ -1,0 +1,16 @@
+SYNTHETIC FIXTURE — invented solely for testing; no real issuer.
+Section 1. Eligibility
+Bidders must be registered to conduct business in Example State.
+Section 2. Submission deadline
+Proposals must be submitted by 2025-02-01 at 17:00 UTC.
+Section 3. Response contents
+Proposals must include a fixed-price budget.
+If subcontractors are used, proposals must include each subcontractor's role.
+Section 4. Submission channel
+Bidders must submit proposals through the procurement portal.
+Section 5. Preferences
+Teams should describe their approach to accessibility testing.
+Section 6. Rejection
+Late proposals will be rejected and shall receive no evaluation.
+Section 7. Other delivery rule
+Delivery of an editable project schedule is a condition of acceptance.

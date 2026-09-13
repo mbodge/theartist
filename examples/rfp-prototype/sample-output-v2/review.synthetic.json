@@ -1,0 +1,106 @@
+{
+  "evidence_type": "synthetic",
+  "candidate_sha256": "bb2589055df8178673295b370676dd39b047aed7c91b1000a54f1c19a44bcf01",
+  "reference_sha256": "1a9f924dfa72cc67d4e21d4cb13efc3afe25025c862c4e0e9be92ff5af924672",
+  "reviewer": "SYNTHETIC fixture adjudicator",
+  "review_basis": "Authored synthetic expected mappings; no independent review",
+  "correction_minutes": null,
+  "reference_disputes": [],
+  "rows": [
+    {
+      "candidate_id": "R001",
+      "matches": [
+        "F1"
+      ],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R002",
+      "matches": [],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R003",
+      "matches": [
+        "F3"
+      ],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R004",
+      "matches": [
+        "F4"
+      ],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R005",
+      "matches": [
+        "F5"
+      ],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R006",
+      "matches": [
+        "F6"
+      ],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R007",
+      "matches": [
+        "F7"
+      ],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R008",
+      "matches": [
+        "F2"
+      ],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R009",
+      "matches": [
+        "F9"
+      ],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R010",
+      "matches": [],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    },
+    {
+      "candidate_id": "R011",
+      "matches": [
+        "F10"
+      ],
+      "supported": true,
+      "citation_correct": true,
+      "notes": "Synthetic fixture mapping; citation support asserted only for this authored fixture"
+    }
+  ]
+}

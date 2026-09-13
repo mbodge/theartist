@@ -1,0 +1,110 @@
+{
+  "kind": "source_recovery_after_managed_artifact_handoff_failure",
+  "buildId": "4a06715e-0703-41c2-bee9-0ea38c85a8dd",
+  "cycleId": "6d389293-dbd0-47ff-b83e-5713af7c6330",
+  "source": "Literal heredocs from captured command_execution.command strings, plus recorded edits in commands 7 and 9 (zero-indexed). Shell commands were parsed with shlex, never executed during extraction. Python source was reviewed before local verification. README and build-report were rewritten to identify recovery.",
+  "hostedArtifactDownload": false,
+  "localVerification": "recovery-test-results.json",
+  "files": [
+    {
+      "path": "README.md",
+      "sha256": "55270bb71cde401ec78fa62b512229a68c0d33e7de3275a26357e6d73f64cd2f",
+      "bytes": 2478
+    },
+    {
+      "path": "build-report.md",
+      "sha256": "38182f8bccf47436480be722983c07dbd0c464f3e5e18bb1812152ddfe2f6b8a",
+      "bytes": 1417
+    },
+    {
+      "path": "recovery-test-results.json",
+      "sha256": "4db6a0b152699a428d513653a9a24e53c7058cf56c294915f55eed8444790978",
+      "bytes": 5859
+    },
+    {
+      "path": "rfp_review.py",
+      "sha256": "644ee9983f891e4c90bd8195e3743806167258f150f7c4f9d43b5593ec8e2c6d",
+      "bytes": 21432
+    },
+    {
+      "path": "run_sample.py",
+      "sha256": "004644b5a0e82f1d035d30d9b9472b38973d373f471f3bc72e1f43261bb5234a",
+      "bytes": 3349
+    },
+    {
+      "path": "sample-output-v2/candidate/checklist.csv",
+      "sha256": "8a1eabf8e1c95002327d5d0ff5314ad8a97e55c61f13d7fba5d91e6d5924561c",
+      "bytes": 5370
+    },
+    {
+      "path": "sample-output-v2/candidate/checklist.md",
+      "sha256": "cf2eaf9fdf9c0d71c2cf8704b87f89f1b91833d1a608a06267d65a9868e9d22c",
+      "bytes": 2049
+    },
+    {
+      "path": "sample-output-v2/candidate/raw.json",
+      "sha256": "eb24c10a437b06dc1c00d66b603fe92429104ca624510d25dcd08f5721a97864",
+      "bytes": 13714
+    },
+    {
+      "path": "sample-output-v2/candidate/review-template.json",
+      "sha256": "f5267593bfa14fc31b7e3733126b4cfb08d641006e5a04dbccfe15a9c7327566",
+      "bytes": 1800
+    },
+    {
+      "path": "sample-output-v2/commands.json",
+      "sha256": "866777cd2f82b884b9c9a26c83be4cf4514d879be611b653e8383e965911279e",
+      "bytes": 3234
+    },
+    {
+      "path": "sample-output-v2/reference.frozen.json",
+      "sha256": "56cbfc5af7b586792c5d86ea13185ee758df39614fcd0ebf8caa8a9ee5873472",
+      "bytes": 2509
+    },
+    {
+      "path": "sample-output-v2/review.synthetic.json",
+      "sha256": "f2aa6ec273196dcc4a4aea294c9e8100706315ba8a262b85f8e56a73a2cf6b65",
+      "bytes": 3040
+    },
+    {
+      "path": "sample-output-v2/score.json",
+      "sha256": "3f0d563c5d8ff176af5da7f4417f92c8b142f790f1ace9d1974e7dc50a7d33e6",
+      "bytes": 1054
+    },
+    {
+      "path": "samples/amendment.txt",
+      "sha256": "e44c85b38b01d698418aa1b5f28ded62e1bff594bd4aa1f17e76f8bcac0738f8",
+      "bytes": 278
+    },
+    {
+      "path": "samples/original.txt",
+      "sha256": "7491cb902b0dbd55bcd8827c22a960322923bf44b088c29d537e2f6999c0a2a3",
+      "bytes": 760
+    },
+    {
+      "path": "samples/package.json",
+      "sha256": "0e16598b3a98e6038ee7044f9de4c01ba445d59c0dbd7330c25c2bf9b8429467",
+      "bytes": 724
+    },
+    {
+      "path": "samples/qa.txt",
+      "sha256": "9ad37f9c94ef93c8a4ec6e296e0defd90c30f3d46347483f630dfb6653e224e8",
+      "bytes": 209
+    },
+    {
+      "path": "samples/reference.json",
+      "sha256": "94f80f8dcdc7e28bc4ff6fc399a0949cab420be80f33aea942c9c0a89803f73f",
+      "bytes": 1874
+    },
+    {
+      "path": "test_review.py",
+      "sha256": "e927635fa9450b714786b9108032a87fc4532db4805fb7fb6ccd517c878f4a10",
+      "bytes": 11666
+    },
+    {
+      "path": "verify.py",
+      "sha256": "eac7160e4ab6cbfd1e249c1a8b10476a627d8b6c542c8665a08e7a14e10f020e",
+      "bytes": 1973
+    }
+  ]
+}

@@ -1,0 +1,387 @@
+{
+  "schema_version": 1,
+  "workflow_version": "0.1.1",
+  "workflow_source_sha256": "644ee9983f891e4c90bd8195e3743806167258f150f7c4f9d43b5593ec8e2c6d",
+  "generated_at": "2026-09-13T21:55:51.605251+00:00",
+  "evidence_type": "synthetic",
+  "package_id": "SYNTHETIC-WEB-001",
+  "manifest_sha256": "ac95f4e6dc8d34c6dd88803864a142695d8ef501ae274e344403a52245996df1",
+  "manifest": {
+    "package_id": "SYNTHETIC-WEB-001",
+    "evidence_type": "synthetic",
+    "issuer": "FICTIONAL Example Municipality — software fixture only",
+    "project": "Synthetic website RFP; not an actual procurement",
+    "verification": {
+      "note": "No official sources or closure claims. All documents are authored synthetic test data."
+    },
+    "documents": [
+      {
+        "id": "RFP",
+        "path": "original.txt",
+        "version": "1",
+        "date": "2025-01-01",
+        "kind": "original",
+        "authority_verified": true
+      },
+      {
+        "id": "A1",
+        "path": "amendment.txt",
+        "version": "1",
+        "date": "2025-01-03",
+        "kind": "amendment",
+        "authority_verified": true
+      },
+      {
+        "id": "QA",
+        "path": "qa.txt",
+        "version": "1",
+        "date": "2025-01-04",
+        "kind": "qa",
+        "authority_verified": false
+      }
+    ]
+  },
+  "source_snapshots": [
+    {
+      "id": "RFP",
+      "path": "original.txt",
+      "version": "1",
+      "date": "2025-01-01",
+      "kind": "original",
+      "authority_verified": true,
+      "text": "SYNTHETIC FIXTURE — invented solely for testing; no real issuer.\nSection 1. Eligibility\nBidders must be registered to conduct business in Example State.\nSection 2. Submission deadline\nProposals must be submitted by 2025-02-01 at 17:00 UTC.\nSection 3. Response contents\nProposals must include a fixed-price budget.\nIf subcontractors are used, proposals must include each subcontractor's role.\nSection 4. Submission channel\nBidders must submit proposals through the procurement portal.\nSection 5. Preferences\nTeams should describe their approach to accessibility testing.\nSection 6. Rejection\nLate proposals will be rejected and shall receive no evaluation.\nSection 7. Other delivery rule\nDelivery of an editable project schedule is a condition of acceptance.\n",
+      "sha256": "7491cb902b0dbd55bcd8827c22a960322923bf44b088c29d537e2f6999c0a2a3"
+    },
+    {
+      "id": "A1",
+      "path": "amendment.txt",
+      "version": "1",
+      "date": "2025-01-03",
+      "kind": "amendment",
+      "authority_verified": true,
+      "text": "SYNTHETIC FIXTURE — amendment authority is a simulated test attribute.\nSection 2. Submission deadline (replaces RFP section 2)\nProposals must be submitted by 2025-02-05 at 17:00 UTC.\nSection 8. Amendment acknowledgment\nBidders must acknowledge amendment A1 in their response.\n",
+      "sha256": "e44c85b38b01d698418aa1b5f28ded62e1bff594bd4aa1f17e76f8bcac0738f8"
+    },
+    {
+      "id": "QA",
+      "path": "qa.txt",
+      "version": "1",
+      "date": "2025-01-04",
+      "kind": "qa",
+      "authority_verified": false,
+      "text": "SYNTHETIC FIXTURE — deliberate unresolved Q&A conflict.\nSection 4. Submission channel\nBidders must submit proposals by email.\nSection 9. Reference format\nBidders may attach screenshots as optional examples.\n",
+      "sha256": "9ad37f9c94ef93c8a4ec6e296e0defd90c30f3d46347483f630dfb6653e224e8"
+    }
+  ],
+  "generation_seconds": 0.0010138330000000056,
+  "rows": [
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R001",
+      "obligation": "Bidders must be registered to conduct business in Example State.",
+      "status": "mandatory",
+      "critical_category": "eligibility",
+      "condition": null,
+      "section_title": "Eligibility",
+      "citations": [
+        {
+          "document_id": "RFP",
+          "source_file": "original.txt",
+          "source_version": "1",
+          "source_sha256": "7491cb902b0dbd55bcd8827c22a960322923bf44b088c29d537e2f6999c0a2a3",
+          "page": 1,
+          "line": 3,
+          "section": "1",
+          "excerpt": "Bidders must be registered to conduct business in Example State."
+        }
+      ],
+      "lifecycle": "active",
+      "supersedes": [],
+      "superseded_by": [],
+      "change_citations": [],
+      "unresolved_ambiguity": []
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R002",
+      "obligation": "Proposals must be submitted by 2025-02-01 at 17:00 UTC.",
+      "status": "mandatory",
+      "critical_category": "deadline",
+      "condition": null,
+      "section_title": "Submission deadline",
+      "citations": [
+        {
+          "document_id": "RFP",
+          "source_file": "original.txt",
+          "source_version": "1",
+          "source_sha256": "7491cb902b0dbd55bcd8827c22a960322923bf44b088c29d537e2f6999c0a2a3",
+          "page": 1,
+          "line": 5,
+          "section": "2",
+          "excerpt": "Proposals must be submitted by 2025-02-01 at 17:00 UTC."
+        }
+      ],
+      "lifecycle": "superseded",
+      "supersedes": [],
+      "superseded_by": [
+        "R008"
+      ],
+      "change_citations": [],
+      "unresolved_ambiguity": []
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R003",
+      "obligation": "Proposals must include a fixed-price budget.",
+      "status": "mandatory",
+      "critical_category": "submission",
+      "condition": null,
+      "section_title": "Response contents",
+      "citations": [
+        {
+          "document_id": "RFP",
+          "source_file": "original.txt",
+          "source_version": "1",
+          "source_sha256": "7491cb902b0dbd55bcd8827c22a960322923bf44b088c29d537e2f6999c0a2a3",
+          "page": 1,
+          "line": 7,
+          "section": "3",
+          "excerpt": "Proposals must include a fixed-price budget."
+        }
+      ],
+      "lifecycle": "active",
+      "supersedes": [],
+      "superseded_by": [],
+      "change_citations": [],
+      "unresolved_ambiguity": []
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R004",
+      "obligation": "If subcontractors are used, proposals must include each subcontractor's role.",
+      "status": "mandatory",
+      "critical_category": "submission",
+      "condition": "If subcontractors are used",
+      "section_title": "Response contents",
+      "citations": [
+        {
+          "document_id": "RFP",
+          "source_file": "original.txt",
+          "source_version": "1",
+          "source_sha256": "7491cb902b0dbd55bcd8827c22a960322923bf44b088c29d537e2f6999c0a2a3",
+          "page": 1,
+          "line": 8,
+          "section": "3",
+          "excerpt": "If subcontractors are used, proposals must include each subcontractor's role."
+        }
+      ],
+      "lifecycle": "active",
+      "supersedes": [],
+      "superseded_by": [],
+      "change_citations": [],
+      "unresolved_ambiguity": []
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R005",
+      "obligation": "Bidders must submit proposals through the procurement portal.",
+      "status": "mandatory",
+      "critical_category": "submission",
+      "condition": null,
+      "section_title": "Submission channel",
+      "citations": [
+        {
+          "document_id": "RFP",
+          "source_file": "original.txt",
+          "source_version": "1",
+          "source_sha256": "7491cb902b0dbd55bcd8827c22a960322923bf44b088c29d537e2f6999c0a2a3",
+          "page": 1,
+          "line": 10,
+          "section": "4",
+          "excerpt": "Bidders must submit proposals through the procurement portal."
+        }
+      ],
+      "lifecycle": "unresolved",
+      "supersedes": [],
+      "superseded_by": [],
+      "change_citations": [],
+      "unresolved_ambiguity": [
+        "Different assertions in the same section across sources; authority needs review"
+      ]
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R006",
+      "obligation": "Teams should describe their approach to accessibility testing.",
+      "status": "advisory",
+      "critical_category": null,
+      "condition": null,
+      "section_title": "Preferences",
+      "citations": [
+        {
+          "document_id": "RFP",
+          "source_file": "original.txt",
+          "source_version": "1",
+          "source_sha256": "7491cb902b0dbd55bcd8827c22a960322923bf44b088c29d537e2f6999c0a2a3",
+          "page": 1,
+          "line": 12,
+          "section": "5",
+          "excerpt": "Teams should describe their approach to accessibility testing."
+        }
+      ],
+      "lifecycle": "active",
+      "supersedes": [],
+      "superseded_by": [],
+      "change_citations": [],
+      "unresolved_ambiguity": []
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R007",
+      "obligation": "Late proposals will be rejected and shall receive no evaluation.",
+      "status": "mandatory",
+      "critical_category": "disqualification",
+      "condition": null,
+      "section_title": "Rejection",
+      "citations": [
+        {
+          "document_id": "RFP",
+          "source_file": "original.txt",
+          "source_version": "1",
+          "source_sha256": "7491cb902b0dbd55bcd8827c22a960322923bf44b088c29d537e2f6999c0a2a3",
+          "page": 1,
+          "line": 14,
+          "section": "6",
+          "excerpt": "Late proposals will be rejected and shall receive no evaluation."
+        }
+      ],
+      "lifecycle": "active",
+      "supersedes": [],
+      "superseded_by": [],
+      "change_citations": [],
+      "unresolved_ambiguity": []
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R008",
+      "obligation": "Proposals must be submitted by 2025-02-05 at 17:00 UTC.",
+      "status": "mandatory",
+      "critical_category": "deadline",
+      "condition": null,
+      "section_title": "Submission deadline",
+      "citations": [
+        {
+          "document_id": "A1",
+          "source_file": "amendment.txt",
+          "source_version": "1",
+          "source_sha256": "e44c85b38b01d698418aa1b5f28ded62e1bff594bd4aa1f17e76f8bcac0738f8",
+          "page": 1,
+          "line": 3,
+          "section": "2",
+          "excerpt": "Proposals must be submitted by 2025-02-05 at 17:00 UTC."
+        }
+      ],
+      "lifecycle": "active",
+      "supersedes": [
+        "R002"
+      ],
+      "superseded_by": [],
+      "change_citations": [
+        {
+          "document_id": "A1",
+          "source_file": "amendment.txt",
+          "source_version": "1",
+          "source_sha256": "e44c85b38b01d698418aa1b5f28ded62e1bff594bd4aa1f17e76f8bcac0738f8",
+          "page": 1,
+          "line": 2,
+          "section": "2",
+          "excerpt": "Section 2. Submission deadline (replaces RFP section 2)"
+        }
+      ],
+      "unresolved_ambiguity": []
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R009",
+      "obligation": "Bidders must acknowledge amendment A1 in their response.",
+      "status": "mandatory",
+      "critical_category": "amendment_acknowledgment",
+      "condition": null,
+      "section_title": "Amendment acknowledgment",
+      "citations": [
+        {
+          "document_id": "A1",
+          "source_file": "amendment.txt",
+          "source_version": "1",
+          "source_sha256": "e44c85b38b01d698418aa1b5f28ded62e1bff594bd4aa1f17e76f8bcac0738f8",
+          "page": 1,
+          "line": 5,
+          "section": "8",
+          "excerpt": "Bidders must acknowledge amendment A1 in their response."
+        }
+      ],
+      "lifecycle": "active",
+      "supersedes": [],
+      "superseded_by": [],
+      "change_citations": [],
+      "unresolved_ambiguity": []
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R010",
+      "obligation": "Bidders must submit proposals by email.",
+      "status": "mandatory",
+      "critical_category": "submission",
+      "condition": null,
+      "section_title": "Submission channel",
+      "citations": [
+        {
+          "document_id": "QA",
+          "source_file": "qa.txt",
+          "source_version": "1",
+          "source_sha256": "9ad37f9c94ef93c8a4ec6e296e0defd90c30f3d46347483f630dfb6653e224e8",
+          "page": 1,
+          "line": 3,
+          "section": "4",
+          "excerpt": "Bidders must submit proposals by email."
+        }
+      ],
+      "lifecycle": "unresolved",
+      "supersedes": [],
+      "superseded_by": [],
+      "change_citations": [],
+      "unresolved_ambiguity": [
+        "Different assertions in the same section across sources; authority needs review"
+      ]
+    },
+    {
+      "package_id": "SYNTHETIC-WEB-001",
+      "requirement_id": "R011",
+      "obligation": "Bidders may attach screenshots as optional examples.",
+      "status": "advisory",
+      "critical_category": null,
+      "condition": null,
+      "section_title": "Reference format",
+      "citations": [
+        {
+          "document_id": "QA",
+          "source_file": "qa.txt",
+          "source_version": "1",
+          "source_sha256": "9ad37f9c94ef93c8a4ec6e296e0defd90c30f3d46347483f630dfb6653e224e8",
+          "page": 1,
+          "line": 5,
+          "section": "9",
+          "excerpt": "Bidders may attach screenshots as optional examples."
+        }
+      ],
+      "lifecycle": "active",
+      "supersedes": [],
+      "superseded_by": [],
+      "change_citations": [],
+      "unresolved_ambiguity": []
+    }
+  ],
+  "warnings": [],
+  "extraction_limitations": "Heuristic line extraction; implicit duties, tables, OCR, paraphrases and semantic change reconciliation require human review.",
+  "artifact_sha256": "bb2589055df8178673295b370676dd39b047aed7c91b1000a54f1c19a44bcf01"
+}

@@ -181,3 +181,45 @@ test('managed adapter disables network and separates session creation from model
   assert.ok(!JSON.stringify(created).includes('test-only-key'));
   await transport.submit(job); assert.ok(JSON.stringify(sent).includes('agent.session.input.message'));
 });
+
+test('API null exit codes remain unknown while completed execution can produce a prototype', async t => {
+  const { cycle, builder, transport } = await setup(t);
+  const inspect = transport.inspect.bind(transport);
+  transport.inspect = async () => { const result = await inspect(); result.commands[0]!.exitCode = null; return result; };
+  await builder.enqueue(cycle.id, policy.builder!);
+  const job = await builder.tick(cycle.id);
+  assert.equal(job.status, 'built'); assert.equal(job.commands[0]?.exitCode, null);
+});
+
+test('explicit nonzero exits cannot satisfy the execution gate', async t => {
+  const { cycle, builder, transport } = await setup(t);
+  const inspect = transport.inspect.bind(transport);
+  transport.inspect = async () => { const result = await inspect(); result.commands[0]!.exitCode = 1; return result; };
+  await builder.enqueue(cycle.id, policy.builder!);
+  assert.equal((await builder.tick(cycle.id)).status, 'failed');
+});
+
+test('unresponsive cancellation deletes the session after grace rather than leaving paid work active', async t => {
+  const { h, cycle, builder, transport } = await setup(t);
+  transport.status = 'running'; await builder.enqueue(cycle.id, policy.builder!);
+  await builder.tick(cycle.id);
+  const job = builder.get(cycle.id)!;
+  h.store.db.prepare('UPDATE build_jobs SET payload=? WHERE cycle_id=?').run(JSON.stringify({ ...job, status: 'cancelling', cancelRequestedAt: 0 }), cycle.id);
+  const result = await builder.tick(cycle.id);
+  assert.equal(result.status, 'cancelled'); assert.equal(result.cleanup, 'deleted');
+  assert.equal(transport.deletes, 1);
+  assert.match(result.error!, /did not confirm cancellation/);
+});
+
+test('rejected session deletion keeps cancellation unresolved and preserves the active-job limit', async t => {
+  const { h, cycle, builder, transport } = await setup(t);
+  const { StudioError } = await import('../src/domain.js');
+  transport.status = 'running'; await builder.enqueue(cycle.id, policy.builder!); await builder.tick(cycle.id);
+  const job = builder.get(cycle.id)!;
+  h.store.db.prepare('UPDATE build_jobs SET payload=? WHERE cycle_id=?').run(JSON.stringify({ ...job, status: 'cancelling', cancelRequestedAt: 0 }), cycle.id);
+  transport.cleanup = async () => { throw new StudioError('Provider refused deletion'); };
+  await assert.rejects(builder.tick(cycle.id), /refused deletion/);
+  assert.equal(builder.get(cycle.id)?.status, 'cancelling');
+  const next = h.start('blocked-build', profile, { ...policy, maxCallsPerDay: 60 }, inputs); await h.run(next.id);
+  await assert.rejects(builder.enqueue(next.id, { ...policy.builder!, maxJobsPerDay: 2 }), /Another build is still active/);
+});

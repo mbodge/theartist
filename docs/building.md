@@ -1,5 +1,7 @@
 # Coding workshop
 
+**Observed integration limitation:** the [first live trial](trials/astra-build-001.md) built and tested code but stalled before artifact publication. Cancellation was acknowledged without a terminal state; deletion returned HTTP 409. The source was recovered manually, and that job remains unresolved. This backend is not yet proven reliable for unattended use.
+
 Live founders can now turn accepted experiment packages into executable prototypes. The coding agent receives the accepted brief, works in an OpenAI-hosted workspace, creates source files, runs commands, fixes failures, and returns files. The founder retains execution results as durable memory for later decisions.
 
 ## Run
@@ -32,9 +34,9 @@ The builder can make dependency-free CLIs and browser prototypes. Tasks needing 
 
 A SQLite job is reserved before any remote work. Session creation carries the job ID as metadata and contains no model input. The returned session ID is saved before the first input is sent. If creation disconnects, recovery searches for that session instead of blindly creating another one. If submission disconnects, recovery polls the known session instead of submitting again. An unresolved creation stays pending for inspection; a request proven not to have reached the provider is not automatically resubmitted.
 
-Workers claim a fenced ninety-second lease per poll. A completed root turn, executable output, and an observed successful command are required for `built`. Idle sessions and model-written reports alone cannot satisfy this gate. `built` means source and successful command execution were observed; it does **not** certify that all tests passed, that the code is production ready, or that customers want it. Inspect the retained logs and test results.
+Workers claim a fenced ninety-second lease per poll. A completed root turn, executable output, and an observed completed command with no reported nonzero exit code are required for `built`. Idle sessions and model-written reports alone cannot satisfy this gate. `built` means source and completed command execution were observed; it does **not** certify that all tests passed, that the code is production ready, or that customers want it. The live API can return a null process exit code even for completed commands; the harness preserves null and does not invent a zero. Explicit nonzero exits cannot satisfy the execution gate. Inspect the retained logs and test results.
 
-The worker cancels running work when it observes a studio pause or the deadline. Cancellation must be confirmed by a terminal remote turn. If the worker dies, remote work may continue until completion or until a resumed worker cancels it. Pause is therefore effective on the next running worker poll, not an immediate remote kill switch. Completed files are copied before deleting the hosted session. A failed cleanup can be retried by repeating the same `build` command.
+The worker cancels running work when it observes a studio pause or the deadline. Cancellation is confirmed by a terminal remote turn or, after sixty seconds without confirmation, successful deletion of the remote session. If deletion fails, the job remains cancelling and retains its identifiers for retry; no replacement build is admitted. The live provider has refused deletion of a still-active session with HTTP 409, so this is an attempted fallback, not a guaranteed hard kill. If the worker dies, remote work may continue until completion or until a resumed worker cancels it. Pause is therefore effective on the next running worker poll, not an immediate remote kill switch. Completed files are copied before deleting the hosted session. A failed cleanup can be retried by repeating the same `build` command.
 
 ## Public record
 

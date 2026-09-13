@@ -14,3 +14,7 @@ jobs:
       - run: npm ci
       - run: npm run check
       - run: npm test
+      - name: Verify recovered founder prototype
+        run: python3 -B -m unittest discover -s examples/rfp-prototype -p 'test_*.py' -v
+      - name: Exercise prototype sample
+        run: python3 -B examples/rfp-prototype/run_sample.py --out "$RUNNER_TEMP/rfp-sample"

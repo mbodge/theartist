@@ -1,0 +1,49 @@
+[
+  {
+    "argv": [
+      "/Applications/Xcode-26.4.app/Contents/Developer/usr/bin/python3",
+      "-B",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/rfp_review.py",
+      "freeze-reference",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/samples/reference.json",
+      "--out",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/reference.frozen.json"
+    ],
+    "exit_code": 0,
+    "stdout": "Frozen reference: /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/reference.frozen.json\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/Applications/Xcode-26.4.app/Contents/Developer/usr/bin/python3",
+      "-B",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/rfp_review.py",
+      "generate",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/samples/package.json",
+      "--out",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/candidate"
+    ],
+    "exit_code": 0,
+    "stdout": "{\"package_id\": \"SYNTHETIC-WEB-001\", \"rows\": 11, \"evidence_type\": \"synthetic\", \"artifact_sha256\": \"bb2589055df8178673295b370676dd39b047aed7c91b1000a54f1c19a44bcf01\"}\n",
+    "stderr": ""
+  },
+  {
+    "argv": [
+      "/Applications/Xcode-26.4.app/Contents/Developer/usr/bin/python3",
+      "-B",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/rfp_review.py",
+      "score",
+      "--candidate",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/candidate/raw.json",
+      "--reference",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/reference.frozen.json",
+      "--review",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/review.synthetic.json",
+      "--out",
+      "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/score.json"
+    ],
+    "exit_code": 0,
+    "stdout": "{\n  \"schema_version\": 1,\n  \"package_id\": \"SYNTHETIC-WEB-001\",\n  \"evidence_type\": \"synthetic\",\n  \"candidate_sha256\": \"bb2589055df8178673295b370676dd39b047aed7c91b1000a54f1c19a44bcf01\",\n  \"reference_sha256\": \"1a9f924dfa72cc67d4e21d4cb13efc3afe25025c862c4e0e9be92ff5af924672\",\n  \"review_sha256\": \"91386ff80e2696e891302cfb1fa62dc2e90e6275158381cec106959bd2cbb577\",\n  \"reference_total\": 10,\n  \"matched_total\": 8,\n  \"critical_total\": 8,\n  \"critical_matched\": 6,\n  \"overall_recall\": 0.8,\n  \"critical_recall\": 0.75,\n  \"missed_obligations\": [\n    \"F5\",\n    \"F8\"\n  ],\n  \"invented_mandatory\": [],\n  \"citation_errors\": [],\n  \"correction_minutes\": null,\n  \"reference_disputes\": [],\n  \"gates\": {\n    \"critical_recall\": false,\n    \"overall_recall\": false,\n    \"no_invented_mandatory\": true,\n    \"all_citations_correct\": true,\n    \"correction_time\": null\n  },\n  \"package_gate_result\": \"fail\",\n  \"benchmark_eligible\": false,\n  \"benchmark_status\": \"inconclusive\",\n  \"benchmark_note\": \"A single package or synthetic fixture cannot establish the three-package benchmark.\"\n}\n",
+    "stderr": ""
+  }
+]

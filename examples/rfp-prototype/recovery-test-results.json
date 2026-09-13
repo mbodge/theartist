@@ -1,0 +1,38 @@
+{
+  "recorded_at": "2026-09-13T21:55:51.732336+00:00",
+  "python_version": "3.9.6",
+  "evidence_type": "automated software tests and synthetic sample",
+  "all_commands_succeeded": true,
+  "benchmark_status": "inconclusive",
+  "commands": [
+    {
+      "argv": [
+        "/Applications/Xcode-26.4.app/Contents/Developer/usr/bin/python3",
+        "-B",
+        "-m",
+        "unittest",
+        "-v",
+        "test_review"
+      ],
+      "cwd": "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype",
+      "exit_code": 0,
+      "elapsed_seconds": 0.38431929099999995,
+      "stdout": "",
+      "stderr": "test_all_citations_resolve (test_review.ReviewTests) ... ok\ntest_citation_wrong_page_and_excerpt (test_review.ReviewTests) ... ok\ntest_cli_rejects_reference_argument_to_generator (test_review.ReviewTests) ... ok\ntest_condition_preserved (test_review.ReviewTests) ... ok\ntest_critical_categories (test_review.ReviewTests) ... ok\ntest_duplicate_matches_count_once (test_review.ReviewTests) ... ok\ntest_empty_denominators_are_not_percentages (test_review.ReviewTests) ... ok\ntest_every_candidate_requires_adjudication (test_review.ReviewTests) ... ok\ntest_explicit_waiver_is_not_invented_mandatory_duty (test_review.ReviewTests) ... ok\ntest_gate_boundary_and_unknown_correction (test_review.ReviewTests) ... ok\ntest_invented_duty_and_citation_error_fail (test_review.ReviewTests) ... ok\ntest_late_reference_freeze_rejected (test_review.ReviewTests) ... ok\ntest_no_overwrite_and_csv_formula_escaping (test_review.ReviewTests) ... ok\ntest_noncritical_subset_is_not_applicable (test_review.ReviewTests) ... ok\ntest_older_amendment_does_not_supersede (test_review.ReviewTests) ... ok\ntest_original_deadline_is_superseded_with_change_citation (test_review.ReviewTests) ... ok\ntest_page_breaks_and_duplicate_rows (test_review.ReviewTests) ... ok\ntest_path_escape_and_hash_mismatch (test_review.ReviewTests) ... ok\ntest_primary_verification_required (test_review.ReviewTests) ... ok\ntest_prompt_injection_is_inert_data (test_review.ReviewTests) ... ok\ntest_qa_conflict_remains_unresolved (test_review.ReviewTests) ... ok\ntest_reference_dispute_prevents_pass (test_review.ReviewTests) ... ok\ntest_synthetic_never_qualifies_for_benchmark (test_review.ReviewTests) ... ok\ntest_tamper_and_wrong_reference_hash_rejected (test_review.ReviewTests) ... ok\ntest_unknown_authority_does_not_supersede (test_review.ReviewTests) ... ok\ntest_unresolved_flag_does_not_count_as_recovery (test_review.ReviewTests) ... ok\n\n----------------------------------------------------------------------\nRan 26 tests in 0.168s\n\nOK\n"
+    },
+    {
+      "argv": [
+        "/Applications/Xcode-26.4.app/Contents/Developer/usr/bin/python3",
+        "-B",
+        "run_sample.py",
+        "--out",
+        "sample-output-v2"
+      ],
+      "cwd": "/Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype",
+      "exit_code": 0,
+      "elapsed_seconds": 0.47314295799999995,
+      "stdout": "$ /Applications/Xcode-26.4.app/Contents/Developer/usr/bin/python3 -B /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/rfp_review.py freeze-reference /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/samples/reference.json --out /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/reference.frozen.json\nFrozen reference: /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/reference.frozen.json\n$ /Applications/Xcode-26.4.app/Contents/Developer/usr/bin/python3 -B /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/rfp_review.py generate /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/samples/package.json --out /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/candidate\n{\"package_id\": \"SYNTHETIC-WEB-001\", \"rows\": 11, \"evidence_type\": \"synthetic\", \"artifact_sha256\": \"bb2589055df8178673295b370676dd39b047aed7c91b1000a54f1c19a44bcf01\"}\n$ /Applications/Xcode-26.4.app/Contents/Developer/usr/bin/python3 -B /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/rfp_review.py score --candidate /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/candidate/raw.json --reference /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/reference.frozen.json --review /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/review.synthetic.json --out /Users/mikebodge/Documents/wip/theartist/examples/rfp-prototype/sample-output-v2/score.json\n{\n  \"schema_version\": 1,\n  \"package_id\": \"SYNTHETIC-WEB-001\",\n  \"evidence_type\": \"synthetic\",\n  \"candidate_sha256\": \"bb2589055df8178673295b370676dd39b047aed7c91b1000a54f1c19a44bcf01\",\n  \"reference_sha256\": \"1a9f924dfa72cc67d4e21d4cb13efc3afe25025c862c4e0e9be92ff5af924672\",\n  \"review_sha256\": \"91386ff80e2696e891302cfb1fa62dc2e90e6275158381cec106959bd2cbb577\",\n  \"reference_total\": 10,\n  \"matched_total\": 8,\n  \"critical_total\": 8,\n  \"critical_matched\": 6,\n  \"overall_recall\": 0.8,\n  \"critical_recall\": 0.75,\n  \"missed_obligations\": [\n    \"F5\",\n    \"F8\"\n  ],\n  \"invented_mandatory\": [],\n  \"citation_errors\": [],\n  \"correction_minutes\": null,\n  \"reference_disputes\": [],\n  \"gates\": {\n    \"critical_recall\": false,\n    \"overall_recall\": false,\n    \"no_invented_mandatory\": true,\n    \"all_citations_correct\": true,\n    \"correction_time\": null\n  },\n  \"package_gate_result\": \"fail\",\n  \"benchmark_eligible\": false,\n  \"benchmark_status\": \"inconclusive\",\n  \"benchmark_note\": \"A single package or synthetic fixture cannot establish the three-package benchmark.\"\n}\nSynthetic sample assertions passed; benchmark remains inconclusive.\n",
+      "stderr": ""
+    }
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "package_id": "SYNTHETIC-WEB-001",
+  "evidence_type": "synthetic",
+  "candidate_sha256": "bb2589055df8178673295b370676dd39b047aed7c91b1000a54f1c19a44bcf01",
+  "reference_sha256": "1a9f924dfa72cc67d4e21d4cb13efc3afe25025c862c4e0e9be92ff5af924672",
+  "review_sha256": "91386ff80e2696e891302cfb1fa62dc2e90e6275158381cec106959bd2cbb577",
+  "reference_total": 10,
+  "matched_total": 8,
+  "critical_total": 8,
+  "critical_matched": 6,
+  "overall_recall": 0.8,
+  "critical_recall": 0.75,
+  "missed_obligations": [
+    "F5",
+    "F8"
+  ],
+  "invented_mandatory": [],
+  "citation_errors": [],
+  "correction_minutes": null,
+  "reference_disputes": [],
+  "gates": {
+    "critical_recall": false,
+    "overall_recall": false,
+    "no_invented_mandatory": true,
+    "all_citations_correct": true,
+    "correction_time": null
+  },
+  "package_gate_result": "fail",
+  "benchmark_eligible": false,
+  "benchmark_status": "inconclusive",
+  "benchmark_note": "A single package or synthetic fixture cannot establish the three-package benchmark."
+}

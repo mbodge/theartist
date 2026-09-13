@@ -2,7 +2,7 @@
 
 A persistent conceptual artist and its studio. The artist develops an agenda; specialized roles research, make, critique, decide, and reflect. The studio remembers what happened and exposes an inspectable public record.
 
-**Status: working local harness, version 0.2.** Artist and configurable-founder modes share the durable engine. The offline demos are deterministic fixtures, not evidence of autonomous artistic or business judgment. A live OpenAI Responses adapter is implemented but requires your own credentials and model choice. Live founders also use OpenAI Agents API to build and test executable prototypes in isolated hosted workspaces. Cloudflare deployment remains a future integration.
+**Status: working local harness, version 0.2.** Artist and configurable-founder modes share the durable engine. The offline demos are deterministic fixtures, not evidence of autonomous artistic or business judgment. A live OpenAI Responses adapter is implemented but requires your own credentials and model choice. Live founders also use OpenAI Agents API to build and test executable prototypes in isolated hosted workspaces. The [first coding trial](docs/trials/astra-build-001.md) produced a tested prototype but hit a stalled artifact handoff requiring operator recovery. The managed backend is not yet proven reliable unattended. Cloudflare deployment remains a future integration.
 
 ## Spin up a founder
 
@@ -75,6 +75,8 @@ npm run studio -- run CYCLE_ID --provider openai
 Live runs incur provider charges. Execution limits live in `config/policy.json`: daily/cycle call allowances, maximum output tokens, input size, retries, timeouts, and revision limits. Failed and interrupted calls retain their allowance reservation. The SDK's automatic retries are disabled. These are resource limits, **not a dollar-denominated spending guarantee**. No purchasing, outbound email, or social tools are connected.
 
 The live adapter completed a [first Astra founder trial](docs/trials/astra-001.md) that abstained without supplied evidence. A [second live trial with web discovery](docs/trials/astra-discovery-001.md) completed the full loop: seven model calls, six web actions, seven cited sources, and a reviewed experiment package. These are two observed runs, not a general quality evaluation. Those research trials did not execute an experiment or launch a product; the coding workshop now provides the next execution phase. Abstention can use a null success criterion, while making an experiment requires one.
+
+The [first live coding trial](docs/trials/astra-build-001.md) produced a [runnable RFP review prototype](examples/rfp-prototype/README.md) with 26 passing tests. Its managed artifact handoff stalled; the source was recovered from recorded commands and independently rerun locally. The unresolved provider session remains recorded as cancelling.
 
 ### Autonomous founder discovery
 

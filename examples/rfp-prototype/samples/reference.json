@@ -1,0 +1,18 @@
+{
+  "package_id": "SYNTHETIC-WEB-001",
+  "evidence_type": "synthetic",
+  "label_note": "Authored synthetic fixture, not independently verified reference truth. Atomic labels are withheld from the generation CLI.",
+  "requirements": [
+    {"id":"F1","obligation":"Business registration in Example State","critical_category":"eligibility","applicable":true,"source":"RFP section 1"},
+    {"id":"F2","obligation":"Submit by 2025-02-05 at 17:00 UTC","critical_category":"deadline","applicable":true,"source":"A1 section 2 replaces RFP section 2"},
+    {"id":"F3","obligation":"Include fixed-price budget","critical_category":"submission","applicable":true,"source":"RFP section 3"},
+    {"id":"F4","obligation":"If subcontractors used, include their roles","critical_category":"submission","applicable":true,"source":"RFP section 3"},
+    {"id":"F5","obligation":"Submit through procurement portal; conflicting Q&A lacks superseding authority","critical_category":"submission","applicable":true,"source":"RFP section 4"},
+    {"id":"F6","obligation":"Describe accessibility testing (advisory)","critical_category":null,"applicable":true,"source":"RFP section 5"},
+    {"id":"F7","obligation":"Late proposals rejected","critical_category":"disqualification","applicable":true,"source":"RFP section 6"},
+    {"id":"F8","obligation":"Provide editable project schedule","critical_category":"submission","applicable":true,"source":"RFP section 7"},
+    {"id":"F9","obligation":"Acknowledge amendment A1","critical_category":"amendment_acknowledgment","applicable":true,"source":"A1 section 8"},
+    {"id":"F10","obligation":"Optional example screenshots (advisory)","critical_category":null,"applicable":true,"source":"QA section 9"},
+    {"id":"H1","obligation":"Old February 1 deadline","critical_category":"deadline","applicable":false,"source":"RFP section 2, superseded"}
+  ]
+}

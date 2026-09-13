@@ -1,0 +1,88 @@
+{
+  "evidence_type": "synthetic",
+  "candidate_sha256": "bb2589055df8178673295b370676dd39b047aed7c91b1000a54f1c19a44bcf01",
+  "reference_sha256": null,
+  "reviewer": null,
+  "review_basis": null,
+  "correction_minutes": null,
+  "reference_disputes": [],
+  "rows": [
+    {
+      "candidate_id": "R001",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R002",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R003",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R004",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R005",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R006",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R007",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R008",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R009",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R010",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    },
+    {
+      "candidate_id": "R011",
+      "matches": [],
+      "supported": null,
+      "citation_correct": null,
+      "notes": ""
+    }
+  ]
+}

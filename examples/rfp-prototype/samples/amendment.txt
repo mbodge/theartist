@@ -1,0 +1,5 @@
+SYNTHETIC FIXTURE — amendment authority is a simulated test attribute.
+Section 2. Submission deadline (replaces RFP section 2)
+Proposals must be submitted by 2025-02-05 at 17:00 UTC.
+Section 8. Amendment acknowledgment
+Bidders must acknowledge amendment A1 in their response.

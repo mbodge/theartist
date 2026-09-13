@@ -14,7 +14,7 @@ export type BuildJob = {
   createdAt: string; updatedAt: string; deadline: number; sessionId: string | null; turnId: string | null;
   brief: string; briefHash: string; visibility: 'public' | 'private'; error: string | null;
   artifacts: BuildArtifact[]; commands: Array<{ command: string; exitCode: number | null; output: string; status: string }>;
-  summary: string; usage: unknown; cleanup: 'pending' | 'deleted';
+  summary: string; usage: unknown; cleanup: 'pending' | 'deleted'; cancelRequestedAt?: number;
 };
 export type RemoteBuild = {
   status: 'pending' | 'running' | 'completed' | 'failed' | 'cancelled'; turnId: string | null;
@@ -105,11 +105,13 @@ export class Builder {
         this.store.addMemory({ id: `build-${job.id}:result`, kind: 'work', cycleId, sourceIds: [],
           visibility: job.visibility, supersedes: null,
           content: JSON.stringify({ status, artifacts: job.artifacts, commandCount: job.commands.length,
-            successfulCommands: job.commands.filter(c => c.exitCode === 0).length, summary: job.summary.slice(-4000),
+            commandsWithZeroExit: job.commands.filter(c => c.exitCode === 0).length,
+            commandsWithUnknownExit: job.commands.filter(c => c.exitCode === null).length, summary: job.summary.slice(-4000),
             error, validation: 'Sandbox execution and self-tests are not customer validation.' }) });
         this.store.event(cycleId, `build.${status}`, { buildId: job.id, files: job.artifacts.length });
       }).immediate();
     };
+    let validatingArtifacts = false;
     try {
       if (buildTerminal(job)) {
         if (job.sessionId && job.cleanup === 'pending') { await this.transport.cleanup(job); job.cleanup = 'deleted'; save(); }
@@ -135,20 +137,26 @@ export class Builder {
         await this.transport.submit(job);
         job.status = 'running'; save();
       }
-      if (this.store.paused() || this.store.now() >= job.deadline) {
-        if (job.status !== 'cancelling') { await this.transport.cancel(job); job.status = 'cancelling'; save(); }
-      }
       const remote = await this.transport.inspect(job);
       if (remote.turnId && job.status === 'dispatching') job.status = 'running';
       job.error = null;
       job.turnId = remote.turnId; job.commands = remote.commands; job.summary = remote.summary; job.usage = remote.usage;
       save();
+      if ((this.store.paused() || this.store.now() >= job.deadline) && ['pending', 'running'].includes(remote.status) && job.status !== 'cancelling') {
+        await this.transport.cancel(job); job.status = 'cancelling'; job.cancelRequestedAt = this.store.now(); save();
+        return job;
+      }
       if (job.status === 'cancelling') {
         if (['completed', 'failed', 'cancelled'].includes(remote.status)) finish('cancelled', 'Build stopped at operating limit or pause');
+        else if (this.store.now() >= (job.cancelRequestedAt ?? job.deadline) + 60000) {
+          await this.transport.cleanup(job); job.cleanup = 'deleted';
+          finish('cancelled', 'Provider did not confirm cancellation; session deleted after a sixty-second grace period');
+        }
         return job;
       }
       if (remote.status === 'failed' || remote.status === 'cancelled') { finish(remote.status, 'Remote coding turn did not complete'); return job; }
       if (remote.status !== 'completed') return job; // Idle/pending is never treated as success.
+      validatingArtifacts = true;
       const files = await this.transport.files(job);
       if (!files.length || files.length > job.policy.maxFiles || files.reduce((total, f) => total + f.sizeBytes, 0) > job.policy.maxBytes) {
         finish('failed', 'Build artifacts are missing or exceed configured limits'); return job;
@@ -168,8 +176,8 @@ export class Builder {
         save();
       }
       job.artifacts = artifacts;
-      if (!artifacts.some(file => /\.(py|js|mjs|ts|tsx|jsx|html|sh)$/.test(file.path)) || !job.commands.some(c => c.status === 'completed' && c.exitCode === 0)) {
-        finish('failed', 'Build lacks executable source or observed successful command execution'); return job;
+      if (!artifacts.some(file => /\.(py|js|mjs|ts|tsx|jsx|html|sh)$/.test(file.path)) || !job.commands.some(c => c.status === 'completed' && (c.exitCode === 0 || c.exitCode === null))) {
+        finish('failed', 'Build lacks executable source or completed commands without reported failure'); return job;
       }
       finish('built');
       try { await this.transport.cleanup(job); job.cleanup = 'deleted'; save(); } catch { /* Files and result are safe locally; cleanup can be retried. */ }
@@ -178,7 +186,7 @@ export class Builder {
       // Preserve the side-effect state so retries reconcile rather than create another paid job.
       job.error = error instanceof StudioError ? error.message : 'Coding transport failed; resume this job to reconcile remote state.';
       try {
-        if (error instanceof StudioError && !(error instanceof BusyError) && job.turnId) finish('failed', job.error);
+        if (error instanceof StudioError && !(error instanceof BusyError) && validatingArtifacts) finish('failed', job.error);
         else save();
       } catch { /* A newer worker owns this job. */ }
       throw error;

@@ -1,0 +1,12 @@
+{
+  "package_id": "SYNTHETIC-WEB-001",
+  "evidence_type": "synthetic",
+  "issuer": "FICTIONAL Example Municipality — software fixture only",
+  "project": "Synthetic website RFP; not an actual procurement",
+  "verification": {"note": "No official sources or closure claims. All documents are authored synthetic test data."},
+  "documents": [
+    {"id": "RFP", "path": "original.txt", "version": "1", "date": "2025-01-01", "kind": "original", "authority_verified": true},
+    {"id": "A1", "path": "amendment.txt", "version": "1", "date": "2025-01-03", "kind": "amendment", "authority_verified": true},
+    {"id": "QA", "path": "qa.txt", "version": "1", "date": "2025-01-04", "kind": "qa", "authority_verified": false}
+  ]
+}
