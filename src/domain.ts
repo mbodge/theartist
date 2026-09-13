@@ -1,14 +1,29 @@
 import { z } from 'zod';
 
 const prose = z.string().min(1).max(2400);
-export const profileSchema = z.strictObject({
+export const artistProfileSchema = z.strictObject({
   name: z.string().min(1).max(100), version: z.number().int().positive(),
   provisional: z.boolean(), description: prose,
   preoccupations: z.array(prose).min(1).max(10),
   preferences: z.array(prose).max(20), refusals: z.array(prose).max(20),
   voice: prose, initialBodyOfWork: prose, referenceNotes: z.array(prose).max(20),
 });
+export const founderProfileSchema = z.strictObject({
+  studio: z.literal('founder'), name: z.string().min(1).max(100),
+  instanceId: z.string().regex(/^[a-z][a-z0-9-]{0,47}$/).nullable().default(null),
+  version: z.number().int().positive(), provisional: z.boolean(), description: prose,
+  audience: prose, ventureType: prose, mandate: prose, thesis: prose,
+  successSignals: z.array(prose).min(1).max(10),
+  principles: z.array(prose).min(1).max(20), exclusions: z.array(prose).max(20),
+  voice: prose, referenceNotes: z.array(prose).max(20),
+});
+export const profileSchema = z.union([artistProfileSchema, founderProfileSchema]);
 export type Profile = z.infer<typeof profileSchema>;
+export type StudioKind = 'artist' | 'founder';
+export function isFounder(profile: Profile): profile is z.infer<typeof founderProfileSchema> {
+  return 'studio' in profile && profile.studio === 'founder';
+}
+export const studioKind = (profile: Profile): StudioKind => isFounder(profile) ? 'founder' : 'artist';
 
 export const policySchema = z.strictObject({
   maxActiveCycles: z.number().int().min(1).max(3),
@@ -25,7 +40,7 @@ export type Policy = z.infer<typeof policySchema>;
 
 export const observationSchema = z.strictObject({
   id: z.string().regex(/^[a-zA-Z0-9_-]{1,100}$/),
-  stream: z.enum(['world', 'interest', 'reception']),
+  stream: z.enum(['world', 'interest', 'reception', 'customer', 'usage']),
   kind: z.enum(['source', 'studio_note', 'fixture']),
   visibility: z.enum(['public', 'private']).default('public'),
   title: z.string().min(1).max(300), text: z.string().min(1).max(8000),
@@ -75,6 +90,31 @@ export const reflectionSchema = z.strictObject({
   nextExperiment: prose, identityChangeProposed: prose.nullable(),
 });
 
+export const founderResearchSchema = z.strictObject({
+  summary: prose,
+  findings: z.array(z.strictObject({ observationId: z.string(), interpretation: prose })).max(12),
+  uncertainties: z.array(prose).max(8),
+  evidenceLevel: z.enum(['hypothesis_only', 'source_reports']),
+  reportedProblemSourceIds: z.array(z.string()).max(20),
+});
+export const founderProposalSchema = z.strictObject({
+  action: z.enum(['make', 'abstain']), rationale: prose,
+  title: z.string().min(1).max(160), targetAudience: prose, problem: prose,
+  hypothesis: prose, smallestTest: prose,
+  successCriterion: z.strictObject({ metric: prose, target: z.number().positive().max(1000000),
+    unit: z.string().min(1).max(80), windowDays: z.number().int().min(1).max(365) }),
+  stopCondition: prose, maintenancePlan: prose,
+  sourceIds: z.array(z.string()).max(20), previousWorkIds: z.array(z.string()).max(10),
+});
+export const experimentSchema = z.strictObject({
+  title: z.string().min(1).max(160), summary: prose,
+  prototypeBehavior: z.array(prose).min(1).max(8),
+  testSteps: z.array(prose).min(1).max(10),
+  acceptanceChecks: z.array(prose).min(1).max(8),
+  recruitingPlan: prose, instrumentation: prose, supportPlan: prose,
+  limitations: z.array(prose).min(1).max(8),
+});
+
 export const stages = ['research', 'propose', 'make', 'render', 'critique', 'decide', 'release', 'reflect', 'done'] as const;
 export type Stage = typeof stages[number];
 export type AgentStage = 'research' | 'propose' | 'make' | 'critique' | 'decide' | 'reflect';
@@ -82,6 +122,11 @@ export const agentSchemas = {
   research: researchSchema, propose: proposalSchema, make: artworkSchema,
   critique: critiqueSchema, decide: decisionSchema, reflect: reflectionSchema,
 } as const;
+export const founderAgentSchemas = {
+  research: founderResearchSchema, propose: founderProposalSchema, make: experimentSchema,
+  critique: critiqueSchema, decide: decisionSchema, reflect: reflectionSchema,
+} as const;
+export const schemasFor = (profile: Profile) => isFounder(profile) ? founderAgentSchemas : agentSchemas;
 export type ProviderName = 'fixture' | 'openai';
 export type Result = Record<string, unknown>;
 export type Cycle = {
@@ -101,6 +146,12 @@ export type Artifact = {
   hash: string; pngHash: string; svgHash: string; directory: string;
   png: string; svg: string; spec: string; width: number; height: number;
 };
+export type FounderArtifact = {
+  kind: 'experiment-package'; hash: string; documentHash: string;
+  directory: string; document: string; spec: string;
+};
+export type StudioArtifact = Artifact | FounderArtifact;
+export const isFounderArtifact = (artifact: StudioArtifact): artifact is FounderArtifact => 'kind' in artifact && artifact.kind === 'experiment-package';
 export type AgentRequest = {
   stage: AgentStage; cycle: Cycle; context: Record<string, unknown>;
   image?: { base64: string; hash: string };

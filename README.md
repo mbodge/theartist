@@ -2,7 +2,29 @@
 
 A persistent conceptual artist and its studio. The artist develops an agenda; specialized roles research, make, critique, decide, and reflect. The studio remembers what happened and exposes an inspectable public record.
 
-**Status: working local harness, version 0.1.** The offline demo is deterministic fixture data, not evidence of artistic intelligence. A live OpenAI Responses adapter is implemented but requires your own credentials and model choice. OpenAI Agents API and Cloudflare deployment are the next integration milestone; neither is wired into this local runtime yet.
+**Status: working local harness, version 0.2.** Artist and configurable-founder modes share the durable engine. The offline demos are deterministic fixtures, not evidence of autonomous artistic or business judgment. A live OpenAI Responses adapter is implemented but requires your own credentials and model choice. OpenAI Agents API and Cloudflare deployment are the next integration milestone; neither is wired into this local runtime yet.
+
+## Spin up a founder
+
+A founder can pursue any configured mission: an app, service, community, publication, or another venture. Each instance has its own identity, operating limits, and memory. A social AI app is one possible brief.
+
+```sh
+npm run studio -- init my-founder
+npm run studio -- demo --instance my-founder
+npm run studio -- memory --instance my-founder
+```
+
+Edit `studios/my-founder/founder.json` to set the mission, audience, thesis, and principles. Or provide them at creation:
+
+```sh
+npm run studio -- init community-builder \
+  --mission "Explore a neighborhood repair community" \
+  --audience "Local residents" --venture "Community"
+```
+
+The first founder workshop produces a reviewed **experiment package** with a hypothesis, success threshold, stop condition, test procedure, and maintenance plan. It does not yet build or launch an arbitrary business. Every release remains labeled unvalidated until a future measured-outcomes integration can establish otherwise.
+
+`npm run demo:founder` runs a standalone founder fixture without creating a named instance. See [configurable founders](docs/founders.md) for instance commands, evidence rules, and the path to a hosted product anyone can use.
 
 ## Run it
 
@@ -126,6 +148,8 @@ Source map:
 | `src/store.ts` | Checkpoints, leases, allowances, memory and events |
 | `src/harness.ts` | Studio stage transitions and validation |
 | `src/agents.ts` | Public role instructions and provider adapters |
+| `src/founder.ts` | Founder roles, fixtures, and experiment packages |
+| `src/instances.ts` | Founder creation and isolated instance paths |
 | `src/artifacts.ts` | Bounded rendering and local release preparation |
 | `src/archive.ts` | Portable public archive projection |
 | `src/cli.ts` | Local operations |

@@ -1,0 +1,11 @@
+[
+  {
+    "id": "fixture-project-handoff",
+    "stream": "customer",
+    "kind": "fixture",
+    "title": "A fictional service business loses track of project handoffs",
+    "text": "Synthetic development scenario: a fictional independent service business keeps client requests in several places and sometimes misses a promised handoff. No customer was interviewed. This is a hypothesis-generating fixture, not evidence of demand.",
+    "url": null,
+    "observedAt": "2026-09-13T00:00:00.000Z"
+  }
+]

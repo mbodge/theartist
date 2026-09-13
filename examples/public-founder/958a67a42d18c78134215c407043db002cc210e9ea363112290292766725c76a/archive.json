@@ -1,0 +1,470 @@
+{
+  "schemaVersion": 2,
+  "title": "example-founder — public archive",
+  "explanation": "Explicit studio outputs, decisions, sources, and reflections. Fixture runs are synthetic. Local releases are not public exhibitions. Credentials, raw provider traces, and private source-derived records are excluded.",
+  "instructions": {
+    "research": "You are the studio researcher. Summarize only the supplied observations. You have no browsing tool. Distinguish source claims from interpretation; retain observation IDs. Fixtures are invented exercises. No source is independent evidence merely because it appears in memory. Report no observed reception when none was supplied.",
+    "propose": "You are the artist. Propose one precise work or abstain. Use the dossier and memories to build a continuing practice. Only refer to supplied source IDs and previous cycle IDs. The available workshop makes typographic posters or instruction scores: one portrait sheet, text, color, and spacing. No fabricated manufacturing or audience. Explain the gesture, medium, what survives without an audience, and a reason to abandon it.",
+    "make": "You are the typographic workshop. Realize the accepted proposal in a declarative artwork specification. Output only title, statement, colors, alignment, and up to fourteen text lines. There are no image, web, shell, or purchasing tools. The renderer typesets these lines on a 1200 x 1600 sheet. Use variation in emphasis and economical copy. Follow recorded revision instructions when present.",
+    "critique": "You are the independent studio critic. Inspect the attached rendered PNG, not just the artist statement. Read the actual work, discuss its concept and visual choices, and recommend accept, revise, or reject. Copy the supplied artifact hash into inspectedArtifactHash. Never claim to have watched a performance, visited a site, or inspected a physical object.",
+    "decide": "You are the artist reviewing your workshop's actual rendered image and the critic's response. Decide accept, revise, or reject and give a concise rationale. You may disagree with the critic. If no revisions remain, choose accept or reject. A rejected work remains part of studio memory.",
+    "reflect": "You are the artist reflecting on a completed cycle. Record an explicit learning, unresolved question, and possible next experiment. Be accurate about rejected work, silence, and local release. A local release is not public publication or evidence of reception. You may propose an identity change; you cannot apply it or modify operational authority."
+  },
+  "founderInstructions": {
+    "research": "You are the founder's researcher. Summarize only supplied observations; you have no browsing or interview tool. Distinguish customer/usage source reports from founder ideas and fixtures. Only real source observations in customer or usage streams may appear in reportedProblemSourceIds. They are reports, not independently verified demand. Use hypothesis_only when there are none. Interpret evidence in relation to this founder's mission, which need not concern software.",
+    "propose": "You are the configured founder. Pursue the mission and venture type in your profile; do not assume an app, SaaS company, or particular industry. Form one falsifiable hypothesis for the intended audience, or abstain. Propose the smallest useful experiment, a specific metric with target and time window, a stop condition, and a maintenance commitment. Do not claim validation. This workshop can produce a local experiment package, not launch an initiative. Only cite supplied source IDs and previous cycle IDs.",
+    "make": "You are the founder's experiment designer. Turn the proposal into a concrete experiment package for this venture: intended prototype or pilot behavior, ordered test steps, acceptance checks, recruiting and instrumentation plans, support responsibilities, and limitations. No outreach or execution has occurred. Do not replace the founder's metric, target, or stop condition; they remain fixed in the proposal. Incorporate recorded revision instructions.",
+    "critique": "You are the independent venture reviewer. Inspect the complete experiment document in context.artifactDocument. Assess whether the test can falsify the hypothesis, its scope, evidence gaps, and maintenance burden. Copy the artifact hash to inspectedArtifactHash. Acceptance means ready for a future experiment, never proven demand or an initiative already launched.",
+    "decide": "You are the founder reviewing the experiment package and independent critique. Accept it for a future experiment, request a bounded revision, or reject. There is no launch or revenue tool. Do not mistake a local package for validated demand. At the revision limit choose acceptance or rejection.",
+    "reflect": "You are the founder maintaining a persistent venture history. Record what was learned about experiment design, what remains untested, and the next question. Keep fixture and real evidence distinct. No experiment was actually executed by this workflow. identityChangeProposed may suggest a founder-thesis change but does not apply it."
+  },
+  "cycles": [
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "studio": "founder",
+      "provider": "fixture",
+      "model": null,
+      "fixture": true,
+      "profile": {
+        "studio": "founder",
+        "name": "example-founder",
+        "instanceId": "example-founder",
+        "version": 1,
+        "provisional": true,
+        "description": "A configurable founder with its own mission, operating limits, and persistent memory.",
+        "audience": "Not selected. Identify who would benefit before committing to an experiment.",
+        "ventureType": "Open. The founder may pursue software, a service, a community, media, or another venture.",
+        "mandate": "Develop a venture consistent with the configured mission. Identify assumptions, gather evidence, propose bounded experiments, and retain what is learned.",
+        "thesis": "Use real observations to decide what deserves to exist. Test the smallest consequential assumption before expanding commitments.",
+        "successSignals": [
+          "Observed behavior supports a specific claim about benefit to the intended audience.",
+          "The initiative can meet its ongoing commitments within available resources.",
+          "Evidence supports continuing, changing direction, or stopping."
+        ],
+        "principles": [
+          "Keep one active experiment at a time.",
+          "Record the success criterion before running the experiment.",
+          "Distinguish source reports, founder hypotheses, fixture data, and measured outcomes.",
+          "Reserve capacity for maintaining existing commitments.",
+          "Stopping an experiment is a legitimate result."
+        ],
+        "exclusions": [
+          "No invented customers, interviews, usage, revenue, or validation.",
+          "No unsolicited outreach, paid acquisition, or deployment in this local implementation.",
+          "No changing success thresholds after seeing results without recording a new experiment."
+        ],
+        "voice": "Specific, economical, evidence-aware. Explain assumptions and unresolved questions.",
+        "referenceNotes": [
+          "This is a generic founder template. Mission, audience, thesis, and operating limits are configured per instance.",
+          "A social AI app is one possible mission, not a built-in assumption.",
+          "The first workshop produces an experiment package; execution capabilities can expand through adapters."
+        ]
+      },
+      "observations": [
+        {
+          "id": "fixture-project-handoff",
+          "stream": "customer",
+          "kind": "fixture",
+          "visibility": "public",
+          "title": "A fictional service business loses track of project handoffs",
+          "text": "Synthetic development scenario: a fictional independent service business keeps client requests in several places and sometimes misses a promised handoff. No customer was interviewed. This is a hypothesis-generating fixture, not evidence of demand.",
+          "url": null,
+          "observedAt": "2026-09-13T00:00:00.000Z"
+        }
+      ],
+      "priorPractice": [],
+      "recalledMemoryIds": [],
+      "stage": "done",
+      "status": "released",
+      "outcome": "released",
+      "revision": 0,
+      "createdAt": "2026-09-13T18:43:34.113Z",
+      "updatedAt": "2026-09-13T18:43:34.125Z"
+    }
+  ],
+  "memories": [
+    {
+      "id": "identity-eb7d047db29d57c3df624f12b7909f078ba572086cd61dff729badd5d1562bdc",
+      "kind": "identity",
+      "content": "{\"studio\":\"founder\",\"name\":\"example-founder\",\"instanceId\":\"example-founder\",\"version\":1,\"provisional\":true,\"description\":\"A configurable founder with its own mission, operating limits, and persistent memory.\",\"audience\":\"Not selected. Identify who would benefit before committing to an experiment.\",\"ventureType\":\"Open. The founder may pursue software, a service, a community, media, or another venture.\",\"mandate\":\"Develop a venture consistent with the configured mission. Identify assumptions, gather evidence, propose bounded experiments, and retain what is learned.\",\"thesis\":\"Use real observations to decide what deserves to exist. Test the smallest consequential assumption before expanding commitments.\",\"successSignals\":[\"Observed behavior supports a specific claim about benefit to the intended audience.\",\"The initiative can meet its ongoing commitments within available resources.\",\"Evidence supports continuing, changing direction, or stopping.\"],\"principles\":[\"Keep one active experiment at a time.\",\"Record the success criterion before running the experiment.\",\"Distinguish source reports, founder hypotheses, fixture data, and measured outcomes.\",\"Reserve capacity for maintaining existing commitments.\",\"Stopping an experiment is a legitimate result.\"],\"exclusions\":[\"No invented customers, interviews, usage, revenue, or validation.\",\"No unsolicited outreach, paid acquisition, or deployment in this local implementation.\",\"No changing success thresholds after seeing results without recording a new experiment.\"],\"voice\":\"Specific, economical, evidence-aware. Explain assumptions and unresolved questions.\",\"referenceNotes\":[\"This is a generic founder template. Mission, audience, thesis, and operating limits are configured per instance.\",\"A social AI app is one possible mission, not a built-in assumption.\",\"The first workshop produces an experiment package; execution capabilities can expand through adapters.\"]}",
+      "cycleId": null,
+      "sourceIds": [],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.114Z"
+    },
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13:source:fixture-project-handoff",
+      "kind": "observation",
+      "content": "{\"id\":\"fixture-project-handoff\",\"stream\":\"customer\",\"kind\":\"fixture\",\"visibility\":\"public\",\"title\":\"A fictional service business loses track of project handoffs\",\"text\":\"Synthetic development scenario: a fictional independent service business keeps client requests in several places and sometimes misses a promised handoff. No customer was interviewed. This is a hypothesis-generating fixture, not evidence of demand.\",\"url\":null,\"observedAt\":\"2026-09-13T00:00:00.000Z\"}",
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.114Z"
+    },
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13:research:0",
+      "kind": "decision",
+      "content": "{\"summary\":\"Synthetic briefing for the configured founder mission. No market research was performed.\",\"findings\":[{\"observationId\":\"fixture-project-handoff\",\"interpretation\":\"Fixture interpretation of supplied input: A fictional service business loses track of project handoffs\"}],\"uncertainties\":[\"The problem frequency, customer group, and willingness to change behavior are unverified.\"],\"evidenceLevel\":\"hypothesis_only\",\"reportedProblemSourceIds\":[]}",
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.116Z"
+    },
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13:propose:0",
+      "kind": "decision",
+      "content": "{\"action\":\"make\",\"rationale\":\"Design a cheap falsifiable test of the fictional workflow problem.\",\"title\":\"First experiment: example-founder\",\"targetAudience\":\"Not selected. Identify who would benefit before committing to an experiment.\",\"problem\":\"The need addressed by this mission remains untested: Develop a venture consistent with the configured mission. Identify assumptions, gather evidence, propose bounded experiments, and retain what is learned.\",\"hypothesis\":\"A small facilitated pilot may establish whether the intended audience can achieve a useful outcome related to the mission.\",\"smallestTest\":\"Facilitate one representative audience activity manually before committing to a full venture.\",\"successCriterion\":{\"metric\":\"Participants completing the agreed activity without facilitator intervention\",\"target\":3,\"unit\":\"participants out of 5 recruited\",\"windowDays\":7},\"stopCondition\":\"Stop if the need is not recurring or fewer than three of five participants complete the activity.\",\"maintenancePlan\":\"Assign an owner for feedback triage and delete test data after the agreed retention period.\",\"sourceIds\":[\"fixture-project-handoff\"],\"previousWorkIds\":[]}",
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.117Z"
+    },
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13:make:0",
+      "kind": "decision",
+      "content": "{\"title\":\"First experiment: example-founder\",\"summary\":\"A synthetic experiment design. There are no real participants, measured results, or deployed software.\",\"prototypeBehavior\":[\"Specify one audience activity related to the founder mission.\",\"Provide the minimum manual pilot needed to attempt that activity.\"],\"testSteps\":[\"Obtain agreement from five relevant participants for a future test.\",\"Define one representative activity and a clear completion condition.\",\"Observe each participant attempt the activity.\",\"Record outcomes against the original criterion.\"],\"acceptanceChecks\":[\"The activity has a clear completion condition.\",\"The observer can tell whether facilitator intervention was needed.\"],\"recruitingPlan\":\"Prepare a recruitment brief for the owner; no outreach is sent by this harness.\",\"instrumentation\":\"Record participant pseudonym, completion, and facilitator intervention. Keep personal information private.\",\"supportPlan\":\"One person owns questions during the seven-day test; no live service is promised.\",\"limitations\":[\"Customer group is provisional.\",\"Fixture inputs are not validation.\",\"This package does not contain executable software.\"]}",
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.118Z"
+    },
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13:render:0",
+      "kind": "decision",
+      "content": "{\"kind\":\"experiment-package\",\"hash\":\"c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a\",\"documentHash\":\"fac14577dad03e49f4755112ea5cab27f7e93093a0801c1f7b12afefc981b735\",\"directory\":\"artifacts/c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a\",\"document\":\"artifacts/c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a/experiment.md\",\"spec\":\"artifacts/c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a/spec.json\"}",
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.120Z"
+    },
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13:critique:0",
+      "kind": "decision",
+      "content": "{\"inspectedArtifactHash\":\"c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a\",\"recommendation\":\"accept\",\"reading\":\"Synthetic reviewer fixture: the package specifies a bounded future test, not a completed experiment.\",\"strengths\":[\"A pass threshold and stop condition are fixed before data collection.\"],\"weaknesses\":[\"The fictional customer problem still requires real discovery.\"],\"revisionInstructions\":[]}",
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.121Z"
+    },
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13:decide:0",
+      "kind": "decision",
+      "content": "{\"action\":\"accept\",\"rationale\":\"Accept the fixture package as an unvalidated experiment design.\",\"revisionInstructions\":[]}",
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.122Z"
+    },
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13:release:0",
+      "kind": "work",
+      "content": "{\"id\":\"fd063606-a825-41bb-be4c-92d37880bf13\",\"title\":\"First experiment: example-founder\",\"studio\":\"founder\",\"medium\":\"experiment-package\",\"status\":\"local-release\",\"validationStatus\":\"unvalidated\",\"launchStatus\":\"not-launched\",\"provider\":\"fixture\",\"fixture\":true,\"founder\":\"example-founder\",\"profileVersion\":1,\"artifact\":{\"kind\":\"experiment-package\",\"hash\":\"c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a\",\"documentHash\":\"fac14577dad03e49f4755112ea5cab27f7e93093a0801c1f7b12afefc981b735\",\"directory\":\"artifacts/c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a\",\"document\":\"artifacts/c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a/experiment.md\",\"spec\":\"artifacts/c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a/spec.json\"},\"sourceIds\":[\"fixture-project-handoff\"],\"previousWorkIds\":[],\"successCriterion\":{\"metric\":\"Participants completing the agreed activity without facilitator intervention\",\"target\":3,\"unit\":\"participants out of 5 recruited\",\"windowDays\":7},\"stopCondition\":\"Stop if the need is not recurring or fewer than three of five participants complete the activity.\"}",
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.125Z"
+    },
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13:reflect:0",
+      "kind": "reflection",
+      "content": "{\"learning\":\"The studio can retain a hypothesis, predeclared criterion, and test design without claiming measured success.\",\"unresolvedQuestion\":\"Does a real customer have this problem frequently enough to change their workflow?\",\"nextExperiment\":\"Collect actual problem reports from a chosen customer group.\",\"identityChangeProposed\":null}",
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "visibility": "public",
+      "supersedes": null,
+      "createdAt": "2026-09-13T18:43:34.125Z"
+    }
+  ],
+  "releases": [
+    {
+      "id": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "title": "First experiment: example-founder",
+      "studio": "founder",
+      "medium": "experiment-package",
+      "status": "local-release",
+      "validationStatus": "unvalidated",
+      "launchStatus": "not-launched",
+      "provider": "fixture",
+      "fixture": true,
+      "founder": "example-founder",
+      "profileVersion": 1,
+      "artifact": {
+        "kind": "experiment-package",
+        "hash": "c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a",
+        "documentHash": "fac14577dad03e49f4755112ea5cab27f7e93093a0801c1f7b12afefc981b735",
+        "directory": "artifacts/c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a",
+        "document": "artifacts/c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a/experiment.md",
+        "spec": "artifacts/c84c94aea2fc921f6d63e3c0b7246bc0dd4c41d8120436eefc2155232e1ead4a/spec.json"
+      },
+      "sourceIds": [
+        "fixture-project-handoff"
+      ],
+      "previousWorkIds": [],
+      "successCriterion": {
+        "metric": "Participants completing the agreed activity without facilitator intervention",
+        "target": 3,
+        "unit": "participants out of 5 recruited",
+        "windowDays": 7
+      },
+      "stopCondition": "Stop if the need is not recurring or fewer than three of five participants complete the activity."
+    }
+  ],
+  "events": [
+    {
+      "sequence": 1,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "cycle.created",
+      "data": {
+        "provider": "fixture"
+      },
+      "at": "2026-09-13T18:43:34.114Z",
+      "previousHash": "0000000000000000000000000000000000000000000000000000000000000000",
+      "hash": "d9c844e62fec599ac038fff5a359893339244b8fe94bfbab7aff2944bcc5fe45"
+    },
+    {
+      "sequence": 2,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.started",
+      "data": {
+        "stage": "research",
+        "revision": 0,
+        "attemptId": "ff01539b-3b70-4f53-a565-c9400165d09a"
+      },
+      "at": "2026-09-13T18:43:34.115Z",
+      "previousHash": "d9c844e62fec599ac038fff5a359893339244b8fe94bfbab7aff2944bcc5fe45",
+      "hash": "08ebcc94d75b5f04bfab32d67545c087b170492a436c86e11bd00e7ce7d4d99c"
+    },
+    {
+      "sequence": 3,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.completed",
+      "data": {
+        "stage": "research",
+        "revision": 0,
+        "nextStage": "propose",
+        "outcome": null
+      },
+      "at": "2026-09-13T18:43:34.116Z",
+      "previousHash": "08ebcc94d75b5f04bfab32d67545c087b170492a436c86e11bd00e7ce7d4d99c",
+      "hash": "d1fb02800ee3a5f9207ddbb0febd18956c6664cd17074f234c1dc21ed34cff00"
+    },
+    {
+      "sequence": 4,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.started",
+      "data": {
+        "stage": "propose",
+        "revision": 0,
+        "attemptId": "226627ac-2132-4fdf-873e-8212ecbf6f86"
+      },
+      "at": "2026-09-13T18:43:34.116Z",
+      "previousHash": "d1fb02800ee3a5f9207ddbb0febd18956c6664cd17074f234c1dc21ed34cff00",
+      "hash": "a914668ab217587fbb99e7d9962aaf8c963bb87c6bee64b943c42beb39e730c2"
+    },
+    {
+      "sequence": 5,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.completed",
+      "data": {
+        "stage": "propose",
+        "revision": 0,
+        "nextStage": "make",
+        "outcome": null
+      },
+      "at": "2026-09-13T18:43:34.117Z",
+      "previousHash": "a914668ab217587fbb99e7d9962aaf8c963bb87c6bee64b943c42beb39e730c2",
+      "hash": "e9e2b0687d99593e8a3e50f51bc0ef89aa8cd85b9826034940d454be62b4e455"
+    },
+    {
+      "sequence": 6,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.started",
+      "data": {
+        "stage": "make",
+        "revision": 0,
+        "attemptId": "838da91d-33b1-4a42-a0c5-e40d546b7df5"
+      },
+      "at": "2026-09-13T18:43:34.117Z",
+      "previousHash": "e9e2b0687d99593e8a3e50f51bc0ef89aa8cd85b9826034940d454be62b4e455",
+      "hash": "8f04d665487f8240241bf627f5decf999aa574bc6371d927911cca68c6f755a3"
+    },
+    {
+      "sequence": 7,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.completed",
+      "data": {
+        "stage": "make",
+        "revision": 0,
+        "nextStage": "render",
+        "outcome": null
+      },
+      "at": "2026-09-13T18:43:34.118Z",
+      "previousHash": "8f04d665487f8240241bf627f5decf999aa574bc6371d927911cca68c6f755a3",
+      "hash": "01e6d55407111a0660ca08b54cbce9dfea854a486aeda8502a6f44830a984e7d"
+    },
+    {
+      "sequence": 8,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.started",
+      "data": {
+        "stage": "render",
+        "revision": 0,
+        "attemptId": "cecdb978-0882-4f50-8359-6259cc969988"
+      },
+      "at": "2026-09-13T18:43:34.118Z",
+      "previousHash": "01e6d55407111a0660ca08b54cbce9dfea854a486aeda8502a6f44830a984e7d",
+      "hash": "e40dfb0186f9ae6d5a42b9d36b559f40a706c5bf0269e577799cbbd23b547057"
+    },
+    {
+      "sequence": 9,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.completed",
+      "data": {
+        "stage": "render",
+        "revision": 0,
+        "nextStage": "critique",
+        "outcome": null
+      },
+      "at": "2026-09-13T18:43:34.120Z",
+      "previousHash": "e40dfb0186f9ae6d5a42b9d36b559f40a706c5bf0269e577799cbbd23b547057",
+      "hash": "bac79df5b13557a35ac1829d9784afd224be2111dfc2b4d69d9d87cffb2f6c4d"
+    },
+    {
+      "sequence": 10,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.started",
+      "data": {
+        "stage": "critique",
+        "revision": 0,
+        "attemptId": "c023b115-ce9d-4d68-a1e6-3b504cf3c78d"
+      },
+      "at": "2026-09-13T18:43:34.120Z",
+      "previousHash": "bac79df5b13557a35ac1829d9784afd224be2111dfc2b4d69d9d87cffb2f6c4d",
+      "hash": "c1015f1b26bfb590b4db5378af35158224b627b20d902d3ec5f639d04ec2226b"
+    },
+    {
+      "sequence": 11,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.completed",
+      "data": {
+        "stage": "critique",
+        "revision": 0,
+        "nextStage": "decide",
+        "outcome": null
+      },
+      "at": "2026-09-13T18:43:34.121Z",
+      "previousHash": "c1015f1b26bfb590b4db5378af35158224b627b20d902d3ec5f639d04ec2226b",
+      "hash": "7b6911d4d2ed97f30d83b3fc8e267195a1ebfc41316004b3e40ac49cde684c3f"
+    },
+    {
+      "sequence": 12,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.started",
+      "data": {
+        "stage": "decide",
+        "revision": 0,
+        "attemptId": "1a74c21b-1e74-4a87-9269-9ab3843cab4a"
+      },
+      "at": "2026-09-13T18:43:34.121Z",
+      "previousHash": "7b6911d4d2ed97f30d83b3fc8e267195a1ebfc41316004b3e40ac49cde684c3f",
+      "hash": "04fc8c7ddeb56b768888e4170e552a2164075a4ff8dfed7b1f290b99be3538be"
+    },
+    {
+      "sequence": 13,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.completed",
+      "data": {
+        "stage": "decide",
+        "revision": 0,
+        "nextStage": "release",
+        "outcome": null
+      },
+      "at": "2026-09-13T18:43:34.122Z",
+      "previousHash": "04fc8c7ddeb56b768888e4170e552a2164075a4ff8dfed7b1f290b99be3538be",
+      "hash": "ff2ff94a09ab3261d2e0d8f3d8395a5b681a8cab99f66050bc8ec9e73874cfe3"
+    },
+    {
+      "sequence": 14,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.started",
+      "data": {
+        "stage": "release",
+        "revision": 0,
+        "attemptId": "ee7ea663-32b5-486f-8b60-73e72389f7e9"
+      },
+      "at": "2026-09-13T18:43:34.122Z",
+      "previousHash": "ff2ff94a09ab3261d2e0d8f3d8395a5b681a8cab99f66050bc8ec9e73874cfe3",
+      "hash": "8df66c80ad98903d3010aaa3ccdce02e9b1ff80f1a59bca26169c6c1db6ecddd"
+    },
+    {
+      "sequence": 15,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.completed",
+      "data": {
+        "stage": "release",
+        "revision": 0,
+        "nextStage": "reflect",
+        "outcome": "released"
+      },
+      "at": "2026-09-13T18:43:34.125Z",
+      "previousHash": "8df66c80ad98903d3010aaa3ccdce02e9b1ff80f1a59bca26169c6c1db6ecddd",
+      "hash": "a64a4f756670f67be5253e8c3032e6ffe58c9973c4df10ef33fd891e7536ca0f"
+    },
+    {
+      "sequence": 16,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.started",
+      "data": {
+        "stage": "reflect",
+        "revision": 0,
+        "attemptId": "07a260ba-9e1a-4e26-9410-a3d4b0356ffd"
+      },
+      "at": "2026-09-13T18:43:34.125Z",
+      "previousHash": "a64a4f756670f67be5253e8c3032e6ffe58c9973c4df10ef33fd891e7536ca0f",
+      "hash": "1ce8dcca972157da9e6bc73eb86548d96b81695d088385052ce82063d4d2148f"
+    },
+    {
+      "sequence": 17,
+      "cycleId": "fd063606-a825-41bb-be4c-92d37880bf13",
+      "type": "stage.completed",
+      "data": {
+        "stage": "reflect",
+        "revision": 0,
+        "nextStage": "done",
+        "outcome": "released"
+      },
+      "at": "2026-09-13T18:43:34.125Z",
+      "previousHash": "1ce8dcca972157da9e6bc73eb86548d96b81695d088385052ce82063d4d2148f",
+      "hash": "3a03da085c58b83bd10a2273e67605bfc58ca4f96e390debc4b0ea1ae7802a66"
+    }
+  ],
+  "withheldMemoryCount": 0,
+  "eventChainValid": true
+}

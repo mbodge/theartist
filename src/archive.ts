@@ -4,14 +4,15 @@ import { randomUUID } from 'node:crypto';
 import { hash, type Store } from './store.js';
 import { immutableWrite, inspectArtifact } from './artifacts.js';
 import { instructions } from './agents.js';
-import type { Artifact } from './domain.js';
+import { founderInstructions, inspectExperiment } from './founder.js';
+import { isFounderArtifact, studioKind, type StudioArtifact } from './domain.js';
 
 /** Portable public record. A projection of the studio, never a raw database dump. */
 export async function exportArchive(store: Store, studioRoot: string, destination: string) {
   const allMemories = store.memories();
   const memories = allMemories.filter(m => m.visibility === 'public');
   const cycles = store.list().filter(c => c.observations.every(o => o.visibility === 'public')).map(c => ({
-    id: c.id, provider: c.provider, model: c.model, fixture: c.provider === 'fixture',
+    id: c.id, studio: studioKind(c.profile), provider: c.provider, model: c.model, fixture: c.provider === 'fixture',
     profile: c.profile, observations: c.observations, priorPractice: c.memory,
     recalledMemoryIds: c.recalledMemories.map(m => m.id),
     stage: c.stage, status: c.status, outcome: c.outcome, revision: c.revision,
@@ -21,9 +22,9 @@ export async function exportArchive(store: Store, studioRoot: string, destinatio
   const releases = store.releases().filter(r => ids.has(String(r.id)));
   const events = store.events(); // Event payloads are operational metadata, never provider responses.
   const manifest = {
-    schemaVersion: 1, title: 'theartist — public studio archive',
+    schemaVersion: 2, title: `${cycles[0]?.profile.name ?? 'Studio'} — public archive`,
     explanation: 'Explicit studio outputs, decisions, sources, and reflections. Fixture runs are synthetic. Local releases are not public exhibitions. Credentials, raw provider traces, and private source-derived records are excluded.',
-    instructions, cycles, memories, releases, events,
+    instructions, founderInstructions, cycles, memories, releases, events,
     withheldMemoryCount: allMemories.length - memories.length,
     eventChainValid: store.verifyEvents(),
   };
@@ -31,17 +32,19 @@ export async function exportArchive(store: Store, studioRoot: string, destinatio
   const digest = hash(serialized);
   const directory = join(destination, digest);
   await mkdir(directory, { recursive: true });
-  const artifacts = new Map<string, Artifact>();
+  const artifacts = new Map<string, StudioArtifact>();
   for (const cycle of cycles) {
     for (let revision = 0; revision <= cycle.revision; revision++) {
-      const artifact = store.checkpoint(cycle.id, 'render', revision) as Artifact | undefined;
+      const artifact = store.checkpoint(cycle.id, 'render', revision) as StudioArtifact | undefined;
       if (artifact) artifacts.set(artifact.hash, artifact);
     }
   }
   for (const artifact of artifacts.values()) {
-    await inspectArtifact(studioRoot, artifact);
+    if (isFounderArtifact(artifact)) await inspectExperiment(studioRoot, artifact);
+    else await inspectArtifact(studioRoot, artifact);
     await mkdir(join(directory, artifact.directory), { recursive: true });
-    for (const path of [artifact.png, artifact.svg, artifact.spec]) {
+    const files = isFounderArtifact(artifact) ? [artifact.document, artifact.spec] : [artifact.png, artifact.svg, artifact.spec];
+    for (const path of files) {
       await immutableWrite(join(directory, path), await readFile(join(studioRoot, path)));
     }
   }

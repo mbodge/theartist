@@ -4,8 +4,8 @@ import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import {
   AttemptLimitError, BudgetError, BusyError, PausedError, StudioError,
-  agentSchemas,
-  type Cycle, type Memory, type Result, type Stage,
+  agentSchemas, studioKind, isFounder,
+  type Cycle, type Memory, type Result, type Stage, type StudioKind,
 } from './domain.js';
 
 export const hash = (value: string | Buffer) => createHash('sha256').update(value).digest('hex');
@@ -65,6 +65,17 @@ export class Store {
     `);
   }
   close() { this.db.close(); }
+  bindStudio(kind: StudioKind, instanceId: string | null = null) {
+    this.db.transaction(() => {
+      const saved = this.db.prepare("SELECT value FROM settings WHERE key='studio_kind'").get() as { value: string } | undefined;
+      const prior = saved?.value ?? (this.list()[0] ? studioKind(this.list()[0]!.profile) : undefined);
+      if (prior && prior !== kind) throw new StudioError('This data directory belongs to a different studio; use a separate instance directory');
+      const instance = this.db.prepare("SELECT value FROM settings WHERE key='founder_instance_id'").get() as { value: string } | undefined;
+      if (kind === 'founder' && instance && instance.value !== (instanceId ?? 'default')) throw new StudioError('This data directory belongs to another founder instance');
+      this.db.prepare("INSERT OR IGNORE INTO settings VALUES('studio_kind',?)").run(kind);
+      if (kind === 'founder') this.db.prepare("INSERT OR IGNORE INTO settings VALUES('founder_instance_id',?)").run(instanceId ?? 'default');
+    }).immediate();
+  }
   iso() { return new Date(this.now()).toISOString(); }
   private decode(row: unknown): Cycle {
     if (!row) throw new StudioError('Cycle not found');
@@ -78,6 +89,7 @@ export class Store {
   }
   create(cycle: Cycle): Cycle {
     return this.db.transaction(() => {
+      this.bindStudio(studioKind(cycle.profile), isFounder(cycle.profile) ? cycle.profile.instanceId : null);
       const existing = this.byTrigger(cycle.triggerKey);
       if (existing) {
         // Same trigger with a different payload is a caller error, not a new project.
@@ -253,7 +265,7 @@ export class Store {
     return this.list().filter(c => c.status !== 'active' && c.observations.every(o => o.visibility === 'public')).slice(-6).map(c => {
       const proposal = this.checkpoint(c.id, 'propose');
       return { id: c.id, title: String(proposal?.title ?? 'No work proposed'), outcome: c.outcome ?? c.status,
-        concept: String(proposal?.concept ?? ''), reflection: this.checkpoint(c.id, 'reflect') ?? null };
+        concept: String(proposal?.concept ?? proposal?.hypothesis ?? ''), reflection: this.checkpoint(c.id, 'reflect') ?? null };
     });
   }
   attempts() { return this.db.prepare('SELECT * FROM attempts ORDER BY rowid').all(); }

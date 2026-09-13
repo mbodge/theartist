@@ -1,13 +1,14 @@
 import { randomUUID } from 'node:crypto';
 import { join } from 'node:path';
 import {
-  agentSchemas, observationsSchema, profileSchema, policySchema, StudioError,
+  agentSchemas, schemasFor, isFounder, isFounderArtifact, observationsSchema, profileSchema, policySchema, StudioError,
   type AgentProvider, type AgentRequest, type AgentResponse, type AgentStage,
-  type Artifact, type Cycle, type Observation, type Policy, type Profile, type Result,
+  type StudioArtifact, type Cycle, type Observation, type Policy, type Profile, type Result,
 } from './domain.js';
 import { Store } from './store.js';
 import { agentInput } from './agents.js';
 import { inspectArtifact, prepareRelease, renderArtwork } from './artifacts.js';
+import { inspectExperiment, renderExperiment, releaseExperiment } from './founder.js';
 
 export class Harness {
   readonly store: Store;
@@ -19,7 +20,10 @@ export class Harness {
     const profile = profileSchema.parse(profileInput), policy = policySchema.parse(policyInput);
     const observations = observationsSchema.parse(observationsInput);
     const now = this.store.iso();
-    const query = [...profile.preoccupations, ...observations.map(o => o.title)].join(' ');
+    // Bind before memory retrieval so another studio's history can never enter this context.
+    this.store.bindStudio(isFounder(profile) ? 'founder' : 'artist', isFounder(profile) ? profile.instanceId : null);
+    const interests = isFounder(profile) ? [profile.mandate, profile.audience, profile.thesis] : profile.preoccupations;
+    const query = [...observations.map(o => o.title), ...interests].join(' ');
     const all = this.store.memories();
     const superseded = new Set(all.map(m => m.supersedes).filter(Boolean));
     const recalled = this.store.memories(query).filter(m => m.visibility === 'public' && !superseded.has(m.id)).slice(0, 8);
@@ -61,8 +65,9 @@ export class Harness {
         if (['critique', 'decide'].includes(cycle.stage)) {
           context.artwork = this.required(cycle, 'make', cycle.revision);
           context.artifact = this.required(cycle, 'render', cycle.revision);
-          const artifact = context.artifact as Artifact;
-          image = { base64: (await inspectArtifact(this.root, artifact)).toString('base64'), hash: artifact.hash };
+          const artifact = context.artifact as StudioArtifact;
+          if (isFounderArtifact(artifact)) context.artifactDocument = await inspectExperiment(this.root, artifact);
+          else image = { base64: (await inspectArtifact(this.root, artifact)).toString('base64'), hash: artifact.hash };
         }
         if (cycle.stage === 'decide') context.critique = this.required(cycle, 'critique', cycle.revision);
         if (cycle.stage === 'reflect') {
@@ -80,16 +85,19 @@ export class Harness {
         });
         try { usage = await Promise.race([this.provider.generate(request, controller.signal), timeout]); }
         finally { clearTimeout(timer!); }
-        output = agentSchemas[request.stage].parse(usage.output) as Result;
+        output = schemasFor(cycle.profile)[request.stage].parse(usage.output) as Result;
         this.validateReferences(cycle, output);
       } else if (cycle.stage === 'render') {
-        output = await renderArtwork(this.root, this.required(cycle, 'make', cycle.revision));
+        output = isFounder(cycle.profile)
+          ? await renderExperiment(this.root, this.required(cycle, 'propose'), this.required(cycle, 'make', cycle.revision))
+          : await renderArtwork(this.root, this.required(cycle, 'make', cycle.revision));
       } else if (cycle.stage === 'release') {
         const decision = this.required(cycle, 'decide', cycle.revision);
-        if (decision.action !== 'accept') throw new StudioError('Only artist-accepted artifacts can be released');
-        output = await prepareRelease(this.root, cycle,
-          this.required(cycle, 'render', cycle.revision) as Artifact,
-          this.required(cycle, 'propose'), this.required(cycle, 'make', cycle.revision));
+        if (decision.action !== 'accept') throw new StudioError('Only principal-accepted artifacts can be released');
+        const artifact = this.required(cycle, 'render', cycle.revision) as StudioArtifact;
+        output = isFounderArtifact(artifact)
+          ? await releaseExperiment(this.root, cycle, artifact, this.required(cycle, 'propose'), this.required(cycle, 'make', cycle.revision))
+          : await prepareRelease(this.root, cycle, artifact, this.required(cycle, 'propose'), this.required(cycle, 'make', cycle.revision));
       } else throw new StudioError(`Unexpected stage ${cycle.stage}`);
 
       switch (cycle.stage) {
@@ -122,7 +130,12 @@ export class Harness {
     const sourceIds = new Set(cycle.observations.map(o => o.id));
     if (cycle.stage === 'research') {
       for (const item of output.findings as { observationId: string }[]) if (!sourceIds.has(item.observationId)) throw new StudioError('Research cited an unknown observation');
-      if (output.reception === 'observed' && !cycle.observations.some(o => o.stream === 'reception' && o.kind === 'source')) throw new StudioError('Research claimed reception without an external reception source');
+      if (isFounder(cycle.profile)) {
+        const reported = output.reportedProblemSourceIds as string[];
+        const allowed = new Set(cycle.observations.filter(o => o.kind === 'source' && ['customer', 'usage'].includes(o.stream)).map(o => o.id));
+        if (reported.some(id => !allowed.has(id))) throw new StudioError('Customer evidence must reference supplied customer or usage sources; fixtures and notes are not evidence');
+        if ((output.evidenceLevel === 'source_reports') !== (reported.length > 0)) throw new StudioError('Evidence level does not match reported sources');
+      } else if (output.reception === 'observed' && !cycle.observations.some(o => o.stream === 'reception' && o.kind === 'source')) throw new StudioError('Research claimed reception without an external reception source');
     }
     if (cycle.stage === 'propose') {
       if ((output.sourceIds as string[]).some(id => !sourceIds.has(id))) throw new StudioError('Proposal cited an unknown source');

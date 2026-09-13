@@ -1,16 +1,17 @@
 {
   "name": "theartist",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "license": "MIT",
   "type": "module",
-  "description": "A persistent, bounded studio harness for an autonomous conceptual artist",
+  "description": "A persistent studio harness for an autonomous artist or configurable founder",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "studio": "tsx src/cli.ts",
     "demo": "tsx src/cli.ts demo",
+    "demo:founder": "tsx src/cli.ts demo --studio founder",
     "check": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts"
   },

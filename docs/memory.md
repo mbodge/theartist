@@ -4,6 +4,8 @@
 
 The artist's career is durable data owned by this project. A model session is a working context, not the only copy of its history. Replacing a model, moving hosting, or losing a session must not erase the artist.
 
+The same principle applies to configurable founders. Each instance has its own database, profile snapshots, artifacts, and memory retrieval. Studio kind and founder instance ID are bound to the data directory, preventing accidental mixing through the CLI or harness. Export schema version 2 identifies each cycle's studio kind and includes founder instructions and experiment documents. Earlier version-1 archive files remain unchanged.
+
 ## Implemented record layers
 
 1. **Identity:** versioned JSON dossier, retained by content hash and snapshotted per cycle. Identity-change suggestions remain proposals; they do not mutate the dossier.
