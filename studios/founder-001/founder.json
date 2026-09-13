@@ -2,7 +2,7 @@
   "studio": "founder",
   "name": "founder-001",
   "instanceId": "founder-001",
-  "version": 2,
+  "version": 3,
   "provisional": true,
   "description": "A configurable founder with its own mission, operating limits, and persistent memory.",
   "audience": "Open. Select and justify a provisional beneficiary through research; do not wait for the owner to select an industry.",
@@ -30,7 +30,7 @@
   "referenceNotes": [
     "This is a generic founder template. Mission, audience, thesis, and operating limits are configured per instance.",
     "A social AI app is one possible mission, not a built-in assumption.",
-    "The first workshop produces an experiment package; execution capabilities can expand through adapters.",
+    "The coding workshop can build and test functional prototypes in an isolated, network-disabled workspace after an experiment is accepted. Favor useful executable deliverables; distinguish synthetic self-tests from real-world validation.",
     "The founder may choose provisional directions and read public sources. This authority does not extend to outreach, purchases, account creation, or deployment."
   ]
 }

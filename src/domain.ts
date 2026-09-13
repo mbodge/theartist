@@ -25,6 +25,13 @@ export function isFounder(profile: Profile): profile is z.infer<typeof founderPr
 }
 export const studioKind = (profile: Profile): StudioKind => isFounder(profile) ? 'founder' : 'artist';
 
+export const builderPolicySchema = z.strictObject({
+  enabled: z.boolean(), maxMinutes: z.number().int().min(1).max(30),
+  maxJobsPerDay: z.number().int().min(1).max(10),
+  maxFiles: z.number().int().min(1).max(100), maxBytes: z.number().int().min(1024).max(20000000),
+});
+export type BuilderPolicy = z.infer<typeof builderPolicySchema>;
+
 export const policySchema = z.strictObject({
   maxActiveCycles: z.number().int().min(1).max(3),
   maxRevisions: z.number().int().min(0).max(5),
@@ -34,6 +41,7 @@ export const policySchema = z.strictObject({
   maxInputBytes: z.number().int().min(1000).max(200000),
   maxAttemptsPerStage: z.number().int().min(1).max(5),
   maxWebCallsPerAttempt: z.number().int().min(0).max(12).optional(),
+  builder: builderPolicySchema.optional(),
   callTimeoutMs: z.number().int().min(100).max(300000),
   leaseMs: z.number().int().min(500).max(600000),
 }).refine(p => p.leaseMs > p.callTimeoutMs, 'Lease must exceed model timeout');
@@ -160,6 +168,7 @@ export type Cycle = {
 export type Memory = {
   id: string; title: string; outcome: string; concept: string;
   reflection: Result | null;
+  execution?: Result | null;
 };
 export type Artifact = {
   hash: string; pngHash: string; svgHash: string; directory: string;

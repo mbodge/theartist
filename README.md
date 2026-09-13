@@ -2,7 +2,7 @@
 
 A persistent conceptual artist and its studio. The artist develops an agenda; specialized roles research, make, critique, decide, and reflect. The studio remembers what happened and exposes an inspectable public record.
 
-**Status: working local harness, version 0.2.** Artist and configurable-founder modes share the durable engine. The offline demos are deterministic fixtures, not evidence of autonomous artistic or business judgment. A live OpenAI Responses adapter is implemented but requires your own credentials and model choice. OpenAI Agents API and Cloudflare deployment are the next integration milestone; neither is wired into this local runtime yet.
+**Status: working local harness, version 0.2.** Artist and configurable-founder modes share the durable engine. The offline demos are deterministic fixtures, not evidence of autonomous artistic or business judgment. A live OpenAI Responses adapter is implemented but requires your own credentials and model choice. Live founders also use OpenAI Agents API to build and test executable prototypes in isolated hosted workspaces. Cloudflare deployment remains a future integration.
 
 ## Spin up a founder
 
@@ -22,7 +22,7 @@ npm run studio -- init community-builder \
   --audience "Local residents" --venture "Community"
 ```
 
-The first founder workshop produces a reviewed **experiment package** with a hypothesis, success threshold, stop condition, test procedure, and maintenance plan. It does not yet build or launch an arbitrary business. Every release remains labeled unvalidated until a future measured-outcomes integration can establish otherwise.
+The founder produces a reviewed **experiment package** with a hypothesis, success threshold, stop condition, test procedure, and maintenance plan. Enabled live founders then hand it to a coding workshop that builds runnable source, executes commands, and saves the files and results. Prototype execution remains distinct from customer validation. See [the coding workshop](docs/building.md).
 
 `npm run demo:founder` runs a standalone founder fixture without creating a named instance. See [configurable founders](docs/founders.md) for instance commands, evidence rules, and the path to a hosted product anyone can use.
 
@@ -74,7 +74,7 @@ npm run studio -- run CYCLE_ID --provider openai
 
 Live runs incur provider charges. Execution limits live in `config/policy.json`: daily/cycle call allowances, maximum output tokens, input size, retries, timeouts, and revision limits. Failed and interrupted calls retain their allowance reservation. The SDK's automatic retries are disabled. These are resource limits, **not a dollar-denominated spending guarantee**. No purchasing, outbound email, or social tools are connected.
 
-The live adapter completed a [first Astra founder trial](docs/trials/astra-001.md) that abstained without supplied evidence. A [second live trial with web discovery](docs/trials/astra-discovery-001.md) completed the full loop: seven model calls, six web actions, seven cited sources, and a reviewed experiment package. These are two observed runs, not a general quality evaluation. No experiment was executed or product launched. Abstention can use a null success criterion, while making an experiment requires one.
+The live adapter completed a [first Astra founder trial](docs/trials/astra-001.md) that abstained without supplied evidence. A [second live trial with web discovery](docs/trials/astra-discovery-001.md) completed the full loop: seven model calls, six web actions, seven cited sources, and a reviewed experiment package. These are two observed runs, not a general quality evaluation. Those research trials did not execute an experiment or launch a product; the coding workshop now provides the next execution phase. Abstention can use a null success criterion, while making an experiment requires one.
 
 ### Autonomous founder discovery
 
@@ -119,7 +119,7 @@ npm run studio -- run CYCLE_ID --steps 3
 npm run studio -- tick
 ```
 
-Pause blocks new stage dispatches; an already-started stage can checkpoint its result. `tick` starts or resumes one cycle for the current UTC date, then exports the archive. It is a one-shot command, not an installed scheduler. Earlier active cycles can be resumed with `run`; multi-day queue scheduling is part of the hosted-runtime milestone.
+Pause blocks new stage dispatches; an already-started planning stage can checkpoint its result. A running builder cancels on its next worker poll. `tick` resumes unfinished builds or older active cycles before starting the current UTC date’s cycle, and automatically builds accepted live founder experiments. It then exports the archive. It is a one-shot worker, not an installed scheduler. See [execution limits and recovery](docs/building.md).
 
 Failed steps can be retried within their configured attempt allowance. When exhausted, inspect the record and close the failed cycle with `close CYCLE_ID --text "reason"`; a fresh trigger creates a new attempt with its own provenance. Daily allowance exhaustion can be resumed on a later UTC day.
 
@@ -136,6 +136,7 @@ Persistent studio state machine ───► Role provider
 SQLite checkpoints + memory + events
         │
         ├─► bounded typographic renderer ─► PNG / SVG
+        ├─► managed coding workspace ─► source + tests + command logs
         └─► public JSON / JSONL archive + artifacts
 ```
 
@@ -159,6 +160,8 @@ Source map:
 | `src/harness.ts` | Studio stage transitions and validation |
 | `src/agents.ts` | Public role instructions and provider adapters |
 | `src/founder.ts` | Founder roles, fixtures, and experiment packages |
+| `src/builder.ts` | Durable coding jobs, recovery, execution memory and file verification |
+| `src/managed-builder.ts` | OpenAI Agents sandbox, commands and artifacts |
 | `src/instances.ts` | Founder creation and isolated instance paths |
 | `src/artifacts.ts` | Bounded rendering and local release preparation |
 | `src/archive.ts` | Portable public archive projection |

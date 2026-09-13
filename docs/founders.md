@@ -22,6 +22,7 @@ studios/my-founder/
   studio.sqlite         # Created on first run; isolated memory and history
   artifacts/            # Created as experiments are rendered
   releases/
+  builds/               # Source, tests, and artifacts from coding jobs
   public/               # Portable exports
 ```
 
@@ -60,7 +61,7 @@ The command line checks the instance ID stored in the data directory. Pointing o
 
 The implemented loop is:
 
-`discover → synthesize observations → choose provisional direction → design experiment → render package → review → decide → local release → reflect`
+`discover → synthesize observations → choose provisional direction → design experiment → render package → review → decide → local release → reflect → build and test → record execution`
 
 The optional discovery stage is enabled for live founders by a positive `maxWebCallsPerAttempt` policy value. It uses hosted web search, page reading, and finding text within pages, within one bounded Responses request. The generic founder may compare candidate directions and choose its own provisional audience; a custom mission still constrains that choice. The template allows six web actions per attempt. Old policies without this setting and all offline fixture runs skip discovery. Existing in-flight cycles keep their original stages and limits.
 
@@ -79,9 +80,9 @@ The reviewer receives the actual generated Markdown document and its content has
 
 When abstaining, the founder should set `successCriterion` to null. A proposal to make an experiment must include a criterion. Older records with a criterion attached to abstention remain readable, including the unsuitable fractional target preserved in the first live trial.
 
-Acceptance means an experiment package is ready to consider executing. Every release is labeled `validationStatus: unvalidated` and `launchStatus: not-launched`. The harness cannot convert founder confidence into measured outcomes.
+Acceptance makes an experiment eligible for the enabled coding workshop. Every release is labeled `validationStatus: unvalidated` and `launchStatus: not-launched`. The harness cannot convert founder confidence into measured outcomes.
 
-This workshop plans experiments. Coding, deployment, outreach, payments, support, and measured feedback loops are future adapters with their own operating authority.
+The [coding workshop](building.md) is implemented through OpenAI Agents API. Enabled live founders automatically build and test accepted prototypes, retaining source and command logs. Deployment, outreach, payments, support, and measured customer feedback remain future adapters with their own operating authority.
 
 ## Evidence and memory
 

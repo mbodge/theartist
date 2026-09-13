@@ -59,6 +59,10 @@ export class Store {
       CREATE TABLE IF NOT EXISTS releases (
         cycle_id TEXT PRIMARY KEY REFERENCES cycles(id), manifest TEXT NOT NULL
       );
+      CREATE TABLE IF NOT EXISTS build_jobs (
+        cycle_id TEXT PRIMARY KEY REFERENCES cycles(id), payload TEXT NOT NULL,
+        lease_token TEXT, lease_until INTEGER NOT NULL DEFAULT 0
+      );
       CREATE INDEX IF NOT EXISTS attempts_by_day ON attempts(day, model_call);
       CREATE INDEX IF NOT EXISTS memories_by_cycle ON memories(cycle_id);
       PRAGMA user_version = 1;
@@ -269,10 +273,14 @@ export class Store {
   recentMemory(): Memory[] {
     return this.list().filter(c => c.status !== 'active' && c.observations.every(o => o.visibility === 'public')).slice(-6).map(c => {
       const proposal = this.checkpoint(c.id, 'propose');
+      const row = this.db.prepare('SELECT payload FROM build_jobs WHERE cycle_id=?').get(c.id) as { payload: string } | undefined;
+      const build = row ? JSON.parse(row.payload) : null;
       return { id: c.id, title: String(proposal?.title ?? 'No work proposed'), outcome: c.outcome ?? c.status,
-        concept: String(proposal?.concept ?? proposal?.hypothesis ?? ''), reflection: this.checkpoint(c.id, 'reflect') ?? null };
+        concept: String(proposal?.concept ?? proposal?.hypothesis ?? ''), reflection: this.checkpoint(c.id, 'reflect') ?? null,
+        execution: build ? { status: build.status, artifacts: build.artifacts, error: build.error, validation: 'Prototype execution is not customer validation.' } : null };
     });
   }
   attempts() { return this.db.prepare('SELECT * FROM attempts ORDER BY rowid').all(); }
+  builds(): Result[] { return (this.db.prepare('SELECT payload FROM build_jobs ORDER BY rowid').all() as { payload: string }[]).map(row => JSON.parse(row.payload)); }
   releases(): Result[] { return (this.db.prepare('SELECT manifest FROM releases ORDER BY rowid').all() as { manifest: string }[]).map(r => JSON.parse(r.manifest) as Result); }
 }

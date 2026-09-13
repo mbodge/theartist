@@ -10,6 +10,8 @@ import { observationsSchema, profileSchema, policySchema, studioKind, isFounder,
 import { exportArchive } from './archive.js';
 import { Store } from './store.js';
 import { createFounder, instancePaths, listFounders } from './instances.js';
+import { Builder, buildTerminal, type BuildJob } from './builder.js';
+import { ManagedBuilder } from './managed-builder.js';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const help = `theartist — local studio harness
@@ -22,6 +24,7 @@ const help = `theartist — local studio harness
   npm run studio -- run <id>               Run/resume a cycle to completion
   npm run studio -- step <id>              Execute one checkpointed stage
   npm run studio -- tick                  One idempotent UTC daily cycle
+  npm run studio -- build <id>            Build/resume a prototype from an accepted experiment
   npm run studio -- status               List cycles, pause state, and call attempts
   npm run studio -- show <id>             Inspect a cycle and its explicit outputs
   npm run studio -- close <id> --text ...  Close a failed/stuck cycle with a reason
@@ -48,6 +51,7 @@ Options:
   --supersedes <memory-id>     Correct an earlier note without erasing it
 
 OpenAI mode requires OPENAI_API_KEY and OPENAI_MODEL in environment or .env.
+Enabled live founders build prototypes in an isolated hosted coding workspace.
 This version has no social posting, email sending, or purchasing tools.
 tick is a one-shot scheduler entrypoint; it does not install a background job.
 `;
@@ -83,7 +87,7 @@ async function main() {
   const store = new Store(join(data, 'studio.sqlite'));
   try {
     store.bindStudio(mode as 'artist' | 'founder', values.instance ?? null);
-    if (command === 'status') { json({ paused: store.paused(), cycles: store.list().map(c => ({ id: c.id, stage: c.stage, status: c.status, provider: c.provider, revision: c.revision, lastError: c.lastError })), attempts: store.attempts(), eventChainValid: store.verifyEvents() }); return; }
+    if (command === 'status') { json({ paused: store.paused(), cycles: store.list().map(c => ({ id: c.id, stage: c.stage, status: c.status, provider: c.provider, revision: c.revision, lastError: c.lastError })), builds: store.builds().map(b => ({ cycleId: b.cycleId, status: b.status, sessionId: b.sessionId, error: b.error })), attempts: store.attempts(), eventChainValid: store.verifyEvents() }); return; }
     if (command === 'memory') { json(store.memories(positionals.slice(1).join(' ') || undefined)); return; }
     if (command === 'note') {
       if (!values.text?.trim() || values.text.length > 8000) throw new StudioError('note needs --text between 1 and 8000 characters');
@@ -92,7 +96,7 @@ async function main() {
     }
     if (command === 'show') {
       const id = positionals[1]; if (!id) throw new StudioError('show needs a cycle ID');
-      json({ cycle: store.get(id), memories: store.memories().filter(m => m.cycleId === id) }); return;
+      json({ cycle: store.get(id), memories: store.memories().filter(m => m.cycleId === id), build: store.builds().find(b => b.cycleId === id) ?? null }); return;
     }
     if (command === 'close') {
       const id = positionals[1]; if (!id) throw new StudioError('close needs a cycle ID');
@@ -100,7 +104,7 @@ async function main() {
     }
     if (command === 'pause' || command === 'resume') { store.pause(command === 'pause'); json({ paused: store.paused() }); return; }
     if (command === 'export') { json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return; }
-    if (!['demo', 'start', 'run', 'step', 'tick'].includes(command)) throw new StudioError(`Unknown command ${command}`);
+    if (!['demo', 'start', 'run', 'step', 'tick', 'build'].includes(command)) throw new StudioError(`Unknown command ${command}`);
     if (!['fixture', 'openai'].includes(values.provider)) throw new StudioError('Unknown provider');
     if (command === 'demo' && values.provider !== 'fixture') throw new StudioError('demo is always offline; use start/run for live models');
     if (values.provider === 'openai' && existsSync(join(projectRoot, '.env'))) process.loadEnvFile(join(projectRoot, '.env'));
@@ -108,8 +112,32 @@ async function main() {
       ? new OpenAIProvider(process.env.OPENAI_MODEL ?? '', process.env.OPENAI_API_KEY ?? '')
       : new FixtureProvider();
     const harness = new Harness(data, provider, store);
+    const runBuild = async (cycleId: string) => {
+      if (values.provider !== 'openai') throw new StudioError('Build requires --provider openai');
+      const policy = policySchema.parse(JSON.parse(await readFile(policyPath, 'utf8')));
+      if (!policy.builder?.enabled) throw new StudioError('Enable the builder in this founder policy first');
+      const builder = new Builder(data, store, new ManagedBuilder(process.env.OPENAI_API_KEY ?? ''));
+      await builder.enqueue(cycleId, policy.builder);
+      let previous = '';
+      const job = await builder.run(cycleId, 120, job => {
+        const progress = `${job.status}:${job.commands.length}`;
+        if (progress !== previous) console.error(`[build ${job.id.slice(0, 8)}] ${job.status} · ${job.commands.length} recorded commands`);
+        previous = progress;
+      });
+      json({ buildId: job.id, cycleId: job.cycleId, status: job.status, artifacts: job.artifacts, summary: job.summary, error: job.error, usage: job.usage });
+      return job;
+    };
     let id = positionals[1];
-    if (['demo', 'start', 'tick'].includes(command)) {
+    if (command === 'build') {
+      if (!id) throw new StudioError('build needs an accepted cycle ID');
+      await runBuild(id); json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return;
+    }
+    if (command === 'tick') {
+      const pending = (store.builds() as unknown as BuildJob[]).find(job => !buildTerminal(job));
+      if (pending) { await runBuild(pending.cycleId); json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return; }
+      id = store.list().find(cycle => cycle.status === 'active')?.id;
+    }
+    if (['demo', 'start'].includes(command) || (command === 'tick' && !id)) {
       const profile = profileSchema.parse(JSON.parse(await readFile(profilePath, 'utf8')));
       if (studioKind(profile) !== mode) throw new StudioError('Profile does not match selected studio mode');
       if (isFounder(profile) && profile.instanceId !== (values.instance ?? null)) throw new StudioError('Profile does not match selected founder instance');
@@ -132,7 +160,11 @@ async function main() {
       c => console.error(`[${c.id.slice(0, 8)}] ${c.stage} · revision ${c.revision} · ${c.status}`));
     json({ id: result.id, stage: result.stage, status: result.status, outcome: result.outcome,
       release: store.checkpoint(result.id, 'release', result.revision) ?? null });
-    if (command === 'demo' || command === 'tick') json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public'))));
+    if (command !== 'step' && result.status === 'released' && isFounder(result.profile) && values.provider === 'openai') {
+      const policy = policySchema.parse(JSON.parse(await readFile(policyPath, 'utf8')));
+      if (policy.builder?.enabled) await runBuild(result.id);
+    }
+    if (command === 'demo' || command === 'tick' || command === 'run') json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public'))));
   } finally { store.close(); }
 }
 

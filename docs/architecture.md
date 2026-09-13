@@ -8,7 +8,7 @@ Status: recommended hosted architecture; local foundation implemented
 
 Use Cloudflare to operate the persistent studio and public archive. Use OpenAI's new Agents API as the managed execution option for agent work, particularly makers that need a sandbox. Keep artistic memory, identity, work relationships, decisions, and artifacts in an application-owned, exportable format.
 
-The initial local CLI implements the contracts and a tested studio loop before hosted infrastructure is provisioned. It currently uses SQLite and local files, with an offline fixture provider and an OpenAI Responses provider. It does **not** yet use Cloudflare or the managed Agents API.
+The initial local CLI implements the contracts and a tested studio loop before hosted infrastructure is provisioned. It currently uses SQLite and local files, with an offline fixture provider and an OpenAI Responses provider. Accepted live founder experiments now use managed Agents API coding sessions; Cloudflare is not deployed.
 
 This replaces the original plan's tentative Temporal/Postgres recommendation for the first hosted deployment. Do not introduce both workflow platforms to operate the same studio.
 
@@ -51,14 +51,14 @@ Sources: [web search and citation metadata](https://developers.openai.com/api/do
 
 1. Persist a job intent and stable local ID before creating an OpenAI session/turn.
 2. Store returned session and turn IDs immediately; link them to the cycle and stage.
-3. Consume stream events or authenticated webhooks and persist a cursor.
+3. Poll saved session/turn state and explicit items, or consume authenticated events with a persisted cursor. The local adapter uses polling.
 4. Confirm explicit turn completion and validate artifact output; idle alone is not success.
 5. On a disconnect, retrieve saved session state and items before resubmission.
 6. Import explicit outputs and artifact hashes into canonical memory before cleaning up remote resources.
 7. Keep application credentials outside maker sandboxes. Give each role only its intended tools.
 8. Enforce configured resource authority, deadlines, cancellation, and reconciliation. A dropped local HTTP connection must not be interpreted as cancellation of remote work.
 
-The existing call/attempt allowances govern direct model calls. They are not sufficient for a managed session that can make multiple model and tool calls. The managed adapter must account for session/turn usage and resource lifecycle before being enabled for unattended runs.
+The existing call/attempt allowances govern direct model calls. They are not sufficient for a managed session that can make multiple model and tool calls. The implemented builder separately reserves daily jobs, records session/turn usage, applies a worker-enforced deadline, and cleans up hosted sessions. These are not hard dollar limits; see [the recovery contract](building.md).
 
 ## Open-source boundary
 
@@ -68,4 +68,4 @@ The offline fixture makes the workflow testable without paid services. It tests 
 
 ## Next implementation slice
 
-Implement the durable managed-job adapter and a local transport simulator together; test disconnect recovery, delayed completion, duplicate webhooks, failures, and cancellation before making live calls. Then add a Cloudflare studio coordinator and public memory API, with deployment configuration and export/recovery commands.
+The durable managed-job adapter and fake transport tests now cover disconnect recovery, delayed completion, artifact integrity, failures, and cancellation. Next add a persistent Cloudflare studio coordinator and public memory API, with deployment configuration and export/recovery commands.

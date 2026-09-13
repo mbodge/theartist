@@ -8,5 +8,12 @@
   "maxAttemptsPerStage": 2,
   "callTimeoutMs": 180000,
   "leaseMs": 210000,
-  "maxWebCallsPerAttempt": 6
+  "maxWebCallsPerAttempt": 6,
+  "builder": {
+    "enabled": true,
+    "maxMinutes": 10,
+    "maxJobsPerDay": 1,
+    "maxFiles": 30,
+    "maxBytes": 8000000
+  }
 }

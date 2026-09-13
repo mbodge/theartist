@@ -21,6 +21,8 @@ export function agentInput(request: AgentRequest) {
   return {
     studio: studioKind(request.cycle.profile),
     principal: request.cycle.profile,
+    capabilities: { prototypeBuilder: request.cycle.policy.builder?.enabled ?? false,
+      webDiscovery: (request.cycle.policy.maxWebCallsPerAttempt ?? 0) > 0 },
     observations: [...request.cycle.observations, ...(request.cycle.discoveredObservations ?? [])]
       .filter(o => request.stage !== 'discover' || o.visibility === 'public'),
     priorPractice: request.cycle.memory,
