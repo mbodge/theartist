@@ -21,12 +21,15 @@ export async function publishStudio(root: string, store: Store, policy: Deployme
     if (build.status !== 'built' || build.visibility !== 'public') continue;
     try {
       const publication = await buildPublication(root, store, build);
+      const probe = build.policy.backend === 'docker' ? await loadBrowserProbe(root, build) : undefined;
       const job = await deployer.enqueue(publication);
       const deployed = await deployer.tick(job.id);
       apps.push(deployed);
       const inspectionId = `browser-${job.id}:${store.iso().slice(0, 10)}`;
       if (deployed.status === 'published' && deployed.url && build.policy.backend === 'docker' && !store.memories().some(m => m.id === inspectionId)) {
-        const result = await browserSmoke(deployed.url, await loadBrowserProbe(root, build));
+        let result;
+        try { result = await browserSmoke(deployed.url, probe); }
+        catch { result = { status: 'failed', reason: 'Live browser acceptance could not execute' }; }
         store.addMemory({ id: inspectionId, kind: 'work', cycleId: build.cycleId, sourceIds: [], visibility: 'public', supersedes: null,
           content: JSON.stringify({ deploymentId: job.id, url: deployed.url, observedAt: store.iso(), ...result }) });
         store.event(build.cycleId, 'publication.browser-inspected', { deploymentId: job.id, status: result.status });
