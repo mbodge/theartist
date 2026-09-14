@@ -85,6 +85,23 @@ test('large memory excerpts cannot crowd out the verified artifact being reviewe
   assert.equal(cycle.recalledMemories[0]!.content.length, 96000);
 });
 
+test('reflection keeps outcomes and live checks without duplicating historical artifact metadata', async t => {
+  const { cycle } = await setup(t, new FixtureProvider(), { maxInputBytes: 60000 });
+  const artifacts = Array.from({ length: 30 }, (_, n) => ({ path: `prototype/file-${n}.txt`, file: 'builds/' + 'metadata/'.repeat(80), sha256: 'a'.repeat(64), sizeBytes: 42 }));
+  cycle.memory = Array.from({ length: 6 }, (_, n) => ({ id: `prior-${n}`, title: 'Prior experiment', outcome: 'released', concept: 'Synthetic test',
+    reflection: { learning: 'The earlier candidate failed and remains withdrawn.' },
+    execution: { status: 'built', error: 'Publication blocked', artifacts, deployments: [{ id: `deployment-${n}`, status: 'withdrawn', error: 'Failed live check', checks: [] }] } }));
+  const inspection = { status: 'passed', interactionChecks: { passed: 29, expected: 29, noExtraRequests: true } };
+  const input = agentInput({ stage: 'reflect', cycle, context: { execution: { status: 'built', summary: '105 checks passed', artifacts }, browserInspection: inspection } });
+  assert.ok(Buffer.byteLength(JSON.stringify(input)) < cycle.policy.maxInputBytes);
+  assert.deepEqual(input.context.browserInspection, inspection);
+  assert.equal(input.priorPractice.length, 6);
+  assert.equal(input.priorPractice[0]!.execution?.error, 'Publication blocked');
+  assert.equal(input.priorPractice[0]!.execution?.artifactCount, 30);
+  assert.deepEqual(input.priorPractice[0]!.reflection, cycle.memory[0]!.reflection);
+  assert.equal((cycle.memory[0]!.execution!.artifacts as unknown[]).length, 30);
+});
+
 test('exhausted cycle closes with an attributed failure while a daily budget pause remains resumable', async t => {
   const { h, cycle } = await setup(t, new FixtureProvider(), { maxAttemptsPerStage: 1 });
   const lease = h.store.claim(cycle.id);

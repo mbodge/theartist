@@ -3,6 +3,7 @@ import { zodTextFormat } from 'openai/helpers/zod';
 import {
   isFounder, studioKind, StudioError, type AgentProvider, type AgentRequest, type AgentResponse,
   type AgentStage,
+  type Result,
 } from './domain.js';
 import { founderInstructions, founderFixture } from './founder.js';
 import { boardInstructions, boardFixture, responseSchema } from './board.js';
@@ -18,8 +19,29 @@ export const instructions: Record<AgentStage, string> = {
   reflect: `You are the artist reflecting on a completed cycle. Record an explicit learning, unresolved question, and possible next experiment. Be accurate about rejected work, silence, and local release. A local release is not public publication or evidence of reception. You may propose an identity change; you cannot apply it or modify operational authority.`,
 };
 
+function executionContext(value: Result | null | undefined): Result | null | undefined {
+  if (!value) return value;
+  const { artifacts, deployments, ...record } = value;
+  return { ...record,
+    ...(Array.isArray(artifacts) ? { artifactCount: artifacts.length, artifactPaths: artifacts.map(a => a.path),
+      artifactMetadata: 'Full file hashes and metadata are retained in the canonical build record.' } : {}),
+    ...(Array.isArray(deployments) ? { deployments: deployments.map(deploymentContext) } : {}),
+  };
+}
+function deploymentContext(value: Result) {
+  return { id: value.id, buildId: value.buildId, status: value.status, url: value.url, error: value.error,
+    contentHash: value.contentHash, checks: value.checks, validation: value.validation };
+}
+
 export function agentInput(request: AgentRequest) {
   const context = { ...request.context };
+  if (context.execution) context.execution = executionContext(context.execution as Result);
+  if (Array.isArray(context.publication)) context.publication = context.publication.map(deploymentContext);
+  if (request.stage === 'reflect' && isFounder(request.cycle.profile) && context.artwork) {
+    const work = context.artwork as Result;
+    context.artwork = { title: work.title, summary: work.summary, acceptanceChecks: work.acceptanceChecks,
+      limitations: work.limitations, representation: 'Acceptance contract excerpt; complete specification is retained at release.artifact.document.' };
+  }
   // The verified rendered experiment already contains the complete making specification.
   if (context.artifactDocument) { delete context.artwork; context.artworkRepresentation = 'Complete specification is in artifactDocument'; }
   const input = {
@@ -37,7 +59,7 @@ export function agentInput(request: AgentRequest) {
     observations: [...request.cycle.observations, ...(request.cycle.discoveredObservations ?? [])]
       .filter(o => request.stage !== 'discover' || o.visibility === 'public'),
     availableObservationIds: [...request.cycle.observations, ...(request.cycle.discoveredObservations ?? [])].filter(o => request.stage !== 'discover' || o.visibility === 'public').map(o => o.id),
-    priorPractice: request.cycle.memory,
+    priorPractice: request.cycle.memory.map(memory => ({ ...memory, execution: executionContext(memory.execution) })),
     recalledMemories: request.cycle.recalledMemories.map(memory => ({ ...memory,
       content: memory.content.length > 3000 ? memory.content.slice(0, 3000) + '\n[Excerpt; complete record retained under this memory ID.]' : memory.content })),
     context,
