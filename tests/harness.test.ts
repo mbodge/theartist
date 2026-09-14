@@ -57,6 +57,15 @@ test('same trigger and rerun do not spend again or duplicate the release', async
   assert.throws(() => h.start('test:one', profile, policy, []), /different inputs/);
 });
 
+test('idempotent memory writes compare fields, not JavaScript property order', async t => {
+  const { h } = await setup(t);
+  const input = { id: 'stable-note', kind: 'note' as const, cycleId: null, sourceIds: [], visibility: 'public' as const, supersedes: null, content: 'Preserved outcome' };
+  const first = h.store.addMemory(input);
+  const { content, ...rest } = input;
+  assert.deepEqual(h.store.addMemory({ content, ...rest }), first);
+  assert.throws(() => h.store.addMemory({ ...input, content: 'Changed outcome' }), /Memory ID conflict/);
+});
+
 test('large memory excerpts cannot crowd out the verified artifact being reviewed', async t => {
   const { cycle } = await setup(t);
   cycle.recalledMemories = Array.from({ length: 8 }, (_, n) => ({ id: `memory-${n}`, kind: 'note' as const, content: 'history '.repeat(12000), sourceIds: [], supersedes: null }));
