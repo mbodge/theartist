@@ -5,10 +5,13 @@ on:
   workflow_dispatch:
     inputs:
       action:
-        description: Run one bounded tick, pause, or resume the founder
+        description: Run a bounded tick, pause/resume, or send launcher board guidance
         type: choice
-        options: [tick, pause, resume]
+        options: [tick, pause, resume, nudge]
         default: tick
+      message:
+        description: Public board guidance (required for nudge)
+        type: string
 permissions:
   contents: write
 concurrency:
@@ -37,17 +40,24 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           STUDIO_STATE_KEY: ${{ secrets.STUDIO_STATE_KEY }}
       - name: Build isolated workshop image
-        if: inputs.action != 'pause'
+        if: inputs.action == '' || inputs.action == 'tick'
         run: docker build -t theartist-workshop:1 -f docker/workshop.Dockerfile docker
       - name: Run bounded founder loop
         env:
           STUDIO_ACTION: ${{ inputs.action || 'tick' }}
+          BOARD_MESSAGE: ${{ inputs.message }}
           OPENAI_MODEL: gpt-6-astra
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           STUDIO_RUNTIME: github-actions
-        run: npm run studio -- "$STUDIO_ACTION" --instance founder-001 --provider openai
+        run: |
+          if [ "$STUDIO_ACTION" = nudge ]; then
+            test "$GITHUB_ACTOR" = mbodge
+            npm run studio -- board nudge --instance founder-001 --as mike --key "dispatch:$GITHUB_RUN_ID" --text "$BOARD_MESSAGE"
+          else
+            npm run studio -- "$STUDIO_ACTION" --instance founder-001 --provider openai
+          fi
       - name: Save memory even after a model, build, or deployment failure
         if: always() && steps.restore.outcome == 'success'
         run: node scripts/state.mjs push

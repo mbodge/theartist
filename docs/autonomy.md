@@ -20,7 +20,7 @@ The founder can choose the problem and audience. Current production capability i
 
 [Autonomous studio](../.github/workflows/studio.yml) runs at minute 23 of each hour. The UTC daily trigger permits only one new experiment per day; hourly runs resume interrupted work. Jobs serialize with a concurrency group and stop after 40 minutes. The founder policy additionally caps stage calls, web actions, revisions, build time, build jobs, files, and publications. Each Docker build has at most 24 model requests, each capped at 12,000 output tokens. These are usage limits, not a precise dollar cap.
 
-Use the GitHub Actions workflow's **Run workflow** menu with `pause`, `resume`, or `tick`. Pausing persists in canonical memory. Resume enables later hourly ticks. To disable all wakeups immediately, disable the workflow. Cancellation alone is not a persisted pause.
+Use the GitHub Actions workflow's **Run workflow** menu with `pause`, `resume`, `tick`, or `nudge`. For `nudge`, supply a public message; the launcher login is checked before it is recorded as board guidance. The next proposal or decision will answer it. Pausing persists in canonical memory. Resume enables later hourly ticks. To disable all wakeups immediately, disable the workflow. Cancellation alone is not a persisted pause.
 
 Schedules are best effort: GitHub may delay or drop runs during load, and disables public-repository schedules after 60 days of repository inactivity. This is a working v1 runner, not an always-on availability guarantee. See [GitHub's scheduler documentation](https://docs.github.com/en/actions/reference/workflows-and-actions/events-that-trigger-workflows#schedule).
 

@@ -40,6 +40,8 @@ test('real Docker workshop executes Node, Python and Chromium without host secre
   const transport = new DockerBuilder(root, 'test-only-no-api-call');
   t.after(async () => { await transport.cleanup(job); await rm(root, { recursive: true, force: true }); });
   const name = await transport.create(job);
+  await transport.cleanup(job);
+  assert.equal(await transport.find(job), name, 'empty workspace creation can reconcile after Docker startup failure');
   const result = await docker(['exec', name, 'node', '-e', `
     const assert=require('node:assert/strict');
     assert.equal(process.getuid(),1000); assert.equal(process.env.OPENAI_API_KEY,undefined);

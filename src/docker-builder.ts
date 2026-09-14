@@ -53,7 +53,13 @@ export class DockerBuilder implements BuildTransport {
   }
   async find(job: BuildJob) {
     const result = await docker(['inspect', '--format', '{{.State.Running}}', containerName(job)]);
-    return result.code === 0 && result.output.trim() === 'true' ? containerName(job) : null;
+    if (result.code === 0 && result.output.trim() === 'true') return containerName(job);
+    // Starting an empty container is repeatable; model requests and commands are not.
+    if (/no such/i.test(result.output)) {
+      const state = await this.read(job);
+      if (state.status === 'pending' && state.calls === 0 && !state.submitting) return this.create(job);
+    }
+    return null;
   }
   async submit(job: BuildJob) { const s = await this.read(job); s.status = 'running'; await this.save(job, s); }
   async inspect(job: BuildJob): Promise<RemoteBuild> {
