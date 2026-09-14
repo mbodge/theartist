@@ -9,6 +9,12 @@
   "callTimeoutMs": 180000,
   "leaseMs": 210000,
   "maxWebCallsPerAttempt": 6,
+  "deployment": {
+    "enabled": true,
+    "catalogWorker": "theartist",
+    "maxDeploymentsPerDay": 4,
+    "maxBytes": 1500000
+  },
   "builder": {
     "enabled": true,
     "maxMinutes": 10,

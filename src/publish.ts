@@ -1,0 +1,35 @@
+import { join } from 'node:path';
+import { exportArchive } from './archive.js';
+import type { Store } from './store.js';
+import { hash } from './store.js';
+import { type DeploymentPolicy, StudioError } from './domain.js';
+import type { BuildJob } from './builder.js';
+import { buildPublication, catalogPublication } from './publication.js';
+import { Deployer } from './deployer.js';
+import { CloudflarePublisher } from './cloudflare-publisher.js';
+
+export async function publishStudio(root: string, store: Store, policy: DeploymentPolicy) {
+  if (!policy.enabled || store.paused()) throw new StudioError('Publishing is disabled or studio is paused');
+  const transport = new CloudflarePublisher(process.env.CLOUDFLARE_ACCOUNT_ID ?? '', process.env.CLOUDFLARE_API_TOKEN ?? '');
+  const deployer = new Deployer(root, store, transport, policy, [process.env.CLOUDFLARE_API_TOKEN ?? '', process.env.OPENAI_API_KEY ?? '']);
+  const pending = deployer.jobs().filter(j => !['published', 'failed'].includes(j.status));
+  for (const job of pending) await deployer.tick(job.id);
+  const apps = [];
+  for (const build of store.builds() as unknown as BuildJob[]) {
+    if (build.status !== 'built' || build.visibility !== 'public') continue;
+    try {
+      const publication = await buildPublication(root, store, build);
+      const job = await deployer.enqueue(publication);
+      apps.push(await deployer.tick(job.id));
+    } catch (error) {
+      const reason = error instanceof StudioError ? error.message : 'App publication input could not be validated';
+      store.addMemory({ id: `publication-note-${build.id}-${hash(reason).slice(0, 16)}`, kind: 'work', cycleId: build.cycleId,
+        sourceIds: [], visibility: 'public', supersedes: null,
+        content: JSON.stringify({ buildId: build.id, publication: 'not-confirmed', reason }) });
+    }
+  }
+  const archive = await exportArchive(store, root, join(root, 'public'));
+  const catalog = await catalogPublication(store, root, archive.directory);
+  const job = await deployer.enqueue(catalog);
+  return { apps, catalog: await deployer.tick(job.id) };
+}

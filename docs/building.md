@@ -26,7 +26,7 @@ npm run studio -- export --instance my-founder
 
 New founder policies enable one build per UTC day, a ten-minute worker deadline, thirty output files, and eight million output bytes. Existing policies without a `builder` section keep execution disabled. The builder is separate from the founder's structured-call allowance: one managed coding turn can contain multiple internal model and shell calls. Token usage is recorded when the API reports it. The deadline and daily job allowance are not a dollar spending cap.
 
-The workspace has network access explicitly disabled. It can use installed Python/Node runtimes and standard libraries. It has no studio credentials or access to the host filesystem. Deliverables are downloaded as data, never executed by the harness on your computer. External messaging, deployment, purchases, and account creation are not implemented.
+The workspace has network access explicitly disabled. It can use installed Python/Node runtimes and standard libraries. It has no studio credentials or access to the host filesystem. Deliverables are downloaded as data, never executed by the harness on your computer. External messaging, purchases, and account creation are not implemented. A separate trusted publisher can deploy completed static browser apps when enabled; see [publishing](cloudflare.md).
 
 The builder can make dependency-free CLIs and browser prototypes. Tasks needing unavailable datasets, dependencies, live integrations, or infrastructure must return a useful executable core with explicit limitations. Synthetic tests do not establish the founder's real-world success criterion.
 
@@ -42,7 +42,7 @@ The worker cancels running work when it observes a studio pause or the deadline.
 
 Each build retains its accepted input and hash, operating limits, session and turn identifiers, observed command output and exit codes, explicit assistant summary, usage, errors, and file hashes. Reasoning items are excluded. A compact result is added to durable memory; later founder cycles receive the previous execution status and file references.
 
-Files are under `.studio/instances/NAME/builds/BUILD_ID/prototype/`. Archive schema version 4 (build records introduced in version 3) includes public build records and hash-verified copies of their files. Private cycles and their builds are excluded. Exporting produces a local snapshot; it does not automatically publish the snapshot on a website or push generated code to GitHub.
+Files are under `.studio/instances/NAME/builds/BUILD_ID/prototype/`. Archive schema version 5 (builds introduced in version 3, boards in version 4, deployments in version 5) includes public build records and hash-verified copies of their files. Private cycles and their builds are excluded. Exporting produces a local snapshot. The separate `publish` command, or an enabled live build/tick, publishes eligible apps and the catalog. It does not push generated code to GitHub.
 
 ## Provider references
 

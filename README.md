@@ -2,7 +2,7 @@
 
 A persistent conceptual artist and its studio. The artist develops an agenda; specialized roles research, make, critique, decide, and reflect. The studio remembers what happened and exposes an inspectable public record.
 
-**Status: working local harness, version 0.2.** Artist and configurable-founder modes share the durable engine. The offline demos are deterministic fixtures, not evidence of autonomous artistic or business judgment. A live OpenAI Responses adapter is implemented but requires your own credentials and model choice. Live founders also use OpenAI Agents API to build and test executable prototypes in isolated hosted workspaces. The [first coding trial](docs/trials/astra-build-001.md) produced a tested prototype but hit a stalled artifact handoff requiring operator recovery. The managed backend is not yet proven reliable unattended. Cloudflare deployment remains a future integration.
+**Status: working local harness, version 0.2.** Artist and configurable-founder modes share the durable engine. The offline demos are deterministic fixtures, not evidence of autonomous artistic or business judgment. A live OpenAI Responses adapter is implemented but requires your own credentials and model choice. Live founders also use OpenAI Agents API to build and test executable prototypes in isolated hosted workspaces. The [first coding trial](docs/trials/astra-build-001.md) produced a tested prototype but hit a stalled artifact handoff requiring operator recovery. The managed backend is not yet proven reliable unattended. The [public catalog](https://theartist.mike-3cd.workers.dev) is now live. A durable publisher deploys eligible static browser builds to separate Workers and records verified URLs in memory; the studio runtime itself remains local. See [publishing](docs/cloudflare.md).
 
 ## Spin up a founder
 
@@ -134,7 +134,7 @@ npm run studio -- run CYCLE_ID --steps 3
 npm run studio -- tick
 ```
 
-Pause blocks new stage dispatches; an already-started planning stage can checkpoint its result. A running builder cancels on its next worker poll. `tick` resumes unfinished builds or older active cycles before starting the current UTC date’s cycle, and automatically builds accepted live founder experiments. It then exports the archive. It is a one-shot worker, not an installed scheduler. See [execution limits and recovery](docs/building.md).
+Pause blocks new stage dispatches; an already-started planning stage can checkpoint its result. A running builder cancels on its next worker poll. `tick` resumes unfinished builds or older active cycles before starting the current UTC date’s cycle, and automatically builds accepted live founder experiments. When deployment is enabled, it publishes eligible apps and refreshes the catalog, including after build failures. It then exports the archive. It is a one-shot worker, not an installed scheduler. See [execution limits and recovery](docs/building.md).
 
 Failed steps can be retried within their configured attempt allowance. When exhausted, inspect the record and close the failed cycle with `close CYCLE_ID --text "reason"`; a fresh trigger creates a new attempt with its own provenance. Daily allowance exhaustion can be resumed on a later UTC day.
 
@@ -181,6 +181,10 @@ Source map:
 | `src/instances.ts` | Founder creation and isolated instance paths |
 | `src/artifacts.ts` | Bounded rendering and local release preparation |
 | `src/archive.ts` | Portable public archive projection |
+| `src/publication.ts` | Verified build bundles and public catalog |
+| `src/deployer.ts` | Durable publication, recovery, leases and result memory |
+| `src/cloudflare-publisher.ts` | API upload and live byte verification |
+| `src/publish.ts` | Eligible app publication and catalog refresh |
 | `src/cli.ts` | Local operations |
 
 ## Open source and public process

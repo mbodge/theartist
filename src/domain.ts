@@ -32,6 +32,14 @@ export const builderPolicySchema = z.strictObject({
 });
 export type BuilderPolicy = z.infer<typeof builderPolicySchema>;
 
+export const deploymentPolicySchema = z.strictObject({
+  enabled: z.boolean(),
+  catalogWorker: z.string().regex(/^[a-z][a-z0-9-]{2,62}$/),
+  maxDeploymentsPerDay: z.number().int().min(1).max(20).default(4),
+  maxBytes: z.number().int().min(1024).max(2000000).default(1500000),
+});
+export type DeploymentPolicy = z.infer<typeof deploymentPolicySchema>;
+
 export const policySchema = z.strictObject({
   maxActiveCycles: z.number().int().min(1).max(3),
   maxRevisions: z.number().int().min(0).max(5),
@@ -42,6 +50,7 @@ export const policySchema = z.strictObject({
   maxAttemptsPerStage: z.number().int().min(1).max(5),
   maxWebCallsPerAttempt: z.number().int().min(0).max(12).optional(),
   builder: builderPolicySchema.optional(),
+  deployment: deploymentPolicySchema.optional(),
   callTimeoutMs: z.number().int().min(100).max(300000),
   leaseMs: z.number().int().min(500).max(600000),
 }).refine(p => p.leaseMs > p.callTimeoutMs, 'Lease must exceed model timeout');

@@ -12,7 +12,7 @@
     "studio": "tsx src/cli.ts",
     "demo": "tsx src/cli.ts demo",
     "demo:founder": "tsx src/cli.ts demo --studio founder",
-    "cloudflare:deploy": "node --env-file=.env node_modules/wrangler/bin/wrangler.js deploy --config cloudflare/wrangler.jsonc",
+    "cloudflare:deploy": "tsx src/cli.ts publish",
     "cloudflare:dev": "wrangler dev --config cloudflare/wrangler.jsonc",
     "check": "tsc --noEmit",
     "test": "tsx --test tests/*.test.ts"

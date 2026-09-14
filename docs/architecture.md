@@ -8,7 +8,7 @@ Status: recommended hosted architecture; local foundation implemented
 
 Use Cloudflare to operate the persistent studio and public archive. Use OpenAI's new Agents API as the managed execution option for agent work, particularly makers that need a sandbox. Keep artistic memory, identity, work relationships, decisions, and artifacts in an application-owned, exportable format.
 
-The initial local CLI implements the contracts and a tested studio loop before hosted infrastructure is provisioned. It currently uses SQLite and local files, with an offline fixture provider and an OpenAI Responses provider. Accepted live founder experiments now use managed Agents API coding sessions; Cloudflare is not deployed.
+The initial local CLI implements the contracts and a tested studio loop before hosted infrastructure is provisioned. It currently uses SQLite and local files, with an offline fixture provider and an OpenAI Responses provider. Accepted live founder experiments use managed Agents API coding sessions. Cloudflare now hosts the public catalog, and a durable publisher can deploy verified static builds to separate Workers. The studio coordinator remains local; see [publishing](cloudflare.md).
 
 This replaces the original plan's tentative Temporal/Postgres recommendation for the first hosted deployment. Do not introduce both workflow platforms to operate the same studio.
 

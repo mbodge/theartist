@@ -1,44 +1,118 @@
-# Cloudflare hosting
+# Publishing apps and the public catalog
 
-The `theartist` Worker provides a minimal public hosting bootstrap. It serves a
-plain-text status at `/` and JSON at `/health`. The autonomous Node/SQLite studio
-is not connected to this Worker yet. There are no public execution or board
-mutation endpoints, database bindings, or model credentials in the Worker.
+The harness publishes eligible static browser apps to separate Cloudflare Workers,
+verifies every served file, and retains the URL, version, hashes, and check results
+in the founder's memory and public archive. A separate catalog shows experiments,
+build status, decisions, board records, and recent memory. Source files and
+experiment documents are downloads.
 
-The initial installation is live at <https://theartist.mike-3cd.workers.dev>.
-Check <https://theartist.mike-3cd.workers.dev/health> for hosting status.
+The first catalog is live at <https://theartist.mike-3cd.workers.dev>. `/health`
+describes this website, not studio liveness. The Node/SQLite studio still runs
+locally. Publishing neither installs a scheduler nor migrates it to Cloudflare.
 
-## Deploy
+## Configure a studio
 
-Copy `.env.example` to `.env` when configuring a new checkout. Set
-`CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` in the ignored `.env` file.
-Use a dedicated account API token with **Workers Scripts Edit** access. This
-permission applies across Workers in the selected account, not only this project.
-Keep it in trusted deployment infrastructure, never in generated build workspaces,
-agent context, the public catalog, or source control.
+Set `CLOUDFLARE_ACCOUNT_ID` and `CLOUDFLARE_API_TOKEN` in the ignored `.env` file.
+Use a dedicated account token with **Workers Scripts Edit**. It can edit Workers
+across the account; the trusted publisher further restricts target names. The
+credential never goes to generated code or live-site verification requests. Local
+process separation is not a security boundary for untrusted hosted tenants.
 
-```sh
-npm ci
-npm run check
-npm run cloudflare:deploy
+Add a deployment section to the studio's policy, choosing a unique catalog name:
+
+```json
+{
+  "deployment": {
+    "enabled": true,
+    "catalogWorker": "my-founder-catalog",
+    "maxDeploymentsPerDay": 4,
+    "maxBytes": 1500000
+  }
+}
 ```
 
-`cloudflare:deploy` loads `.env` and uses the checked-in Worker configuration.
-For another installation, change the Worker name in `cloudflare/wrangler.jsonc`
-and use your own account ID. A local Wrangler OAuth login can also deploy with
-`npx wrangler deploy --config cloudflare/wrangler.jsonc`.
+`founder-001` is enabled with catalog `theartist`. New studios keep publication
+disabled until the launcher configures it. The allowance counts new app jobs and
+new catalog snapshots separately per UTC day. It is not a dollar spending cap.
 
-Run `npm run cloudflare:dev` for local development. Test `/health` after a deploy;
-`status: ok` confirms the hosting endpoint only. `studioRuntime: not-connected`
-explicitly distinguishes this from a running autonomous founder.
+```sh
+npm run studio -- publish --instance founder-001
+# Equivalent:
+npm run cloudflare:deploy -- --instance founder-001
 
-## Next integration
+# Research/build, then publish eligible output and refresh the catalog:
+npm run studio -- tick --instance founder-001 --provider openai
+npm run studio -- status --instance founder-001
+```
 
-The harness still needs a trusted deployment adapter that accepts verified build
-artifacts, enforces the founder's allowed Worker names, records deployment IDs and
-URLs in memory, and verifies the deployed application. Hosting the Node harness
-itself additionally requires durable storage and a scheduler. The account token
-must remain outside the generated application's environment.
+`build`, and live founder `run`/`tick` after acceptance, invoke publication when
+enabled. Unsuccessful builds can still refresh the catalog with their actual
+status. `publish` makes no model calls. Pause blocks new uploads; it does not take
+existing websites offline or undo uploads already in flight.
 
-See [Cloudflare account tokens](https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/)
-and [Wrangler deployments](https://developers.cloudflare.com/workers/wrangler/commands/workers/).
+## Eligible apps
+
+The first target supports self-contained HTML, CSS, JavaScript, and images.
+The maker creates `prototype/site/index.html` and `prototype/deployment.json`:
+
+```json
+{
+  "schemaVersion": 1,
+  "kind": "static",
+  "root": "prototype/site",
+  "testCommand": "python tests.py"
+}
+```
+
+The exact test command must have observed completed execution with exit code
+zero. Unknown/null exits, model claims, and generated reports cannot satisfy this
+gate. The cycle must be an accepted live founder experiment, and its inputs and
+build must be public. Files are verified against stored sizes and SHA-256 hashes.
+Traversal, symlinks, duplicate or reserved routes, oversize bundles, and detected
+credentials are rejected before upload.
+
+Only a trusted static file server runs server-side. Generated code is served to
+the browser as data, with no model/deployment secrets or database bindings. The
+browser policy blocks external connections, forms, frames, and remote assets.
+APIs, authentication, server-side Python, CDNs, and persistent server data require
+another target. CLI builds remain downloadable source, not running web apps.
+
+Recorded tests establish software checks. Live verification proves expected
+files are served. Neither establishes browser usability, security review, the
+business benchmark, or customer demand.
+
+## Recovery and ownership
+
+Publication content is immutable under each studio's `publications` directory.
+SQLite reserves a job before external calls. App names combine studio identity
+and content hash; an app cannot replace the catalog. Worker ownership/content
+tags reconcile uncertain uploads. Unowned or differently owned existing Workers
+are refused. The original bootstrap was explicitly adopted after verifying its
+known version; ordinary publication cannot adopt arbitrary existing Workers.
+
+Jobs move through queued, uploading, verifying, and published. An interrupted
+upload resumes the same target and payload. Verification retries brief edge
+propagation delays. Three unsuccessful job attempts stop automatic retries.
+Fenced leases and heartbeats reject stale local commits. `publish` resumes pending
+jobs first; failed jobs require operator inspection. Changed content creates a
+new job within the allowance. Identical published content is not uploaded again.
+
+Archive schema 5 includes app deployments and their result memories. Catalog
+receipts remain local operational records, preventing publication from changing
+its own archive and triggering an endless republish loop. The catalog is a
+snapshot, not continuous uptime monitoring; it changes when publishing runs again.
+
+The original `cloudflare/worker.ts` bootstrap remains for reference. Deploying it
+directly would replace the catalog; use `publish` for normal operation.
+
+## Current provider limitation
+
+The first live coding session still reports itself in progress and refuses
+deletion. Its build remains cancelling. The catalog shows that status and the
+accepted experiment; it has not been promoted to a completed or deployed app.
+The app pipeline has synthetic transport coverage, and catalog publication has
+been exercised against Cloudflare. A reliable model-to-app unattended run still
+needs the provider to finish and deliver its artifacts.
+
+References: [account tokens](https://developers.cloudflare.com/fundamentals/api/get-started/account-owned-tokens/),
+[Worker module upload](https://developers.cloudflare.com/api/resources/workers/subresources/scripts/methods/update/).

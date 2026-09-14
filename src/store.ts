@@ -64,6 +64,10 @@ export class Store {
         lease_token TEXT, lease_until INTEGER NOT NULL DEFAULT 0
       );
       CREATE TABLE IF NOT EXISTS board_members (id TEXT PRIMARY KEY, payload TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS deployment_jobs (
+        id TEXT PRIMARY KEY, payload TEXT NOT NULL,
+        lease_token TEXT, lease_until INTEGER NOT NULL DEFAULT 0
+      );
       CREATE TABLE IF NOT EXISTS board_nudges (
         id TEXT PRIMARY KEY, author_id TEXT NOT NULL REFERENCES board_members(id),
         trigger_key TEXT NOT NULL, payload TEXT NOT NULL, UNIQUE(author_id, trigger_key)
@@ -291,10 +295,13 @@ export class Store {
       const build = row ? JSON.parse(row.payload) : null;
       return { id: c.id, title: String(proposal?.title ?? 'No work proposed'), outcome: c.outcome ?? c.status,
         concept: String(proposal?.concept ?? proposal?.hypothesis ?? ''), reflection: this.checkpoint(c.id, 'reflect') ?? null,
-        execution: build ? { status: build.status, artifacts: build.artifacts, error: build.error, validation: 'Prototype execution is not customer validation.' } : null };
+        execution: build ? { status: build.status, artifacts: build.artifacts, error: build.error,
+          deployments: this.deployments().filter(d => d.cycleId === c.id),
+          validation: 'Prototype execution is not customer validation.' } : null };
     });
   }
   attempts() { return this.db.prepare('SELECT * FROM attempts ORDER BY rowid').all(); }
   builds(): Result[] { return (this.db.prepare('SELECT payload FROM build_jobs ORDER BY rowid').all() as { payload: string }[]).map(row => JSON.parse(row.payload)); }
+  deployments(): Result[] { return (this.db.prepare('SELECT payload FROM deployment_jobs ORDER BY rowid').all() as { payload: string }[]).map(row => JSON.parse(row.payload)); }
   releases(): Result[] { return (this.db.prepare('SELECT manifest FROM releases ORDER BY rowid').all() as { manifest: string }[]).map(r => JSON.parse(r.manifest) as Result); }
 }

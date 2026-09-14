@@ -13,6 +13,7 @@ import { createFounder, instancePaths, listFounders } from './instances.js';
 import { Builder, buildTerminal, type BuildJob } from './builder.js';
 import { Board } from './board.js';
 import { ManagedBuilder } from './managed-builder.js';
+import { publishStudio } from './publish.js';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
 const help = `theartist — local studio harness
@@ -38,6 +39,7 @@ const help = `theartist — local studio harness
   npm run studio -- memory [query]         Retrieve durable studio memories
   npm run studio -- note --text <text>     Append a studio note (public by default)
   npm run studio -- export                Export public memory, history, and artifacts
+  npm run studio -- publish               Publish eligible apps and the public catalog
   npm run studio -- pause | resume         Control new stage dispatches
 
 Options:
@@ -120,7 +122,7 @@ async function main() {
       } else throw new StudioError(`Unknown board action ${action}`);
       return;
     }
-    if (command === 'status') { json({ paused: store.paused(), board: { members: board.members().filter(m => m.active).length, activeNudges: board.nudges().filter(n => !n.withdrawnAt).length }, cycles: store.list().map(c => ({ id: c.id, stage: c.stage, status: c.status, provider: c.provider, revision: c.revision, lastError: c.lastError })), builds: store.builds().map(b => ({ cycleId: b.cycleId, status: b.status, sessionId: b.sessionId, error: b.error })), attempts: store.attempts(), eventChainValid: store.verifyEvents() }); return; }
+    if (command === 'status') { json({ paused: store.paused(), board: { members: board.members().filter(m => m.active).length, activeNudges: board.nudges().filter(n => !n.withdrawnAt).length }, cycles: store.list().map(c => ({ id: c.id, stage: c.stage, status: c.status, provider: c.provider, revision: c.revision, lastError: c.lastError })), builds: store.builds().map(b => ({ cycleId: b.cycleId, status: b.status, sessionId: b.sessionId, error: b.error })), deployments: store.deployments(), attempts: store.attempts(), eventChainValid: store.verifyEvents() }); return; }
     if (command === 'memory') { json(store.memories(positionals.slice(1).join(' ') || undefined)); return; }
     if (command === 'note') {
       if (!values.text?.trim() || values.text.length > 8000) throw new StudioError('note needs --text between 1 and 8000 characters');
@@ -137,6 +139,18 @@ async function main() {
     }
     if (command === 'pause' || command === 'resume') { store.pause(command === 'pause'); json({ paused: store.paused() }); return; }
     if (command === 'export') { json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return; }
+    const publish = async () => {
+      const policy = policySchema.parse(JSON.parse(await readFile(policyPath, 'utf8')));
+      if (!policy.deployment?.enabled) {
+        if (command === 'publish') throw new StudioError('Enable deployment in this studio policy first');
+        return;
+      }
+      if (existsSync(join(projectRoot, '.env'))) process.loadEnvFile(join(projectRoot, '.env'));
+      const result = await publishStudio(data, store, policy.deployment);
+      json({ apps: result.apps.map(a => ({ id: a.id, status: a.status, url: a.url })),
+        catalog: { id: result.catalog.id, status: result.catalog.status, url: result.catalog.url } });
+    };
+    if (command === 'publish') { await publish(); return; }
     if (!['demo', 'start', 'run', 'step', 'tick', 'build'].includes(command)) throw new StudioError(`Unknown command ${command}`);
     if (!['fixture', 'openai'].includes(values.provider)) throw new StudioError('Unknown provider');
     if (command === 'demo' && values.provider !== 'fixture') throw new StudioError('demo is always offline; use start/run for live models');
@@ -163,11 +177,13 @@ async function main() {
     let id = positionals[1];
     if (command === 'build') {
       if (!id) throw new StudioError('build needs an accepted cycle ID');
-      await runBuild(id); json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return;
+      try { await runBuild(id); } finally { await publish(); }
+      json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return;
     }
     if (command === 'tick') {
       const pending = (store.builds() as unknown as BuildJob[]).find(job => !buildTerminal(job));
-      if (pending) { await runBuild(pending.cycleId); json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return; }
+      if (pending) { try { await runBuild(pending.cycleId); } finally { await publish(); }
+        json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return; }
       id = store.list().find(cycle => cycle.status === 'active')?.id;
     }
     if (['demo', 'start'].includes(command) || (command === 'tick' && !id)) {
@@ -195,7 +211,8 @@ async function main() {
       release: store.checkpoint(result.id, 'release', result.revision) ?? null });
     if (command !== 'step' && result.status === 'released' && isFounder(result.profile) && values.provider === 'openai') {
       const policy = policySchema.parse(JSON.parse(await readFile(policyPath, 'utf8')));
-      if (policy.builder?.enabled) await runBuild(result.id);
+      if (policy.builder?.enabled) { try { await runBuild(result.id); } finally { await publish(); } }
+      else await publish();
     }
     if (command === 'demo' || command === 'tick' || command === 'run') json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public'))));
   } finally { store.close(); }

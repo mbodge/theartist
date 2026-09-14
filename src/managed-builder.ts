@@ -1,6 +1,6 @@
 import OpenAI from 'openai';
 import type { AgentSessionItem } from 'openai/resources/beta/agents/agents';
-import { builderInstructions, type BuildJob, type BuildTransport, type RemoteBuild } from './builder.js';
+import { builderInstructions, staticDeploymentInstructions, type BuildJob, type BuildTransport, type RemoteBuild } from './builder.js';
 import { StudioError } from './domain.js';
 
 export function executionLog(items: AgentSessionItem[]) {
@@ -24,7 +24,7 @@ export class ManagedBuilder implements BuildTransport {
   }
   async create(job: BuildJob) {
     const session = await this.client.beta.agents.sessions.create({
-      agent: { model: job.model, instructions: builderInstructions, multi_agent: { enabled: false }, reasoning: { effort: 'high' } },
+      agent: { model: job.model, instructions: builderInstructions + '\n' + staticDeploymentInstructions, multi_agent: { enabled: false }, reasoning: { effort: 'high' } },
       environment: { type: 'openai_hosted', network: { access: 'disabled' },
         files: [{ type: 'inline', path: '/workspace/accepted-experiment.json', data: Buffer.from(job.brief).toString('base64') }] },
       metadata: { studio_build_id: job.id, studio_cycle_id: job.cycleId },
