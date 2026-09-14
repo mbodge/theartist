@@ -1,5 +1,8 @@
 name: Check
-on: [push, pull_request]
+on:
+  push:
+    branches: [main]
+  pull_request:
 permissions:
   contents: read
 jobs:
@@ -13,7 +16,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run check
+      - name: Build isolated workshop image
+        run: docker build -t theartist-workshop:1 -f docker/workshop.Dockerfile docker
       - run: npm test
+        env:
+          TEST_DOCKER: '1'
       - name: Verify recovered founder prototype
         run: python3 -B -m unittest discover -s examples/rfp-prototype -p 'test_*.py' -v
       - name: Exercise prototype sample
