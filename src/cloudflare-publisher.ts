@@ -30,7 +30,7 @@ export default { fetch(request) {
  if(file.download) headers['Content-Disposition']='attachment';
  if(file.contentEncoding) headers['Content-Encoding']=file.contentEncoding;
  headers['Content-Type']=file.mime;
- return new Response(request.method==='HEAD'?null:Uint8Array.from(atob(file.data),c=>c.charCodeAt(0)),{headers});
+ return new Response(request.method==='HEAD'?null:Uint8Array.from(atob(file.data),c=>c.charCodeAt(0)),{headers,encodeBody:'manual'});
 }};`;
 }
 export class CloudflarePublisher implements PublicationTransport {

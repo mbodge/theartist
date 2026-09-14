@@ -164,7 +164,7 @@ export function validatePublication(publication: Publication, maxBytes: number, 
   if (total > maxBytes || !routes.has('/')) throw new StudioError('Publication exceeds size limit or lacks an index');
 }
 export async function snapshotPublication(root: string, publication: Publication) {
-  const text = JSON.stringify(publication); const digest = hash(text);
+  const text = JSON.stringify({ ...publication, serverVersion: 2 }); const digest = hash(text);
   await mkdir(join(root, 'publications'), { recursive: true });
   await immutableWrite(join(root, 'publications', `${digest}.json`), text);
   return digest;
