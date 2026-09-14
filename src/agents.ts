@@ -27,6 +27,12 @@ export function agentInput(request: AgentRequest) {
     principal: request.cycle.profile,
     capabilities: { prototypeBuilder: request.cycle.policy.builder?.enabled ?? false,
       staticAppPublication: request.cycle.policy.deployment?.enabled ?? false,
+      workshop: request.cycle.policy.builder?.backend === 'docker' ? {
+        operatingSystem: 'Linux', nodeMajor: 22, python: 3, browser: 'Chromium',
+        cpuQuota: 1, memoryMiB: 768, network: false,
+        environmentContract: 'Record actual architecture and tool versions inside the workshop. Host CPU count is not the container CPU quota. Past laptop hardware is not an available prerequisite. A new experiment may prospectively define a new environment contract while preserving earlier outcomes and unchanged functional expectations.',
+        iteration: 'Implementation and debugging may precede a separately identified final candidate acceptance run. Preserve all failed runs; never rewrite a blocked candidate as passed. Freeze the candidate and acceptance expectations before its final run.',
+      } : null,
       webDiscovery: (request.cycle.policy.maxWebCallsPerAttempt ?? 0) > 0 },
     observations: [...request.cycle.observations, ...(request.cycle.discoveredObservations ?? [])]
       .filter(o => request.stage !== 'discover' || o.visibility === 'public'),
