@@ -7,3 +7,6 @@ studios/*/observations.json
 !.env.example
 *.sqlite*
 .DS_Store
+.wrangler/
+.dev.vars
+.dev.vars.*
