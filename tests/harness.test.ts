@@ -115,6 +115,22 @@ test('exhausted cycle closes with an attributed failure while a daily budget pau
   assert.equal(h.store.closeExhaustedCycle(next.id).status, 'active');
 });
 
+test('scheduled tick waits successfully at the daily budget without creating another experiment', async t => {
+  const { root, h, cycle } = await setup(t, new FixtureProvider(), { maxCallsPerDay: 1 });
+  const lease = h.store.claim(cycle.id);
+  h.store.fail(lease, 'Recorded failed call still consumes its allowance');
+  h.store.closeCycle(cycle.id, 'Close this synthetic trial before checking the next scheduled tick');
+  const policyFile = join(root, 'policy.json');
+  await writeFile(policyFile, JSON.stringify(cycle.policy));
+  const run = spawnSync(process.execPath, ['--import', 'tsx', 'src/cli.ts', 'tick', '--data', root, '--policy', policyFile], {
+    cwd: new URL('..', import.meta.url), encoding: 'utf8',
+  });
+  assert.equal(run.status, 0, run.stderr);
+  assert.equal(JSON.parse(run.stdout).status, 'waiting_daily_budget');
+  assert.equal(h.store.modelCallsToday(), 1);
+  assert.equal(h.store.list().length, 1);
+});
+
 test('restart after a checkpoint resumes without rerunning completed roles', async t => {
   const { root, h, cycle } = await setup(t);
   await h.run(cycle.id, 3);

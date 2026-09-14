@@ -315,6 +315,7 @@ export class Store {
     });
   }
   attempts() { return this.db.prepare('SELECT * FROM attempts ORDER BY rowid').all(); }
+  modelCallsToday() { return (this.db.prepare('SELECT count(*) AS n FROM attempts WHERE day=? AND model_call=1').get(this.iso().slice(0, 10)) as { n: number }).n; }
   builds(): Result[] { return (this.db.prepare('SELECT payload FROM build_jobs ORDER BY rowid').all() as { payload: string }[]).map(row => JSON.parse(row.payload)); }
   deployments(): Result[] { return (this.db.prepare('SELECT payload FROM deployment_jobs ORDER BY rowid').all() as { payload: string }[]).map(row => JSON.parse(row.payload)); }
   releases(): Result[] { return (this.db.prepare('SELECT manifest FROM releases ORDER BY rowid').all() as { manifest: string }[]).map(r => JSON.parse(r.manifest) as Result); }

@@ -6,7 +6,7 @@ import { parseArgs } from 'node:util';
 import { randomUUID } from 'node:crypto';
 import { FixtureProvider, OpenAIProvider } from './agents.js';
 import { Harness } from './harness.js';
-import { observationsSchema, profileSchema, policySchema, studioKind, isFounder, StudioError } from './domain.js';
+import { observationsSchema, profileSchema, policySchema, studioKind, isFounder, StudioError, BudgetError } from './domain.js';
 import { exportArchive } from './archive.js';
 import { Store } from './store.js';
 import { createFounder, instancePaths, listFounders } from './instances.js';
@@ -191,6 +191,8 @@ async function main() {
     }
     if (command === 'tick') {
       if (store.paused()) { json({ paused: true }); return; }
+      // Health checks and withdrawal must run even when planning is waiting on its daily allowance.
+      await publish(false);
       const pending = (store.builds() as unknown as BuildJob[]).find(job => !buildTerminal(job));
       if (pending) { try { await runBuild(pending.cycleId); } finally { await publish(); }
         if (store.get(pending.cycleId).status !== 'active') { json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return; } }
@@ -203,6 +205,11 @@ async function main() {
       if (studioKind(profile) !== mode) throw new StudioError('Profile does not match selected studio mode');
       if (isFounder(profile) && profile.instanceId !== (values.instance ?? null)) throw new StudioError('Profile does not match selected founder instance');
       const policy = policySchema.parse(JSON.parse(await readFile(policyPath, 'utf8')));
+      if (command === 'tick' && store.modelCallsToday() >= policy.maxCallsPerDay) {
+        await publish();
+        json({ status: 'waiting_daily_budget', modelCallsToday: store.modelCallsToday(), limit: policy.maxCallsPerDay });
+        return;
+      }
       const instanceObservations = instance && existsSync(instance.observations) ? instance.observations : undefined;
       const observationFile = values.observations ?? (command === 'demo'
         ? join(projectRoot, 'examples', mode === 'founder' ? 'founder-observations.json' : 'observations.json')
@@ -239,6 +246,10 @@ async function main() {
 }
 
 main().catch(error => {
+  if (error instanceof BudgetError && process.argv[2] === 'tick') {
+    console.log(JSON.stringify({ status: 'waiting_budget', reason: error.message }));
+    return;
+  }
   console.error(error instanceof StudioError ? error.message : 'Studio command failed. Check configuration and input schemas; raw provider errors are omitted.');
   process.exitCode = 1;
 });

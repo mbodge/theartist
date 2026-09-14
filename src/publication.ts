@@ -161,7 +161,8 @@ export function validatePublication(publication: Publication, maxBytes: number, 
       if (secrets.filter(s => s.length >= 12).some(s => text.includes(s)) || /\b(?:cfat_[A-Za-z0-9_-]{20,}|sk-(?:proj-)?[A-Za-z0-9_-]{30,})/.test(text)) throw new StudioError('Publication contains a credential; nothing was uploaded');
     }
   }
-  if (total > maxBytes || !routes.has('/')) throw new StudioError('Publication exceeds size limit or lacks an index');
+  if (total > maxBytes) throw new StudioError(`Publication exceeds size limit: ${total} bytes exceeds ${maxBytes}`);
+  if (!routes.has('/')) throw new StudioError('Publication lacks an index');
 }
 export async function snapshotPublication(root: string, publication: Publication) {
   const text = JSON.stringify({ ...publication, serverVersion: 2 }); const digest = hash(text);

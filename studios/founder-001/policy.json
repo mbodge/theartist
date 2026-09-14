@@ -13,7 +13,7 @@
     "enabled": true,
     "catalogWorker": "theartist",
     "maxDeploymentsPerDay": 8,
-    "maxBytes": 1500000
+    "maxBytes": 2000000
   },
   "builder": {
     "enabled": true,
