@@ -83,6 +83,11 @@ export class Harness {
           context.decision = this.store.checkpoint(id, 'decide', cycle.revision) ?? null;
           context.artwork = this.store.checkpoint(id, 'make', cycle.revision) ?? null;
           context.release = this.store.checkpoint(id, 'release', cycle.revision) ?? null;
+          const build = this.store.builds().find(b => b.cycleId === id);
+          context.execution = build ? { status: build.status, summary: build.summary, error: build.error,
+            artifacts: build.artifacts, commands: (build.commands as Array<{ command: string; exitCode: number | null }>).map(c => ({ command: c.command.slice(0, 160), exitCode: c.exitCode })) } : null;
+          context.publication = this.store.deployments().filter(d => d.kind === 'app' && d.cycleId === id);
+          context.browserInspection = this.store.memories().filter(m => m.cycleId === id && m.id.startsWith('browser-')).map(m => m.content);
         }
         const request: AgentRequest = { stage: cycle.stage as AgentStage, cycle, context, image };
         if (Buffer.byteLength(JSON.stringify(agentInput(request))) > cycle.policy.maxInputBytes) throw new StudioError('Agent context exceeds configured input limit');
@@ -163,9 +168,10 @@ export class Harness {
       if (output.inspectedArtifactHash !== artifact.hash) throw new StudioError('Critic inspected the wrong artifact version');
     }
   }
-  async run(id: string, maxSteps = 32, onStep: (cycle: Cycle) => void = () => {}) {
+  async run(id: string, maxSteps = 32, onStep: (cycle: Cycle) => void = () => {}, beforeReflect?: (cycle: Cycle) => Promise<void>) {
     let cycle = this.store.get(id);
     for (let i = 0; i < maxSteps && cycle.status === 'active'; i++) {
+      if (cycle.stage === 'reflect' && cycle.outcome === 'released') await beforeReflect?.(cycle);
       cycle = await this.step(id);
       onStep(cycle);
     }

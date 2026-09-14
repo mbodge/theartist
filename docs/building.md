@@ -1,5 +1,7 @@
 # Coding workshop
 
+> New founders default to `builder.backend: "docker"`. Build the image with `docker build -t theartist-workshop:1 -f docker/workshop.Dockerfile docker`. Node, Python, Chromium, and Playwright are available offline. The older managed backend described below remains for historical jobs. See [autonomous operation](autonomy.md).
+
 **Observed integration limitation:** the [first live trial](trials/astra-build-001.md) built and tested code but stalled before artifact publication. Cancellation was acknowledged without a terminal state; deletion returned HTTP 409. The source was recovered manually, and that job remains unresolved. This backend is not yet proven reliable for unattended use.
 
 Live founders can now turn accepted experiment packages into executable prototypes. The coding agent receives the accepted brief, works in an OpenAI-hosted workspace, creates source files, runs commands, fixes failures, and returns files. The founder retains execution results as durable memory for later decisions.

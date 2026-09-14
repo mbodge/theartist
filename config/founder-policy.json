@@ -14,6 +14,7 @@
     "maxMinutes": 10,
     "maxJobsPerDay": 1,
     "maxFiles": 30,
-    "maxBytes": 8000000
+    "maxBytes": 8000000,
+    "backend": "docker"
   }
 }

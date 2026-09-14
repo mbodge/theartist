@@ -13,6 +13,7 @@ import { createFounder, instancePaths, listFounders } from './instances.js';
 import { Builder, buildTerminal, type BuildJob } from './builder.js';
 import { Board } from './board.js';
 import { ManagedBuilder } from './managed-builder.js';
+import { DockerBuilder } from './docker-builder.js';
 import { publishStudio } from './publish.js';
 
 const projectRoot = fileURLToPath(new URL('../', import.meta.url));
@@ -33,6 +34,7 @@ const help = `theartist — local studio harness
   npm run studio -- step <id>              Execute one checkpointed stage
   npm run studio -- tick                  One idempotent UTC daily cycle
   npm run studio -- build <id>            Build/resume a prototype from an accepted experiment
+  npm run studio -- quarantine <id> --text <reason>  Retire an expired unresolved build; preserve cleanup debt
   npm run studio -- status               List cycles, pause state, and call attempts
   npm run studio -- show <id>             Inspect a cycle and its explicit outputs
   npm run studio -- close <id> --text ...  Close a failed/stuck cycle with a reason
@@ -63,9 +65,9 @@ Options:
   --supersedes <memory-id>     Correct an earlier note without erasing it
 
 OpenAI mode requires OPENAI_API_KEY and OPENAI_MODEL in environment or .env.
-Enabled live founders build prototypes in an isolated hosted coding workspace.
+Enabled live founders build prototypes in an isolated Docker coding workspace.
 This version has no social posting, email sending, or purchasing tools.
-tick is a one-shot scheduler entrypoint; it does not install a background job.
+tick is a one-shot entrypoint. The Autonomous studio GitHub workflow invokes it hourly.
 `;
 
 async function main() {
@@ -139,19 +141,19 @@ async function main() {
     }
     if (command === 'pause' || command === 'resume') { store.pause(command === 'pause'); json({ paused: store.paused() }); return; }
     if (command === 'export') { json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return; }
-    const publish = async () => {
+    const publish = async (includeCatalog = true) => {
       const policy = policySchema.parse(JSON.parse(await readFile(policyPath, 'utf8')));
       if (!policy.deployment?.enabled) {
         if (command === 'publish') throw new StudioError('Enable deployment in this studio policy first');
         return;
       }
       if (existsSync(join(projectRoot, '.env'))) process.loadEnvFile(join(projectRoot, '.env'));
-      const result = await publishStudio(data, store, policy.deployment);
+      const result = await publishStudio(data, store, policy.deployment, includeCatalog);
       json({ apps: result.apps.map(a => ({ id: a.id, status: a.status, url: a.url })),
-        catalog: { id: result.catalog.id, status: result.catalog.status, url: result.catalog.url } });
+        catalog: result.catalog ? { id: result.catalog.id, status: result.catalog.status, url: result.catalog.url } : null });
     };
     if (command === 'publish') { await publish(); return; }
-    if (!['demo', 'start', 'run', 'step', 'tick', 'build'].includes(command)) throw new StudioError(`Unknown command ${command}`);
+    if (!['demo', 'start', 'run', 'step', 'tick', 'build', 'quarantine'].includes(command)) throw new StudioError(`Unknown command ${command}`);
     if (!['fixture', 'openai'].includes(values.provider)) throw new StudioError('Unknown provider');
     if (command === 'demo' && values.provider !== 'fixture') throw new StudioError('demo is always offline; use start/run for live models');
     if (values.provider === 'openai' && existsSync(join(projectRoot, '.env'))) process.loadEnvFile(join(projectRoot, '.env'));
@@ -159,11 +161,18 @@ async function main() {
       ? new OpenAIProvider(process.env.OPENAI_MODEL ?? '', process.env.OPENAI_API_KEY ?? '')
       : new FixtureProvider();
     const harness = new Harness(data, provider, store);
+    if (command === 'quarantine') {
+      const id = positionals[1]; if (!id) throw new StudioError('quarantine needs a cycle ID');
+      json(new Builder(data, store, new ManagedBuilder(process.env.OPENAI_API_KEY ?? '')).quarantine(id, values.text ?? '')); return;
+    }
     const runBuild = async (cycleId: string) => {
       if (values.provider !== 'openai') throw new StudioError('Build requires --provider openai');
       const policy = policySchema.parse(JSON.parse(await readFile(policyPath, 'utf8')));
       if (!policy.builder?.enabled) throw new StudioError('Enable the builder in this founder policy first');
-      const builder = new Builder(data, store, new ManagedBuilder(process.env.OPENAI_API_KEY ?? ''));
+      const existing = (store.builds() as unknown as BuildJob[]).find(b => b.cycleId === cycleId);
+      const backend = existing ? existing.policy.backend : policy.builder.backend;
+      const builder = new Builder(data, store, backend === 'docker'
+        ? new DockerBuilder(data, process.env.OPENAI_API_KEY ?? '') : new ManagedBuilder(process.env.OPENAI_API_KEY ?? ''));
       await builder.enqueue(cycleId, policy.builder);
       let previous = '';
       const job = await builder.run(cycleId, 120, job => {
@@ -181,10 +190,13 @@ async function main() {
       json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return;
     }
     if (command === 'tick') {
+      if (store.paused()) { json({ paused: true }); return; }
       const pending = (store.builds() as unknown as BuildJob[]).find(job => !buildTerminal(job));
       if (pending) { try { await runBuild(pending.cycleId); } finally { await publish(); }
-        json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return; }
-      id = store.list().find(cycle => cycle.status === 'active')?.id;
+        if (store.get(pending.cycleId).status !== 'active') { json(await exportArchive(store, data, resolve(values.out ?? join(data, 'public')))); return; } }
+      for (const cycle of store.list().filter(c => c.status === 'active')) store.closeExhaustedCycle(cycle.id);
+      id = store.list().find(cycle => cycle.status === 'active')?.id
+        ?? store.list().find(cycle => cycle.triggerKey === `daily:${store.iso().slice(0, 10)}`)?.id;
     }
     if (['demo', 'start'].includes(command) || (command === 'tick' && !id)) {
       const profile = profileSchema.parse(JSON.parse(await readFile(profilePath, 'utf8')));
@@ -206,7 +218,15 @@ async function main() {
     const steps = Number(values.steps);
     if (!Number.isInteger(steps) || steps < 1 || steps > 100) throw new StudioError('--steps must be 1–100');
     const result = command === 'step' ? await harness.step(id) : await harness.run(id, steps,
-      c => console.error(`[${c.id.slice(0, 8)}] ${c.stage} · revision ${c.revision} · ${c.status}`));
+      c => console.error(`[${c.id.slice(0, 8)}] ${c.stage} · revision ${c.revision} · ${c.status}`), async c => {
+        if (!isFounder(c.profile) || values.provider !== 'openai') return;
+        const policy = policySchema.parse(JSON.parse(await readFile(policyPath, 'utf8')));
+        if (policy.builder?.enabled) {
+          const job = await runBuild(c.id);
+          if (!buildTerminal(job)) throw new StudioError('Build remains active; reflection waits for execution');
+        }
+        await publish(false);
+      });
     json({ id: result.id, stage: result.stage, status: result.status, outcome: result.outcome,
       release: store.checkpoint(result.id, 'release', result.revision) ?? null });
     if (command !== 'step' && result.status === 'released' && isFounder(result.profile) && values.provider === 'openai') {

@@ -76,7 +76,7 @@ export async function catalogPublication(store: Store, root: string, archiveDire
   const cycles = store.list().filter(c => c.observations.every(o => o.visibility === 'public'));
   const title = cycles[0]?.profile.name ?? 'Theartist';
   const files = [publicFile('/archive.json', serialized, true),
-    { ...publicFile('/health', JSON.stringify({ service: 'theartist', status: 'ok', studioRuntime: 'local', catalog: 'published-snapshot' })), mime: 'application/json; charset=utf-8' }];
+    { ...publicFile('/health', JSON.stringify({ service: 'theartist', status: 'ok', studioRuntime: process.env.STUDIO_RUNTIME === 'github-actions' ? 'github-actions' : 'local', catalog: 'published-snapshot' })), mime: 'application/json; charset=utf-8' }];
   let body = `<header><nav><a href="/">Theartist</a><a href="/archive.json">Download public record</a></nav><h1>${escapeHtml(title)}</h1><p class="lead">A studio in public. Follow the work, the decisions, and what happened next.</p><p class="meta">Published snapshot. The studio runs separately from this website.</p></header><h2>Work & experiments</h2>`;
   for (const cycle of [...cycles].reverse()) {
     const proposal = store.checkpoint(cycle.id, 'propose');

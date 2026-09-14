@@ -147,21 +147,33 @@ export class Store {
       this.event(null, value ? 'studio.paused' : 'studio.resumed', {});
     }).immediate();
   }
-  closeCycle(id: string, reason: string) {
+  closeCycle(id: string, reason: string, actor: 'operator' | 'harness' = 'operator') {
     if (!reason.trim() || reason.length > 2400) throw new StudioError('Closing a cycle requires a reason of 1–2400 characters');
     return this.db.transaction(() => {
       const cycle = this.get(id);
       if (cycle.status !== 'active') throw new StudioError('Only active cycles can be closed');
       const lock = this.db.prepare('SELECT lease_until FROM cycles WHERE id=?').get(id) as { lease_until: number };
       if (lock.lease_until > this.now()) throw new BusyError('Wait for the active worker to finish or its lease to expire');
-      const updated: Cycle = { ...cycle, status: 'failed', updatedAt: this.iso(), lastError: 'Closed by operator' };
+      const updated: Cycle = { ...cycle, status: 'failed', updatedAt: this.iso(), lastError: `Closed by ${actor}` };
       this.db.prepare('UPDATE cycles SET payload=?,lease_token=NULL,lease_until=0 WHERE id=?').run(JSON.stringify(updated), id);
       this.addMemory({ id: `${id}:closed`, kind: 'decision', content: reason, cycleId: id,
         sourceIds: cycle.observations.map(o => o.id), supersedes: null,
         visibility: cycle.observations.some(o => o.visibility === 'private') ? 'private' : 'public' });
-      this.event(id, 'cycle.closed', { stage: cycle.stage });
+      this.event(id, 'cycle.closed', { stage: cycle.stage, actor });
       return updated;
     }).immediate();
+  }
+  closeExhaustedCycle(id: string): Cycle {
+    const cycle = this.get(id);
+    if (cycle.status !== 'active') return cycle;
+    const attempts = this.attempts() as Array<{ cycle_id: string; stage: string; revision: number; model_call: number }>;
+    const own = attempts.filter(a => a.cycle_id === id);
+    const stageCount = own.filter(a => a.stage === cycle.stage && a.revision === cycle.revision).length;
+    const calls = own.filter(a => a.model_call === 1).length;
+    if (stageCount >= cycle.policy.maxAttemptsPerStage || (cycle.stage in agentSchemas && calls >= cycle.policy.maxCallsPerCycle)) {
+      return this.closeCycle(id, `The harness stopped this cycle after exhausting its ${stageCount >= cycle.policy.maxAttemptsPerStage ? 'stage attempt' : 'per-cycle model-call'} allowance. Last error: ${cycle.lastError ?? 'No further calls permitted'}. Preserve the work and use the recorded failure in the next daily experiment.`, 'harness');
+    }
+    return cycle;
   }
   claim(id: string): Lease {
     return this.db.transaction(() => {
@@ -297,6 +309,7 @@ export class Store {
         concept: String(proposal?.concept ?? proposal?.hypothesis ?? ''), reflection: this.checkpoint(c.id, 'reflect') ?? null,
         execution: build ? { status: build.status, artifacts: build.artifacts, error: build.error,
           deployments: this.deployments().filter(d => d.cycleId === c.id),
+          browserObservations: this.memories().filter(m => m.cycleId === c.id && m.id.startsWith('browser-')).slice(-2).map(m => ({ id: m.id, content: m.content })),
           validation: 'Prototype execution is not customer validation.' } : null };
     });
   }

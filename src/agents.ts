@@ -19,18 +19,26 @@ export const instructions: Record<AgentStage, string> = {
 };
 
 export function agentInput(request: AgentRequest) {
-  return {
+  const context = { ...request.context };
+  // The verified rendered experiment already contains the complete making specification.
+  if (context.artifactDocument) { delete context.artwork; context.artworkRepresentation = 'Complete specification is in artifactDocument'; }
+  const input = {
     studio: studioKind(request.cycle.profile),
     principal: request.cycle.profile,
     capabilities: { prototypeBuilder: request.cycle.policy.builder?.enabled ?? false,
+      staticAppPublication: request.cycle.policy.deployment?.enabled ?? false,
       webDiscovery: (request.cycle.policy.maxWebCallsPerAttempt ?? 0) > 0 },
     observations: [...request.cycle.observations, ...(request.cycle.discoveredObservations ?? [])]
       .filter(o => request.stage !== 'discover' || o.visibility === 'public'),
     priorPractice: request.cycle.memory,
-    recalledMemories: request.cycle.recalledMemories,
-    context: request.context,
+    recalledMemories: request.cycle.recalledMemories.map(memory => ({ ...memory,
+      content: memory.content.length > 3000 ? memory.content.slice(0, 3000) + '\n[Excerpt; complete record retained under this memory ID.]' : memory.content })),
+    context,
     remainingRevisions: request.cycle.policy.maxRevisions - request.cycle.revision,
   };
+  // Optional recalled excerpts must not crowd out the actual work under review.
+  while (input.recalledMemories.length && Buffer.byteLength(JSON.stringify(input)) > request.cycle.policy.maxInputBytes) input.recalledMemories.pop();
+  return input;
 }
 
 /** One constrained role call. Stateful career memory belongs to Store, not the provider. */

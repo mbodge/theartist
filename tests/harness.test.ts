@@ -4,7 +4,7 @@ import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
-import { FixtureProvider, OpenAIProvider } from '../src/agents.js';
+import { FixtureProvider, OpenAIProvider, agentInput } from '../src/agents.js';
 import { Harness } from '../src/harness.js';
 import { Store } from '../src/store.js';
 import { exportArchive } from '../src/archive.js';
@@ -55,6 +55,29 @@ test('same trigger and rerun do not spend again or duplicate the release', async
   const second = await exportArchive(h.store, root, join(root, 'public'));
   assert.equal(first.hash, second.hash);
   assert.throws(() => h.start('test:one', profile, policy, []), /different inputs/);
+});
+
+test('large memory excerpts cannot crowd out the verified artifact being reviewed', async t => {
+  const { cycle } = await setup(t);
+  cycle.recalledMemories = Array.from({ length: 8 }, (_, n) => ({ id: `memory-${n}`, kind: 'note' as const, content: 'history '.repeat(12000), sourceIds: [], supersedes: null }));
+  const document = 'verified experiment '.repeat(1200);
+  const input = agentInput({ stage: 'critique', cycle, context: { artwork: { duplicate: document }, artifactDocument: document } });
+  assert.equal(input.context.artifactDocument, document); assert.equal(input.context.artwork, undefined);
+  assert.ok(Buffer.byteLength(JSON.stringify(input)) <= cycle.policy.maxInputBytes);
+  assert.equal(cycle.recalledMemories[0]!.content.length, 96000);
+});
+
+test('exhausted cycle closes with an attributed failure while a daily budget pause remains resumable', async t => {
+  const { h, cycle } = await setup(t, new FixtureProvider(), { maxAttemptsPerStage: 1 });
+  const lease = h.store.claim(cycle.id);
+  assert.throws(() => h.store.closeExhaustedCycle(cycle.id), /lease/);
+  h.store.fail(lease, 'Recorded test transport failure');
+  const closed = h.store.closeExhaustedCycle(cycle.id);
+  assert.equal(closed.status, 'failed'); assert.equal(closed.lastError, 'Closed by harness');
+  assert.match(h.store.memories().find(m => m.id === `${cycle.id}:closed`)!.content, /Recorded test transport failure/);
+  assert.ok(h.store.verifyEvents());
+  const next = h.start('next-day', profile, policy, observations);
+  assert.equal(h.store.closeExhaustedCycle(next.id).status, 'active');
 });
 
 test('restart after a checkpoint resumes without rerunning completed roles', async t => {

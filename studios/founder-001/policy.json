@@ -12,7 +12,7 @@
   "deployment": {
     "enabled": true,
     "catalogWorker": "theartist",
-    "maxDeploymentsPerDay": 4,
+    "maxDeploymentsPerDay": 6,
     "maxBytes": 1500000
   },
   "builder": {
@@ -20,6 +20,7 @@
     "maxMinutes": 10,
     "maxJobsPerDay": 1,
     "maxFiles": 30,
-    "maxBytes": 8000000
+    "maxBytes": 8000000,
+    "backend": "docker"
   }
 }

@@ -1,0 +1,56 @@
+name: Autonomous studio
+on:
+  schedule:
+    - cron: '23 * * * *'
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Run one bounded tick, pause, or resume the founder
+        type: choice
+        options: [tick, pause, resume]
+        default: tick
+permissions:
+  contents: write
+concurrency:
+  group: founder-001-runtime
+  cancel-in-progress: false
+jobs:
+  studio:
+    if: github.repository == 'mbodge/theartist'
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      STUDIO_INSTANCE: founder-001
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Restore canonical memory (fail closed if missing)
+        id: restore
+        run: node scripts/state.mjs pull
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STUDIO_STATE_KEY: ${{ secrets.STUDIO_STATE_KEY }}
+      - name: Build isolated workshop image
+        if: inputs.action != 'pause'
+        run: docker build -t theartist-workshop:1 -f docker/workshop.Dockerfile docker
+      - name: Run bounded founder loop
+        env:
+          STUDIO_ACTION: ${{ inputs.action || 'tick' }}
+          OPENAI_MODEL: gpt-6-astra
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          STUDIO_RUNTIME: github-actions
+        run: npm run studio -- "$STUDIO_ACTION" --instance founder-001 --provider openai
+      - name: Save memory even after a model, build, or deployment failure
+        if: always() && steps.restore.outcome == 'success'
+        run: node scripts/state.mjs push
+        env:
+          GH_TOKEN: ${{ github.token }}
+          STUDIO_STATE_KEY: ${{ secrets.STUDIO_STATE_KEY }}

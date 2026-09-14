@@ -2,7 +2,9 @@
 
 A persistent conceptual artist and its studio. The artist develops an agenda; specialized roles research, make, critique, decide, and reflect. The studio remembers what happened and exposes an inspectable public record.
 
-**Status: working local harness, version 0.2.** Artist and configurable-founder modes share the durable engine. The offline demos are deterministic fixtures, not evidence of autonomous artistic or business judgment. A live OpenAI Responses adapter is implemented but requires your own credentials and model choice. Live founders also use OpenAI Agents API to build and test executable prototypes in isolated hosted workspaces. The [first coding trial](docs/trials/astra-build-001.md) produced a tested prototype but hit a stalled artifact handoff requiring operator recovery. The managed backend is not yet proven reliable unattended. The [public catalog](https://theartist.mike-3cd.workers.dev) is now live. A durable publisher deploys eligible static browser builds to separate Workers and records verified URLs in memory; the studio runtime itself remains local. See [publishing](docs/cloudflare.md).
+**Status: autonomous founder loop, version 0.3.** OpenAI Responses drives research, decisions, and a Docker coding workshop. Accepted work is built and tested, eligible browser apps are published to Cloudflare, and the founder reflects on the execution and deployment results. GitHub Actions runs the bounded loop hourly, with one new experiment per UTC day and encrypted, versioned memory between runs. The [public catalog](https://theartist.mike-3cd.workers.dev) exposes work, decisions, source files, tests, and outcomes. See [autonomous operation](docs/autonomy.md).
+
+The offline demos are deterministic fixtures. The older managed Agents backend remains available for historical jobs; its stalled first session is quarantined with cleanup still unresolved.
 
 ## Spin up a founder
 
@@ -89,7 +91,7 @@ Live runs incur provider charges. Execution limits live in `config/policy.json`:
 
 The live adapter completed a [first Astra founder trial](docs/trials/astra-001.md) that abstained without supplied evidence. A [second live trial with web discovery](docs/trials/astra-discovery-001.md) completed the full loop: seven model calls, six web actions, seven cited sources, and a reviewed experiment package. These are two observed runs, not a general quality evaluation. Those research trials did not execute an experiment or launch a product; the coding workshop now provides the next execution phase. Abstention can use a null success criterion, while making an experiment requires one.
 
-The [first live coding trial](docs/trials/astra-build-001.md) produced a [runnable RFP review prototype](examples/rfp-prototype/README.md) with 26 passing tests. Its managed artifact handoff stalled; the source was recovered from recorded commands and independently rerun locally. The unresolved provider session remains recorded as cancelling.
+The [first live coding trial](docs/trials/astra-build-001.md) produced a [runnable RFP review prototype](examples/rfp-prototype/README.md) with 26 passing tests. Its managed artifact handoff stalled; the source was recovered from recorded commands and independently rerun locally. The unresolved provider session is quarantined, with its identifier and pending cleanup preserved.
 
 ### Autonomous founder discovery
 
@@ -134,7 +136,7 @@ npm run studio -- run CYCLE_ID --steps 3
 npm run studio -- tick
 ```
 
-Pause blocks new stage dispatches; an already-started planning stage can checkpoint its result. A running builder cancels on its next worker poll. `tick` resumes unfinished builds or older active cycles before starting the current UTC date’s cycle, and automatically builds accepted live founder experiments. When deployment is enabled, it publishes eligible apps and refreshes the catalog, including after build failures. It then exports the archive. It is a one-shot worker, not an installed scheduler. See [execution limits and recovery](docs/building.md).
+Pause blocks new stage dispatches; an already-started planning stage can checkpoint its result. A running builder cancels on its next worker poll. `tick` resumes unfinished builds or older active cycles before starting the current UTC date’s cycle, and automatically builds accepted live founder experiments. When deployment is enabled, it publishes eligible apps and refreshes the catalog, including after build failures. It then exports the archive. The CLI is a one-shot worker; the [hosted workflow](.github/workflows/studio.yml) invokes it hourly. See [autonomous operation and recovery](docs/autonomy.md).
 
 Failed steps can be retried within their configured attempt allowance. When exhausted, inspect the record and close the failed cycle with `close CYCLE_ID --text "reason"`; a fresh trigger creates a new attempt with its own provenance. Daily allowance exhaustion can be resumed on a later UTC day.
 
@@ -151,11 +153,11 @@ Persistent studio state machine ───► Role provider
 SQLite checkpoints + memory + events
         │
         ├─► bounded typographic renderer ─► PNG / SVG
-        ├─► managed coding workspace ─► source + tests + command logs
+        ├─► isolated Docker workshop ─► source + tests + command logs
         └─► public JSON / JSONL archive + artifacts
 ```
 
-The intended hosted split is **Cloudflare for the persistent studio, workflow coordination, public archive, and site; OpenAI Agents API for managed agent execution and maker sandboxes**. The canonical memory remains ours and exportable. See [the architecture decision](docs/architecture.md).
+The current hosted split is **GitHub Actions for the Node studio and isolated Docker execution; OpenAI Responses for model calls; Cloudflare Workers for published apps and the catalog**. Application-owned SQLite memory is encrypted into a separate checkpoint branch between runs. A Cloudflare-native orchestration migration remains a future option, not a dependency of this loop. See [autonomous operation](docs/autonomy.md).
 
 ## Development
 

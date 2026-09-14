@@ -64,6 +64,34 @@ test('accepted experiment builds, persists execution memory, exports verified co
   await assert.rejects(exportArchive(h.store, root, join(root, 'public')), /integrity/);
 });
 
+test('founder reflects on actual execution after the accepted experiment is built', async t => {
+  const root = await mkdtemp(join(tmpdir(), 'reflection-build-'));
+  const fixture = new FixtureProvider(); let execution: unknown;
+  const provider: AgentProvider = { name: 'openai', model: 'test-only', generate: req => {
+    if (req.stage === 'reflect') execution = req.context.execution;
+    return fixture.generate(req);
+  } };
+  const h = new Harness(root, provider);
+  t.after(async () => { h.store.close(); await rm(root, { recursive: true, force: true }); });
+  const cycle = h.start('after-build', profile, policy, inputs);
+  const builder = new Builder(root, h.store, new FakeTransport());
+  await h.run(cycle.id, 32, () => {}, async c => { await builder.enqueue(c.id, policy.builder!); await builder.tick(c.id); });
+  assert.equal((execution as { status: string }).status, 'built');
+  assert.ok(h.store.verifyEvents());
+});
+
+test('quarantine preserves unresolved cleanup and requires expired cancellation plus a reason', async t => {
+  const { h, cycle, builder } = await setup(t);
+  const job = await builder.enqueue(cycle.id, policy.builder!);
+  assert.throws(() => builder.quarantine(cycle.id, 'A sufficiently detailed recovery reason'), /expired/);
+  job.status = 'cancelling'; job.deadline = 0; job.sessionId = 'remote-unresolved';
+  h.store.db.prepare('UPDATE build_jobs SET payload=? WHERE cycle_id=?').run(JSON.stringify(job), cycle.id);
+  assert.throws(() => builder.quarantine(cycle.id, 'short'), /reason/);
+  const retired = builder.quarantine(cycle.id, 'The provider cancellation is stuck; switching execution backend.');
+  assert.equal(retired.status, 'quarantined'); assert.equal(retired.cleanup, 'pending'); assert.equal(retired.sessionId, 'remote-unresolved');
+  assert.ok(h.store.verifyEvents());
+});
+
 test('uncertain session creation is reconciled on restart without duplicate creation', async t => {
   const { root, h, cycle, builder, transport } = await setup(t);
   transport.uncertainCreate = true;

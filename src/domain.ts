@@ -26,6 +26,7 @@ export function isFounder(profile: Profile): profile is z.infer<typeof founderPr
 export const studioKind = (profile: Profile): StudioKind => isFounder(profile) ? 'founder' : 'artist';
 
 export const builderPolicySchema = z.strictObject({
+  backend: z.enum(['managed', 'docker']).optional(),
   enabled: z.boolean(), maxMinutes: z.number().int().min(1).max(30),
   maxJobsPerDay: z.number().int().min(1).max(10),
   maxFiles: z.number().int().min(1).max(100), maxBytes: z.number().int().min(1024).max(20000000),

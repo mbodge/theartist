@@ -7,8 +7,9 @@ import type { BuildJob } from './builder.js';
 import { buildPublication, catalogPublication } from './publication.js';
 import { Deployer } from './deployer.js';
 import { CloudflarePublisher } from './cloudflare-publisher.js';
+import { browserSmoke } from './browser-smoke.js';
 
-export async function publishStudio(root: string, store: Store, policy: DeploymentPolicy) {
+export async function publishStudio(root: string, store: Store, policy: DeploymentPolicy, includeCatalog = true) {
   if (!policy.enabled || store.paused()) throw new StudioError('Publishing is disabled or studio is paused');
   const transport = new CloudflarePublisher(process.env.CLOUDFLARE_ACCOUNT_ID ?? '', process.env.CLOUDFLARE_API_TOKEN ?? '');
   const deployer = new Deployer(root, store, transport, policy, [process.env.CLOUDFLARE_API_TOKEN ?? '', process.env.OPENAI_API_KEY ?? '']);
@@ -20,7 +21,15 @@ export async function publishStudio(root: string, store: Store, policy: Deployme
     try {
       const publication = await buildPublication(root, store, build);
       const job = await deployer.enqueue(publication);
-      apps.push(await deployer.tick(job.id));
+      const deployed = await deployer.tick(job.id);
+      apps.push(deployed);
+      const inspectionId = `browser-${job.id}:${store.iso().slice(0, 10)}`;
+      if (deployed.status === 'published' && deployed.url && build.policy.backend === 'docker' && !store.memories().some(m => m.id === inspectionId)) {
+        const result = await browserSmoke(deployed.url);
+        store.addMemory({ id: inspectionId, kind: 'work', cycleId: build.cycleId, sourceIds: [], visibility: 'public', supersedes: null,
+          content: JSON.stringify({ deploymentId: job.id, url: deployed.url, observedAt: store.iso(), ...result }) });
+        store.event(build.cycleId, 'publication.browser-inspected', { deploymentId: job.id, status: result.status });
+      }
     } catch (error) {
       const reason = error instanceof StudioError ? error.message : 'App publication input could not be validated';
       store.addMemory({ id: `publication-note-${build.id}-${hash(reason).slice(0, 16)}`, kind: 'work', cycleId: build.cycleId,
@@ -28,6 +37,7 @@ export async function publishStudio(root: string, store: Store, policy: Deployme
         content: JSON.stringify({ buildId: build.id, publication: 'not-confirmed', reason }) });
     }
   }
+  if (!includeCatalog) return { apps, catalog: null };
   const archive = await exportArchive(store, root, join(root, 'public'));
   const catalog = await catalogPublication(store, root, archive.directory);
   const job = await deployer.enqueue(catalog);

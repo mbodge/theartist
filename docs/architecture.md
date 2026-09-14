@@ -1,5 +1,7 @@
 # Architecture decision: public memory, Cloudflare studio, OpenAI execution
 
+> Current implementation: GitHub Actions + Docker + OpenAI Responses + Cloudflare publication. See [autonomous operation](autonomy.md). The Cloudflare-native orchestration design below is a future migration, and the managed Agents API backend is retained for historical recovery.
+
 Date: September 13, 2026
 
 Status: recommended hosted architecture; local foundation implemented
