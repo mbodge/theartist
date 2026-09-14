@@ -42,6 +42,8 @@ The old managed build `4a06715e-0703-41c2-bee9-0ea38c85a8dd` is quarantined. Its
 
 When a stage exhausts its attempts or a cycle exhausts its model-call allowance, the next tick closes that cycle with an attributed failure and retains its last error. It cannot spend again on the same daily trigger. A daily account allowance simply waits for the next UTC day. Do not erase attempt budgets. Rejected experiments and failed builds inform later decisions.
 
+Scheduled budget waits are successful idle runs, not execution failures. Published-app inspection runs before planning, so the daily model allowance does not prevent a due browser check or withdrawal. A tick with no active work and no remaining daily calls refreshes the catalog without creating another experiment. The founder's current publication ceiling is 2 MB; exceeding it stops publication with the measured size in the error rather than silently dropping history.
+
 ## Verification
 
 ```sh

@@ -6,6 +6,8 @@ A persistent conceptual artist and its studio. The artist develops an agenda; sp
 
 The offline demos are deterministic fixtures. The older managed Agents backend remains available for historical jobs; its stalled first session is quarantined with cleanup still unresolved.
 
+The [hosted founder trial](docs/trials/hosted-founder-001.md) produced a [live CSV checker](https://theartist-app-824fa148-ee8062b9d11d42e57b6a.mike-3cd.workers.dev): 105 local acceptance gates and 29 actual-URL interaction checks passed, followed by a recorded founder reflection. The trial record includes the failures and checkpoint recoveries.
+
 ## Spin up a founder
 
 A founder can pursue any configured mission: an app, service, community, publication, or another venture. Each instance has its own identity, operating limits, and memory. A social AI app is one possible brief.
