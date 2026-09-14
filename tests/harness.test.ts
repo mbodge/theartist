@@ -7,6 +7,7 @@ import { spawnSync } from 'node:child_process';
 import { FixtureProvider, OpenAIProvider, agentInput } from '../src/agents.js';
 import { Harness } from '../src/harness.js';
 import { Store } from '../src/store.js';
+import { responseSchema } from '../src/board.js';
 import { exportArchive } from '../src/archive.js';
 import { renderArtwork, inspectArtifact } from '../src/artifacts.js';
 import {
@@ -64,6 +65,14 @@ test('idempotent memory writes compare fields, not JavaScript property order', a
   const { content, ...rest } = input;
   assert.deepEqual(h.store.addMemory({ content, ...rest }), first);
   assert.throws(() => h.store.addMemory({ ...input, content: 'Changed outcome' }), /Memory ID conflict/);
+});
+
+test('model output schema constrains research citations to supplied observations', async t => {
+  const { cycle } = await setup(t);
+  const request: AgentRequest = { stage: 'research', cycle, context: {} };
+  const fixture = await new FixtureProvider().generate(request);
+  const schema = responseSchema(request, true); assert.ok(schema.safeParse(fixture.output).success);
+  assert.equal(schema.safeParse({ ...(fixture.output as object), findings: [{ observationId: 'invented-prior-memory-id', interpretation: 'A prior memory is not a supplied observation.' }] }).success, false);
 });
 
 test('large memory excerpts cannot crowd out the verified artifact being reviewed', async t => {

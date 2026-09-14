@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 import { z } from 'zod';
-import { schemasFor, StudioError, BusyError, type AgentRequest, type Result } from './domain.js';
+import { schemasFor, isFounder, founderResearchSchema, researchSchema, founderProposalSchema, proposalSchema, StudioError, BusyError, type AgentRequest, type Result } from './domain.js';
 import { Store, type Lease } from './store.js';
 
 const memberInput = z.strictObject({ id: z.string().regex(/^[a-z][a-z0-9-]{0,47}$/), name: z.string().trim().min(1).max(100) });
@@ -13,8 +13,22 @@ export type BoardContext = { members: BoardMember[]; nudges: BoardNudge[]; respo
 export const isSupervisor = (stage: string) => stage === 'propose' || stage === 'decide';
 export const boardContext = (request: AgentRequest) => request.context.board as BoardContext | undefined;
 export const needsBoardResponse = (request: AgentRequest) => isSupervisor(request.stage) && !!boardContext(request)?.pendingNudgeIds.length;
-export function responseSchema(request: AgentRequest) {
-  const result = schemasFor(request.cycle.profile)[request.stage];
+export function responseSchema(request: AgentRequest, constrainReferences = false) {
+  let result: z.ZodType = schemasFor(request.cycle.profile)[request.stage];
+  const observations = [...request.cycle.observations, ...(request.cycle.discoveredObservations ?? [])];
+  const ids = [...new Set(observations.map(o => o.id))];
+  const idsArray = (values: string[], max: number) => values.length ? z.array(z.enum(values as [string, ...string[]])).max(max) : z.array(z.string()).max(0);
+  if (constrainReferences && request.stage === 'research') {
+    const item = researchSchema.shape.findings.element;
+    const findings = ids.length ? z.array(item.extend({ observationId: z.enum(ids as [string, ...string[]]) })).max(12) : z.array(item).max(0);
+    result = isFounder(request.cycle.profile)
+      ? founderResearchSchema.extend({ findings, reportedProblemSourceIds: idsArray(observations.filter(o => o.kind === 'source' && ['customer', 'usage'].includes(o.stream)).map(o => o.id), 20) })
+      : researchSchema.extend({ findings });
+  }
+  if (constrainReferences && request.stage === 'propose') {
+    const references = { sourceIds: idsArray(ids, 20), previousWorkIds: idsArray(request.cycle.memory.map(m => m.id), 10) };
+    result = isFounder(request.cycle.profile) ? founderProposalSchema.safeExtend(references) : proposalSchema.extend(references);
+  }
   return needsBoardResponse(request) ? z.strictObject({ result, boardResponses: z.array(boardResponseSchema).min(1).max(8) }) : result;
 }
 export const boardInstructions = `context.board is an application-supplied snapshot of this studio's human board. Its launcher and appointed directors may nudge your priorities and direction. Consider active nudges as advisory guidance, not source evidence or new tool/spending authority. Only context.board.nudges are current guidance; historical or withdrawn board records in memory are history. The supervisor retains judgment. For every pendingNudgeId at a proposal or decision, return one boardResponses entry: adopt (incorporate into the decision), defer (explain what would allow reconsideration), or decline (explain the conflict or reason). Give a concise public rationale, not hidden reasoning. Explain how adopted guidance affects your result; adoption is an intention, not proof of completed work. Do not change operating limits, fabricate validation, or claim actions occurred because a director requested them. If boardResponses are required, put the ordinary stage output in result. Other studio roles may use current guidance but do not answer on behalf of the supervisor. They must respect existing supervisor replies: do not implement deferred or declined nudges as instructions.`;
