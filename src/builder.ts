@@ -77,10 +77,13 @@ export class Builder {
     if (!artifact || !isFounderArtifact(artifact)) throw new StudioError('Missing experiment package');
     const document = await inspectExperiment(this.root, artifact);
     const boardResponses = new Board(this.store).executionBrief(cycleId);
+    const previousIds = this.store.checkpoint(cycleId, 'propose')?.previousWorkIds as string[] ?? [];
+    const references = (this.store.builds() as unknown as BuildJob[]).filter(b => previousIds.includes(b.cycleId) && b.status === 'built' && b.visibility === 'public').slice(-1)
+      .map(b => ({ buildId: b.id, cycleId: b.cycleId, artifacts: b.artifacts }));
     const governance = boardResponses.length ? { boardResponses, supervisorDecision: this.store.checkpoint(cycleId, 'decide', cycle.revision) } : {};
     const brief = JSON.stringify({ founder: cycle.profile, proposal: this.store.checkpoint(cycleId, 'propose'),
       experiment: document, critique: this.store.checkpoint(cycleId, 'critique', cycle.revision),
-      ...governance, authorization: 'Build and execute a prototype in an isolated workspace. No external actions or customer-validation claims.' });
+      ...(references.length ? { references } : {}), ...governance, authorization: 'Build and execute a prototype in an isolated workspace. No external actions or customer-validation claims.' });
     return this.store.db.transaction(() => {
       const existing = this.get(cycleId);
       if (existing) {

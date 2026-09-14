@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm, writeFile, symlink } from 'node:fs/promises';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
+import { gzipSync, gunzipSync } from 'node:zlib';
+import { zipSync, unzipSync } from 'fflate';
 import { Store, hash } from '../src/store.js';
 import { Deployer } from '../src/deployer.js';
 import { CloudflarePublisher, workerModule, receiptPath, type Target, type PublicationTransport } from '../src/cloudflare-publisher.js';
@@ -16,6 +18,17 @@ import { founderProfileSchema, policySchema, observationsSchema, type AgentProvi
 const deploymentPolicy = { enabled: true, catalogWorker: 'test-catalog', maxDeploymentsPerDay: 4, maxBytes: 1500000 };
 const publication: Publication = { kind: 'catalog', cycleId: null, buildId: null, title: 'Test catalog',
   files: [publicFile('/', '<h1>Test catalog</h1>'), publicFile('/archive.json', '{}', true)], validation: 'Synthetic integration fixture' };
+
+test('compressed archives preserve data and credential scanning inspects decoded content', () => {
+  const secret = 'cfat_' + 'x'.repeat(40);
+  const compressed = { ...publicFile('/archive.json', gzipSync(Buffer.from(secret)), true), contentEncoding: 'gzip' as const };
+  assert.throws(() => validatePublication({ ...publication, files: [publication.files[0]!, compressed] }, 10000), /credential/);
+  const zip = publicFile('/files/source.zip', Buffer.from(zipSync({ 'prototype/file.txt': Buffer.from(secret) })), true);
+  assert.throws(() => validatePublication({ ...publication, files: [publication.files[0]!, zip] }, 10000), /credential/);
+  const clean = { ...compressed, ...publicFile('/archive.json', gzipSync(Buffer.from('{"memory":"preserved"}')), true) };
+  assert.deepEqual(JSON.parse(gunzipSync(Buffer.from(clean.data, 'base64')).toString()), { memory: 'preserved' });
+  validatePublication({ ...publication, files: [publication.files[0]!, clean] }, 10000);
+});
 class FakePublisher implements PublicationTransport {
   accountId = 'a'.repeat(32); uploads = 0; enables = 0; verifications = 0; uncertain = false; wrongBytes = false;
   remote: Awaited<ReturnType<PublicationTransport['inspect']>> = { exists: false, owned: false, contentHash: null, versionId: null };
@@ -26,6 +39,7 @@ class FakePublisher implements PublicationTransport {
     return 'version-test';
   }
   async enable(target: Target) { this.enables++; return `https://${target.worker}.test.workers.dev`; }
+  async disable() {}
   async verify(_target: Target, pub: Publication) {
     this.verifications++; if (this.wrongBytes) throw new Error('wrong bytes');
     return pub.files.map(f => ({ path: f.path, sha256: f.sha256, status: 200 }));
@@ -167,6 +181,8 @@ test('accepted tested browser build publishes URL to memory and archive; unknown
   const harness = new Harness(root, provider, store); const cycle = harness.start('test-build', profile, policy, inputs); await harness.run(cycle.id);
   const sources = new Map([
     ['prototype/site/index.html', Buffer.from('<h1>Clearly synthetic test app</h1>')],
+    ['prototype/test-results.json', Buffer.from(JSON.stringify({ publicationEligible: true, synthetic: true }))],
+    ['prototype/browser-checks.json', Buffer.from(JSON.stringify({ schemaVersion: 1, noExtraRequests: true, steps: [{ action: 'click', selector: 'h1' }, { action: 'expectText', selector: 'h1', text: 'Clearly synthetic' }] }))],
     ['prototype/deployment.json', Buffer.from(JSON.stringify({ schemaVersion: 1, kind: 'static', root: 'prototype/site', testCommand: 'python tests.py' }))],
   ]);
   const builderTransport: BuildTransport = {
@@ -189,7 +205,16 @@ test('accepted tested browser build publishes URL to memory and archive; unknown
   const manifest = JSON.parse(await readFile(join(archive.directory, 'archive.json'), 'utf8'));
   assert.equal(manifest.deployments[0].url, result.url); assert.ok(store.verifyEvents());
   const catalog = await catalogPublication(store, root, archive.directory);
+  const sourceZip = catalog.files.find(f => f.path.endsWith('.zip'))!;
+  assert.equal(Buffer.from(unzipSync(Buffer.from(sourceZip.data, 'base64'))['prototype/site/index.html']!).toString(), sources.get('prototype/site/index.html')!.toString());
   const html = Buffer.from(catalog.files.find(f => f.path === '/')!.data, 'base64').toString('utf8');
   assert.ok(html.includes(result.url!));
   assert.ok(catalog.files.filter(f => f.path.startsWith('/files/')).every(f => f.download));
+  const report = build.artifacts.find(a => a.path === 'prototype/test-results.json')!;
+  const blocked = Buffer.from(JSON.stringify({ publicationEligible: false, synthetic: true, runs: [{ exitCode: 1 }, { exitCode: 0 }] }));
+  await writeFile(join(root, report.file), blocked); report.sha256 = hash(blocked); report.sizeBytes = blocked.length;
+  await assert.rejects(buildPublication(root, store, build), /explicitly blocks/);
+  const withdrawn = await deployer.withdraw(job.id, 'Recorded synthetic release-control regression');
+  assert.equal(withdrawn.status, 'withdrawn');
+  const enables = transport.enables; assert.equal((await deployer.tick(job.id)).status, 'withdrawn'); assert.equal(transport.enables, enables);
 });

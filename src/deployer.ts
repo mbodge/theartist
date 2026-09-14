@@ -9,7 +9,7 @@ import type { PublicationTransport, Target } from './cloudflare-publisher.js';
 
 export type DeploymentJob = Target & {
   id: string; kind: Publication['kind']; cycleId: string | null; buildId: string | null; title: string;
-  status: 'queued' | 'uploading' | 'verifying' | 'published' | 'failed';
+  status: 'queued' | 'uploading' | 'verifying' | 'published' | 'failed' | 'withdrawing' | 'withdrawn';
   createdAt: string; updatedAt: string; url: string | null; versionId: string | null;
   attempts: number; error: string | null; checks: Array<{ path: string; sha256: string; status: number }>;
   validation: string;
@@ -19,6 +19,34 @@ export class Deployer {
     readonly policy: DeploymentPolicy, readonly secrets: string[] = []) { deploymentPolicySchema.parse(policy); }
   jobs(): DeploymentJob[] { return this.store.deployments() as unknown as DeploymentJob[]; }
   get(id: string) { return this.jobs().find(j => j.id === id); }
+  async withdraw(id: string, reason: string) {
+    if (!reason.trim() || !this.transport.disable) throw new StudioError('Withdrawal needs a reason and transport support');
+    const token = randomUUID();
+    const job = this.store.db.transaction(() => {
+      const job = this.get(id);
+      if (!job || job.kind !== 'app' || job.accountId !== this.transport.accountId) throw new StudioError('Unknown studio app publication');
+      const identity = this.store.db.prepare("SELECT value FROM settings WHERE key='founder_instance_id'").get() as { value: string } | undefined;
+      if (job.owner !== hash(`${identity?.value ?? 'artist'}:${this.policy.catalogWorker}`).slice(0, 24)) throw new StudioError('Withdrawal is outside this studio policy');
+      const lock = this.store.db.prepare('SELECT lease_until FROM deployment_jobs WHERE id=?').get(id) as { lease_until: number };
+      if (lock.lease_until > this.store.now()) throw new BusyError('Publication is leased');
+      if (job.status !== 'withdrawn') { job.status = 'withdrawing'; job.error = reason; job.updatedAt = this.store.iso(); }
+      this.store.db.prepare('UPDATE deployment_jobs SET payload=?,lease_token=?,lease_until=? WHERE id=?').run(JSON.stringify(job), token, this.store.now() + 90000, id);
+      return job;
+    }).immediate();
+    try {
+      if (job.status === 'withdrawn') return job;
+      await this.transport.disable(job);
+      job.status = 'withdrawn'; job.updatedAt = this.store.iso();
+      this.store.db.transaction(() => {
+        const saved = this.store.db.prepare('UPDATE deployment_jobs SET payload=? WHERE id=? AND lease_token=? AND lease_until>?').run(JSON.stringify(job), id, token, this.store.now());
+        if (!saved.changes) throw new BusyError('Withdrawal lease expired');
+        this.store.addMemory({ id: `withdrawal-${id}`, kind: 'work', cycleId: job.cycleId, visibility: 'public', sourceIds: [], supersedes: null,
+          content: JSON.stringify({ status: job.status, url: job.url, reason, at: job.updatedAt }) });
+        this.store.event(job.cycleId, 'deployment.withdrawn', { id, worker: job.worker });
+      }).immediate();
+      return job;
+    } finally { this.store.db.prepare('UPDATE deployment_jobs SET lease_token=NULL,lease_until=0 WHERE id=? AND lease_token=?').run(id, token); }
+  }
   async enqueue(publication: Publication) {
     if (!this.policy.enabled || this.store.paused()) throw new StudioError('Publishing is disabled or studio is paused');
     validatePublication(publication, this.policy.maxBytes, this.secrets);
@@ -70,7 +98,8 @@ export class Deployer {
         .run(this.store.now() + 60000, id, token, this.store.now());
     }, 15000);
     try {
-      if (job.status === 'published' || job.status === 'failed') return job;
+      if (job.status === 'published' || job.status === 'failed' || job.status === 'withdrawn') return job;
+      if (job.status === 'withdrawing') throw new StudioError('Resume withdrawal before any publication');
       if (!this.policy.enabled || this.store.paused()) return job;
       if (job.attempts >= 3) { job.status = 'failed'; job.error = 'Publication retry limit reached; inspect the saved record'; save(); return job; }
       job.attempts++; save();

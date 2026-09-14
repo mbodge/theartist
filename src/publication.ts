@@ -1,12 +1,15 @@
 import { readFile, lstat, realpath, mkdir } from 'node:fs/promises';
 import { join, resolve, sep, extname } from 'node:path';
 import { z } from 'zod';
+import { gzipSync, gunzipSync } from 'node:zlib';
+import { zipSync, unzipSync } from 'fflate';
 import { artifactPath, type BuildJob } from './builder.js';
 import { hash, type Store } from './store.js';
 import { immutableWrite } from './artifacts.js';
 import { isFounder, StudioError } from './domain.js';
+import { browserProbeSchema } from './browser-smoke.js';
 
-export type PublicFile = { path: string; mime: string; data: string; sha256: string; download: boolean };
+export type PublicFile = { path: string; mime: string; data: string; sha256: string; download: boolean; contentEncoding?: 'gzip' };
 export type Publication = {
   kind: 'app' | 'catalog'; cycleId: string | null; buildId: string | null;
   title: string; files: PublicFile[]; validation: string;
@@ -47,6 +50,15 @@ export async function buildPublication(root: string, store: Store, build: BuildJ
   const raw = files.get('prototype/deployment.json');
   if (!raw) throw new StudioError('Build has no static deployment manifest; retained as downloadable work');
   const manifest = manifestSchema.parse(JSON.parse(raw.toString('utf8')));
+  const results = files.get('prototype/test-results.json');
+  const eligibility = results ? JSON.parse(results.toString('utf8')).publicationEligible : undefined;
+  if (eligibility === false) throw new StudioError('Experiment explicitly blocks publication; a later zero exit code does not override the recorded block');
+  if (build.policy.backend === 'docker' && eligibility !== true) throw new StudioError('Docker builds require explicit publicationEligible=true in test-results.json');
+  if (build.policy.backend === 'docker') {
+    const probe = files.get('prototype/browser-checks.json');
+    if (!probe) throw new StudioError('Docker build needs live-browser acceptance checks');
+    browserProbeSchema.parse(JSON.parse(probe.toString('utf8')));
+  }
   if (!build.commands.some(c => c.command === manifest.testCommand && c.status === 'completed' && c.exitCode === 0)) {
     throw new StudioError('Deployment requires an observed zero exit code for the manifest test command; unknown exits are not a pass');
   }
@@ -75,7 +87,7 @@ export async function catalogPublication(store: Store, root: string, archiveDire
   const archive = JSON.parse(serialized.toString('utf8'));
   const cycles = store.list().filter(c => c.observations.every(o => o.visibility === 'public'));
   const title = cycles[0]?.profile.name ?? 'Theartist';
-  const files = [publicFile('/archive.json', serialized, true),
+  const files: PublicFile[] = [{ ...publicFile('/archive.json', gzipSync(serialized), true), contentEncoding: 'gzip' },
     { ...publicFile('/health', JSON.stringify({ service: 'theartist', status: 'ok', studioRuntime: process.env.STUDIO_RUNTIME === 'github-actions' ? 'github-actions' : 'local', catalog: 'published-snapshot' })), mime: 'application/json; charset=utf-8' }];
   let body = `<header><nav><a href="/">Theartist</a><a href="/archive.json">Download public record</a></nav><h1>${escapeHtml(title)}</h1><p class="lead">A studio in public. Follow the work, the decisions, and what happened next.</p><p class="meta">Published snapshot. The studio runs separately from this website.</p></header><h2>Work & experiments</h2>`;
   for (const cycle of [...cycles].reverse()) {
@@ -85,6 +97,7 @@ export async function catalogPublication(store: Store, root: string, archiveDire
     const outcome = cycle.outcome === 'released' ? 'Experiment accepted' : cycle.outcome === 'abstained' ? 'No experiment selected' : cycle.outcome ?? cycle.status;
     body += `<article class="work"><p class="status">${cycle.provider === 'fixture' ? 'Synthetic fixture · ' : ''}${escapeHtml(outcome)}${build ? ' · Build ' + escapeHtml(build.status) : ''}</p><h3>${escapeHtml(proposal?.title ?? 'Work in progress')}</h3><p>${proposal?.hypothesis ? 'Hypothesis: ' : ''}${escapeHtml(proposal?.hypothesis ?? proposal?.concept ?? '')}</p>`;
     for (const d of deployments) if (/^https:\/\/[a-z0-9-]+\.[a-z0-9-]+\.workers\.dev$/.test(String(d.url))) body += `<p><a href="${escapeHtml(d.url)}" target="_blank" rel="noopener noreferrer">Open published app</a></p>`;
+    for (const d of store.deployments().filter(d => d.cycleId === cycle.id && d.status === 'withdrawn')) body += `<p class="status">Publication withdrawn: ${escapeHtml(d.error)}</p>`;
     const artifact = store.checkpoint(cycle.id, 'render', cycle.revision);
     if (artifact) {
       for (const key of ['document', 'spec', 'png', 'svg']) {
@@ -100,12 +113,14 @@ export async function catalogPublication(store: Store, root: string, archiveDire
     if (build?.error) body += `<p class="status">${escapeHtml(build.error)}</p>`;
     if (build?.artifacts.length) {
       body += '<details><summary>Source files & test records</summary><ul>';
+      const bundle: Record<string, Uint8Array> = {};
       for (const file of build.artifacts) {
         const bytes = await verifiedFile(root, file.file, file.sha256, file.sizeBytes);
-        const route = '/files/' + file.file;
-        files.push(publicFile(route, bytes, true));
-        body += `<li><a href="${route}">${escapeHtml(file.path)}</a></li>`;
+        bundle[file.path] = bytes;
       }
+      const route = `/files/builds/${build.id}.zip`;
+      files.push(publicFile(route, Buffer.from(zipSync(bundle, { level: 6, mtime: new Date(1980, 0, 1) })), true));
+      body += `<li><a href="${route}">Download source, fixtures, and test records (ZIP)</a></li>`;
       body += '</ul></details>';
     }
     const decision = store.checkpoint(cycle.id, 'decide', cycle.revision);
@@ -129,8 +144,22 @@ export function validatePublication(publication: Publication, maxBytes: number, 
     const bytes = Buffer.from(file.data, 'base64');
     if (hash(bytes) !== file.sha256 || bytes.toString('base64') !== file.data || routes.has(file.path)) throw new StudioError('Invalid publication content');
     publicFile(file.path, bytes, file.download); routes.add(file.path); total += bytes.length;
-    const text = bytes.toString('utf8');
-    if (secrets.filter(s => s.length >= 12).some(s => text.includes(s)) || /\b(?:cfat_[A-Za-z0-9_-]{20,}|sk-(?:proj-)?[A-Za-z0-9_-]{30,})/.test(text)) throw new StudioError('Publication contains a credential; nothing was uploaded');
+    const decoded = file.contentEncoding === 'gzip' ? gunzipSync(bytes, { maxOutputLength: 20000000 }) : bytes;
+    if (file.contentEncoding && file.contentEncoding !== 'gzip') throw new StudioError('Invalid content encoding');
+    let scans: Uint8Array[] = [decoded];
+    if (file.path.endsWith('.zip')) {
+      let expanded = 0, count = 0;
+      const entries = unzipSync(decoded, { filter: entry => {
+        expanded += entry.originalSize; count++;
+        if (expanded > 20000000 || count > 100 || entry.name.startsWith('/') || entry.name.split('/').some(p => p === '..')) throw new StudioError('Unsafe source archive');
+        return true;
+      } });
+      scans = [...scans, ...Object.values(entries)];
+    }
+    for (const scan of scans) {
+      const text = Buffer.from(scan).toString('utf8');
+      if (secrets.filter(s => s.length >= 12).some(s => text.includes(s)) || /\b(?:cfat_[A-Za-z0-9_-]{20,}|sk-(?:proj-)?[A-Za-z0-9_-]{30,})/.test(text)) throw new StudioError('Publication contains a credential; nothing was uploaded');
+    }
   }
   if (total > maxBytes || !routes.has('/')) throw new StudioError('Publication exceeds size limit or lacks an index');
 }

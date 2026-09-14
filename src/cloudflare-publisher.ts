@@ -1,6 +1,7 @@
 import { StudioError } from './domain.js';
 import { hash } from './store.js';
 import type { Publication } from './publication.js';
+import { gunzipSync } from 'node:zlib';
 
 export type Target = { accountId: string; worker: string; owner: string; contentHash: string };
 export interface PublicationTransport {
@@ -8,6 +9,7 @@ export interface PublicationTransport {
   inspect(target: Target): Promise<{ exists: boolean; owned: boolean; contentHash: string | null; versionId: string | null }>;
   upload(target: Target, publication: Publication): Promise<string | null>;
   enable(target: Target): Promise<string>;
+  disable?(target: Target): Promise<void>;
   verify(target: Target, publication: Publication, url: string): Promise<Array<{ path: string; sha256: string; status: number }>>;
 }
 export const receiptPath = '/_studio/receipt';
@@ -26,6 +28,7 @@ export default { fetch(request) {
  const file = Object.hasOwn(files,path) ? files[path] : undefined;
  if(!file) return new Response(null,{status:404,headers});
  if(file.download) headers['Content-Disposition']='attachment';
+ if(file.contentEncoding) headers['Content-Encoding']=file.contentEncoding;
  headers['Content-Type']=file.mime;
  return new Response(request.method==='HEAD'?null:Uint8Array.from(atob(file.data),c=>c.charCodeAt(0)),{headers});
 }};`;
@@ -80,17 +83,24 @@ export class CloudflarePublisher implements PublicationTransport {
     if (typeof result?.subdomain !== 'string' || !/^[a-z0-9-]+$/.test(result.subdomain)) throw new StudioError('Cloudflare account has no workers.dev subdomain');
     return `https://${target.worker}.${result.subdomain}.workers.dev`;
   }
+  async disable(target: Target) {
+    this.assertTarget(target);
+    const remote = await this.inspect(target);
+    if (!remote.exists || !remote.owned || remote.contentHash !== target.contentHash) throw new StudioError('Withdrawal target does not match this studio publication');
+    await this.api(`/workers/scripts/${target.worker}/subdomain`, 'POST', JSON.stringify({ enabled: false, previews_enabled: false }));
+  }
   async verify(target: Target, publication: Publication, url: string) {
     this.assertTarget(target);
     if (!new RegExp(`^https://${target.worker.replace(/-/g, '\\-')}\\.[a-z0-9-]+\\.workers\\.dev$`).test(url)) throw new StudioError('Unexpected deployment URL');
-    const checks = [ { path: receiptPath, sha256: hash(JSON.stringify(receipt(target))) }, ...publication.files ];
+    const checks = [ { path: receiptPath, sha256: hash(JSON.stringify(receipt(target))) }, ...publication.files.map(file =>
+      file.contentEncoding === 'gzip' ? { ...file, sha256: hash(gunzipSync(Buffer.from(file.data, 'base64'), { maxOutputLength: 20000000 })) } : file) ];
     const results = [];
     for (const file of checks) {
       let verified = false;
       for (let attempt = 0; attempt < 6; attempt++) {
         try {
           const response = await this.request(url + file.path, { redirect: 'error', signal: AbortSignal.timeout(10000) });
-          const bytes = await readBounded(response, 2000000);
+          const bytes = await readBounded(response, 20000000);
           if (response.status === 200 && hash(bytes) === file.sha256) {
             results.push({ path: file.path, sha256: file.sha256, status: response.status }); verified = true; break;
           }

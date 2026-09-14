@@ -36,7 +36,7 @@ test('workshop has no host mounts, credentials, network, root or capabilities', 
 });
 test('real Docker workshop executes Node, Python and Chromium without host secrets or network', { skip: process.env.TEST_DOCKER !== '1' }, async t => {
   const root = await mkdtemp(join(tmpdir(), 'workshop-integration-'));
-  const job = { id: '11111111-1111-4111-8111-111111111112', brief: 'fixture', policy: { maxFiles: 30, maxBytes: 8000000 } } as BuildJob;
+  const job = { id: '11111111-1111-4111-8111-111111111112', brief: '{"fixture":true}', policy: { maxFiles: 30, maxBytes: 8000000 } } as BuildJob;
   const transport = new DockerBuilder(root, 'test-only-no-api-call');
   t.after(async () => { await transport.cleanup(job); await rm(root, { recursive: true, force: true }); });
   const name = await transport.create(job);

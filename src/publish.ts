@@ -7,13 +7,14 @@ import type { BuildJob } from './builder.js';
 import { buildPublication, catalogPublication } from './publication.js';
 import { Deployer } from './deployer.js';
 import { CloudflarePublisher } from './cloudflare-publisher.js';
-import { browserSmoke } from './browser-smoke.js';
+import { browserSmoke, loadBrowserProbe } from './browser-smoke.js';
 
 export async function publishStudio(root: string, store: Store, policy: DeploymentPolicy, includeCatalog = true) {
   if (!policy.enabled || store.paused()) throw new StudioError('Publishing is disabled or studio is paused');
   const transport = new CloudflarePublisher(process.env.CLOUDFLARE_ACCOUNT_ID ?? '', process.env.CLOUDFLARE_API_TOKEN ?? '');
   const deployer = new Deployer(root, store, transport, policy, [process.env.CLOUDFLARE_API_TOKEN ?? '', process.env.OPENAI_API_KEY ?? '']);
-  const pending = deployer.jobs().filter(j => !['published', 'failed'].includes(j.status));
+  for (const job of deployer.jobs().filter(j => j.status === 'withdrawing')) await deployer.withdraw(job.id, job.error ?? 'Resuming recorded withdrawal');
+  const pending = deployer.jobs().filter(j => !['published', 'failed', 'withdrawn'].includes(j.status));
   for (const job of pending) await deployer.tick(job.id);
   const apps = [];
   for (const build of store.builds() as unknown as BuildJob[]) {
@@ -25,10 +26,14 @@ export async function publishStudio(root: string, store: Store, policy: Deployme
       apps.push(deployed);
       const inspectionId = `browser-${job.id}:${store.iso().slice(0, 10)}`;
       if (deployed.status === 'published' && deployed.url && build.policy.backend === 'docker' && !store.memories().some(m => m.id === inspectionId)) {
-        const result = await browserSmoke(deployed.url);
+        const result = await browserSmoke(deployed.url, await loadBrowserProbe(root, build));
         store.addMemory({ id: inspectionId, kind: 'work', cycleId: build.cycleId, sourceIds: [], visibility: 'public', supersedes: null,
           content: JSON.stringify({ deploymentId: job.id, url: deployed.url, observedAt: store.iso(), ...result }) });
         store.event(build.cycleId, 'publication.browser-inspected', { deploymentId: job.id, status: result.status });
+        if (result.status !== 'passed') {
+          const withdrawn = await deployer.withdraw(job.id, 'Live browser acceptance failed; preserving the failed probe and withdrawing the app');
+          Object.assign(deployed, withdrawn);
+        }
       }
     } catch (error) {
       const reason = error instanceof StudioError ? error.message : 'App publication input could not be validated';

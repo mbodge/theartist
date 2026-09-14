@@ -1,5 +1,6 @@
 import Database from 'better-sqlite3';
 import { createHash, randomUUID } from 'node:crypto';
+import { isDeepStrictEqual } from 'node:util';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
 import {
@@ -276,7 +277,7 @@ export class Store {
       const existing = row ? this.memoryFromRow(row) : undefined;
       if (existing) {
         const { createdAt: _, ...value } = existing;
-        if (JSON.stringify(value) !== JSON.stringify(input)) throw new StudioError('Memory ID conflict');
+        if (!isDeepStrictEqual(value, input)) throw new StudioError('Memory ID conflict');
         return existing;
       }
       if (input.supersedes && !this.db.prepare('SELECT 1 FROM memories WHERE id=?').get(input.supersedes)) throw new StudioError('Superseded memory does not exist');

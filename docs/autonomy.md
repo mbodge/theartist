@@ -9,7 +9,7 @@ The running system has three hosts: GitHub Actions executes the Node studio and 
 3. Search public sources, retrieve relevant memories, research, propose, and answer board guidance.
 4. Produce an experiment specification. Critique it and accept, revise, or reject it.
 5. For an accepted experiment, Astra uses a shell tool to write, execute, test, and repair a prototype in Docker. The harness records actual command output and exit codes.
-6. Validate the output files. A static app needs a deployment manifest referring to an observed successful test command. Publish it to its own Cloudflare Worker and verify all published bytes.
+6. Validate the output files. A static app needs a deployment manifest referring to an observed successful test command, an explicit positive publication-eligibility verdict, and declarative live-browser acceptance checks. An explicit block always wins over a later zero exit. Publish an eligible candidate to its own Cloudflare Worker and verify all published bytes. Run the declared interactions and network assertions at the actual URL; a failed live check withdraws it.
 7. Reflect on the build and publication results. Store the learning and unresolved questions; publish the public record. The next cycle receives prior execution and deployment records.
 8. Inspect each published app in a restricted Chromium session at most once per UTC day; keep the latest observations available to future cycles.
 9. Encrypt and save canonical memory, including after ordinary model, build, or deployment failures.
@@ -30,7 +30,7 @@ The `studio-state` branch contains `runtime/founder-001.enc`: gzip-compressed, A
 
 `STUDIO_STATE_KEY`, `OPENAI_API_KEY`, `CLOUDFLARE_ACCOUNT_ID`, and `CLOUDFLARE_API_TOKEN` are GitHub repository secrets. The state key also lives in the launcher's ignored `.env`; keep that backup. The job's short-lived GitHub token only handles checkpoint storage. No secrets, repository checkout, host folders, or Docker socket are mounted into the coding container. Generated code runs as UID 1000 with no network, a read-only root, no Linux capabilities, and bounded CPU, memory, process count, temporary storage, and command time. Browser tests run Chromium inside that same isolation.
 
-The public catalog exports the public projection of the studio, including explicit decisions and outcomes. It does not expose credentials or private reasoning. Encrypted checkpoints preserve operational state without publishing it as plaintext. The checkpoint branch is a v1 storage backend: monitor repository size as history grows; replace it with durable object storage before scaling many founders.
+The public catalog exports the public projection of the studio, including explicit decisions and outcomes. JSON uses transparent gzip transfer encoding, and each build has a ZIP containing its verified source, fixtures, and test records, so history does not immediately exhaust the static Worker payload. It does not expose credentials or private reasoning. Encrypted checkpoints preserve operational state without publishing it as plaintext. The checkpoint branch is a v1 storage backend: monitor repository size as history grows; replace it with durable object storage before scaling many founders.
 
 Do not run a local writer against the same founder while the hosted workflow is active. The canonical state is now the hosted checkpoint; local files are a launch-time copy. To migrate: pause the hosted founder, restore into a fresh directory with the state utility, make changes, then push using the same version fence. Never overwrite or delete canonical memory to clear an error.
 
@@ -53,3 +53,7 @@ TEST_DOCKER=1 npx tsx --test tests/runtime.test.ts
 ```
 
 The Docker integration test exercises a real Chromium interaction and verifies network denial, non-root execution, read-only system files, and absence of host secrets/socket. Checkpoint tests cover encryption, tampering, wrong keys, identity, paths, duplicate files, and integrity. The builder test checks that reflection receives the actual build result.
+
+## First release-control incident
+
+The first CSV prototype repaired a keyboard-focus failure and passed its final tests, but its original experiment remained explicitly blocked. The first publisher incorrectly accepted the final zero exit. The founder identified that discrepancy in its reflection and requested withdrawal. The app was disabled and verified HTTP 404; history was preserved. A regression now verifies that a blocked result followed by a successful command cannot publish. The repaired product can only proceed as a separately accepted experiment, with fresh measurements and live interaction checks.

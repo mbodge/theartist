@@ -3,11 +3,13 @@ import { spawn } from 'node:child_process';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { StudioError } from './domain.js';
+import { verifiedFile } from './publication.js';
 import { builderInstructions, staticDeploymentInstructions, type BuildJob, type BuildTransport, type RemoteBuild } from './builder.js';
 
 type State = RemoteBuild & { responseId: string | null; calls: number; input: OpenAI.Responses.ResponseInput;
   files: Array<{ id: string; path: string; sizeBytes: number; data: string }>; submitting?: boolean };
 const image = 'theartist-workshop:1';
+const probeInstructions = `For a static app, create prototype/browser-checks.json with {"schemaVersion":1,"noExtraRequests":true,"steps":[...]}. This is the trusted harness's live-URL acceptance test after publication. Allowed steps use CSS selectors: {"action":"upload","selector":"#file","file":"prototype/fixtures/synthetic-sample.csv"}, {"action":"check","selector":"#nonblank","checked":true}, {"action":"fill","selector":"#length","value":"4"}, {"action":"click","selector":"#check"}, {"action":"expectText","selector":"#summary","text":"EXPECTED substring"}, {"action":"expectEmpty","selector":"#records"}. Include 2–30 steps with meaningful interactions and assertions. For CSV preflight, upload the existing synthetic sample, set rules, assert exact counts and preserved identifier values, clear, and assert empty results. Refer only to delivered synthetic fixture files under 100 KB. noExtraRequests=true verifies no network requests after initial assets. A failed live probe causes automatic withdrawal. The offline local tests must still run before this delivery step.`;
 export const containerName = (job: BuildJob) => {
   if (!/^[a-f0-9-]{36}$/.test(job.id)) throw new StudioError('Invalid Docker build identity');
   return `theartist-${job.id}`;
@@ -49,6 +51,18 @@ export class DockerBuilder implements BuildTransport {
     await this.save(job, state);
     const result = await docker(containerArgs(job));
     if (result.code !== 0) throw new StudioError('Isolated Docker workshop could not start; build image first');
+    const references = JSON.parse(job.brief).references ?? [];
+    const files = []; let total = 0;
+    for (const ref of references) for (const artifact of ref.artifacts) {
+      if (!/^[a-f0-9-]{36}$/.test(ref.buildId) || artifact.file !== join('builds', ref.buildId, artifact.path)) throw new StudioError('Invalid reference build path');
+      const data = await verifiedFile(this.root, artifact.file, artifact.sha256, artifact.sizeBytes);
+      total += data.length; if (total > job.policy.maxBytes) throw new StudioError('Reference build is too large');
+      files.push({ path: `/workspace/reference/${ref.buildId}/${artifact.path}`, data: data.toString('base64') });
+    }
+    if (files.length) {
+      const copied = await docker(['exec', '-i', containerName(job), 'python3', '-c', `import sys,json,base64,os\nfor f in json.load(sys.stdin):\n p=f['path']\n assert p.startswith('/workspace/reference/') and '..' not in p.split('/')\n os.makedirs(os.path.dirname(p),exist_ok=True)\n open(p,'wb').write(base64.b64decode(f['data']))`], JSON.stringify(files));
+      if (copied.code !== 0) throw new StudioError('Could not copy verified reference build');
+    }
     return containerName(job);
   }
   async find(job: BuildJob) {
@@ -73,7 +87,7 @@ export class DockerBuilder implements BuildTransport {
       s.submitting = true; s.calls++; await this.save(job, s);
       const response = await this.client.responses.create({ model: job.model, background: true, store: true,
         ...(s.turnId ? { previous_response_id: s.turnId } : {}), input: s.input,
-        instructions: `${builderInstructions}\n${staticDeploymentInstructions}\nYou have one shell tool. Node 22, Python 3, Chromium at /usr/bin/chromium, and playwright-core at /opt/tools/node_modules/playwright-core are installed. Test browser interactions using Chromium (launch with args ['--no-sandbox','--disable-dev-shm-usage']). Include at least one meaningful browser interaction test for a static app. Each shell command has a 45-second timeout. Keep command output concise. Finish with a concise public build summary, not private reasoning.`,
+        instructions: `${builderInstructions}\n${staticDeploymentInstructions}\n${probeInstructions}\nVerified previous builds, when listed in the brief, are available under /workspace/reference/<buildId>/prototype. Reuse relevant source and unchanged fixture expectations for a separately accepted rerun; do not rewrite historical outcomes. New experiment results belong to this new build and must distinguish old failures from new measurements. test-results.json MUST include top-level publicationEligible: true or false; false blocks publication even after a zero exit code. Set true only when this experiment's local release gates pass. Public deployment and live browser inspection happen next in the trusted harness; absence of a URL inside the offline workshop is not itself a local gate failure.\nYou have one shell tool. Node 22, Python 3, Chromium at /usr/bin/chromium, and playwright-core at /opt/tools/node_modules/playwright-core are installed. Test browser interactions using Chromium (launch with args ['--no-sandbox','--disable-dev-shm-usage']). Include at least one meaningful browser interaction test for a static app. Each shell command has a 45-second timeout. Keep command output concise. Finish with a concise public build summary, not private reasoning.`,
         tools: [{ type: 'function', name: 'shell', description: 'Execute a shell command inside the isolated, offline build container. Write files, run tests, inspect output.', strict: true,
           parameters: { type: 'object', properties: { command: { type: 'string' } }, required: ['command'], additionalProperties: false } }],
         parallel_tool_calls: false, max_output_tokens: 12000, reasoning: { effort: 'high' },
